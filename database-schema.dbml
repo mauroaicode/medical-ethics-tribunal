@@ -1,0 +1,197 @@
+// Tablas de Usuario y Autenticación
+// Tabla users normalizada con campos comunes compartidos
+
+Table users {
+  id int [primary key]
+  name varchar
+  last_name varchar
+  document_type varchar [note: "CC, CE, etc"]
+  document_number varchar [unique]
+  phone varchar
+  address varchar
+  email varchar [unique]
+  password varchar
+  role varchar [note: "super_admin, admin, secretary"]
+  position varchar [note: "cargo en la organización"]
+  last_login_ip varchar
+  last_login_at timestamp
+  email_verified_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table password_resets {
+  email varchar [primary key]
+  token varchar
+  created_at timestamp
+}
+
+Table two_factor_codes {
+  id int [primary key]
+  user_id int [ref: > users.id]
+  code varchar
+  expires_at timestamp
+  used_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Tablas de Auditoría
+
+Table audit_logs {
+  id int [primary key]
+  user_id int [ref: > users.id]
+  action varchar [note: "create, update, delete, export, etc"]
+  model_name varchar [note: "nombre del modelo: Process, User, etc"]
+  model_id int
+  old_values text [note: "JSON"]
+  new_values text [note: "JSON"]
+  ip_address varchar
+  user_agent varchar
+  created_at timestamp
+}
+
+// Tablas de Zonas, Departamentos y Ciudades
+
+Table zones {
+  id int [primary key]
+  descripcion varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table departments {
+  id int [primary key]
+  codigo varchar
+  descripcion varchar
+  idZona int [ref: > zones.id]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table cities {
+  id int [primary key]
+  codigo varchar
+  iddepartamento int [ref: > departments.id]
+  descripcion varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Tablas de Gestión de Quejosos
+// Solo contiene campos específicos, datos comunes en users
+
+Table complainants {
+  id int [primary key]
+  user_id int [ref: > users.id, unique]
+  city_id int [ref: > cities.id]
+  municipality varchar
+  company varchar
+  is_anonymous boolean [default: false]
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Tablas de Gestión de Médicos
+// Solo contiene campos específicos, datos comunes en users
+
+Table doctors {
+  id int [primary key]
+  user_id int [ref: > users.id, unique]
+  specialty varchar
+  faculty varchar
+  medical_registration_number varchar
+  medical_registration_place varchar
+  medical_registration_date date
+  main_practice_company varchar
+  other_practice_company varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Tablas de Gestión de Magistrados
+// Solo contiene user_id, todos los datos comunes están en users
+
+Table magistrates {
+  id int [primary key]
+  user_id int [ref: > users.id, unique]
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Tablas de Gestión de Plantillas
+
+Table templates {
+  id int [primary key]
+  name varchar [unique]
+  description text
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Tablas de Gestión de Procesos
+
+Table processes {
+  id int [primary key]
+  complainant_id int [ref: > complainants.id]
+  doctor_id int [ref: > doctors.id]
+  magistrate_instructor_id int [ref: > magistrates.id, note: "magistrado instructor"]
+  magistrate_ponente_id int [ref: > magistrates.id, note: "magistrado ponente"]
+  template_id int [ref: > templates.id]
+  name varchar
+  process_number varchar [unique, note: "número consecutivo automático"]
+  start_date date [note: "fecha de inicio del proceso"]
+  status varchar [note: "pending, in_progress, closed"]
+  description text
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [note: "para soft delete"]
+}
+
+// Tablas de Actuaciones/Folios
+
+Table proceedings {
+  id int [primary key]
+  process_id int [ref: > processes.id]
+  description varchar
+  proceeding_date date
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Tablas para Media Library (archivos)
+
+Table media {
+  id int [primary key]
+  model_type varchar
+  model_id int
+  uuid varchar [unique]
+  collection_name varchar
+  name varchar
+  file_name varchar
+  mime_type varchar
+  disk varchar
+  conversions_disk varchar
+  size bigint
+  type varchar [note: "tipo de archivo cuando se suben a procesos, puede ser null"]
+  manipulations text [note: "JSON"]
+  custom_properties text [note: "JSON"]
+  generated_conversions text [note: "JSON"]
+  responsive_images text [note: "JSON"]
+  order_column int
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Relaciones adicionales
+// Nota: Las relaciones polimórficas con condiciones where no son soportadas directamente en DBML
+// Se representan como relaciones separadas en los comentarios
+
+// Relación polimórfica: media -> templates (cuando model_type = 'Template')
+// Relación polimórfica: media -> proceedings (cuando model_type = 'Proceeding')
+
+// Notas sobre Plantillas:
+// Las plantillas se crean utilizando Word u otro proveedor de documentos (Google Docs).
+// Al crear un proceso, se selecciona la plantilla y cuando se genera el PDF, 
+// los datos del proceso se insertan automáticamente en la plantilla.
+
