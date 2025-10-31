@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Src\Domain\Complainant\Models\Complainant;
+use Src\Domain\City\Models\City;
 
 class ComplainantSeeder extends Seeder
 {
@@ -12,6 +13,14 @@ class ComplainantSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $cities = City::all();
+
+        Complainant::factory(20)->create()->each(function ($complainant) use ($cities) {
+            if ($cities->isNotEmpty()) {
+                $complainant->update([
+                    'city_id' => $cities->random()->id,
+                ]);
+            }
+        });
     }
 }

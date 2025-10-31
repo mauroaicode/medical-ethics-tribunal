@@ -23,6 +23,8 @@ use Illuminate\Support\Carbon;
  */
 class AuditLog extends Model
 {
+    public $timestamps = false;
+
     protected $fillable = [
         'user_id',
         'action',

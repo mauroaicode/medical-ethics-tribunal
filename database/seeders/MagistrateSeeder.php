@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Src\Domain\Magistrate\Models\Magistrate;
 
 class MagistrateSeeder extends Seeder
 {
@@ -12,6 +12,6 @@ class MagistrateSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Magistrate::factory(10)->create();
     }
 }

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -11,10 +12,17 @@ use Src\Domain\User\Enums\UserStatus;
 use Src\Domain\User\Models\User;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<User>
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<Model>
+     */
+    protected $model = User::class;
+
     /**
      * The current password being used by the factory.
      */

@@ -3,12 +3,22 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
+use Src\Domain\Magistrate\Models\Magistrate;
+use Src\Domain\User\Models\User;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
+ * @extends Factory<Magistrate>
  */
 class MagistrateFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<Model>
+     */
+    protected $model = Magistrate::class;
+
     /**
      * Define the model's default state.
      *
@@ -17,7 +27,7 @@ class MagistrateFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'user_id' => User::factory(),
         ];
     }
 }
