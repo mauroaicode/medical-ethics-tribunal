@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +22,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Factory::guessFactoryNamesUsing(
+            function ($modelName) {
+                return 'Database\\Factories\\' . Str::after($modelName, "Models\\") . 'Factory';
+            }
+        );
+        JsonResource::withoutWrapping();
     }
 }

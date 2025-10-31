@@ -2,6 +2,7 @@
 
 return [
 
+    'expiration_time_code_forgot_password' => (int) env('PASSWORD_RESET_EXPIRATION', 10),
     /*
     |--------------------------------------------------------------------------
     | Authentication Defaults
@@ -40,6 +41,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'api' => [
+            'driver' => 'jwt',
+            'provider' => 'users',
+        ],
     ],
 
     /*
@@ -62,7 +67,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', Src\Domain\User\Models\User::class),
+            'model' => Src\Domain\User\Models\User::class,
         ],
 
         // 'users' => [

@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Src\Domain\Template\Models\Template;
 
 class TemplateSeeder extends Seeder
 {
@@ -12,6 +12,6 @@ class TemplateSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Template::factory(5)->create();
     }
 }

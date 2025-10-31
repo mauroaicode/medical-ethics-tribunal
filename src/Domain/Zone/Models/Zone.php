@@ -6,6 +6,7 @@ namespace Src\Domain\Zone\Models;
 
 use Database\Factories\ZoneFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
@@ -22,6 +23,14 @@ class Zone extends Model
 {
     /** @use HasFactory<ZoneFactory> */
     use HasFactory;
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): Factory
+    {
+        return ZoneFactory::new();
+    }
 
     protected $fillable = [
         'name',
