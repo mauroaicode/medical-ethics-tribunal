@@ -1,0 +1,9 @@
+<?php
+
+return [
+    'email' => 'Email',
+    'password' => 'Password',
+    'password_confirmation' => 'Password confirmation',
+    'code' => 'Code',
+];
+

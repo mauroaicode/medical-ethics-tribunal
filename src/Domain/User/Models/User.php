@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\Permission\Traits\HasRoles;
 use Src\Domain\Complainant\Models\Complainant;
@@ -43,7 +44,7 @@ use Src\Domain\User\Enums\UserStatus;
 class User extends Authenticatable implements HasMedia
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, InteractsWithCustomMedia, HasRoles;
+    use HasFactory, Notifiable, InteractsWithCustomMedia, HasRoles, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -119,6 +120,32 @@ class User extends Authenticatable implements HasMedia
     public function magistrate(): HasOne
     {
         return $this->hasOne(Magistrate::class);
+    }
+
+    /**
+     * Get the email address that should be used for verification.
+     */
+    public function getEmailForVerification(): string
+    {
+        return $this->email;
+    }
+
+    /**
+     * Determine if the user has verified their email address.
+     */
+    public function hasVerifiedEmail(): bool
+    {
+        return ! is_null($this->email_verified_at);
+    }
+
+    /**
+     * Mark the given user's email as verified.
+     */
+    public function markEmailAsVerified(): bool
+    {
+        return $this->update([
+            'email_verified_at' => now(),
+        ]);
     }
 }
 

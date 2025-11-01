@@ -1,0 +1,29 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### EMAIL VERIFICATION ENDPOINTS
+### ============================================
+###
+
+### Verify Email - Success
+# Replace {id} and {hash} with actual values from the email verification link
+# Example: GET {{bevalk_base_url}}{{apiVersion}}/auth/verify/1/abc123def456
+GET {{bevalk_base_url}}{{apiVersion}}/auth/verify/{id}/{hash}
+Accept: text/html
+
+### Verify Email - Invalid User ID
+GET {{bevalk_base_url}}{{apiVersion}}/auth/verify/99999/invalid-hash
+Accept: text/html
+
+### Verify Email - Invalid Hash
+# Replace {id} with actual user ID
+GET {{bevalk_base_url}}{{apiVersion}}/auth/verify/{id}/invalid-hash
+Accept: text/html
+
+### Verify Email - Already Verified
+# Replace {id} and {hash} with actual values from a user that is already verified
+GET {{bevalk_base_url}}{{apiVersion}}/auth/verify/{id}/{hash}
+Accept: text/html
+

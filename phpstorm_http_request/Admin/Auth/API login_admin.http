@@ -1,0 +1,63 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### AUTHENTICATION ENDPOINTS
+### ============================================
+###
+
+### Login - Success
+# @name login
+POST {{bevalk_base_url}}{{apiVersion}}/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "superadmin@tribunal.com",
+  "password": "password"
+}
+
+> {%
+    client.global.set("token", response.body.token);
+    client.log("Token saved: " + response.body.token);
+%}
+
+### Login - Invalid Email
+POST {{bevalk_base_url}}{{apiVersion}}/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "invalid@example.com",
+  "password": "password"
+}
+
+### Login - Invalid Password
+POST {{bevalk_base_url}}{{apiVersion}}/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "wrongpassword"
+}
+
+### Login - Missing Fields
+POST {{bevalk_base_url}}{{apiVersion}}/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+}
+
+### Login - Invalid Email Format
+POST {{bevalk_base_url}}{{apiVersion}}/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "invalid-email",
+  "password": "password"
+}
+

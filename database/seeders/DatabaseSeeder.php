@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Src\Domain\Zone\Models\Zone;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,8 +12,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Zone::factory(10)->create();
-
         $path = database_path('seeders/sql/departamentos.sql');
         DB::unprepared(file_get_contents($path));
         $path = database_path('seeders/sql/ciudades.sql');
