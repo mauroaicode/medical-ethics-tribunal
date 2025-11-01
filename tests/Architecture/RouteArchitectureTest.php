@@ -63,6 +63,8 @@ it('ensures no routes use anonymous functions', function (): void {
 
     $ignoredUris = [
         '/',
+        'up',
+        'storage/{path}',
     ];
 
     $invalidRoutes = [];

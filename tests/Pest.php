@@ -13,15 +13,12 @@ declare(strict_types=1);
 |
 */
 
-use Src\Application\Admin\Subscription\Controllers\SubscriptionPriceController;
-use Src\Application\Integrations\Stripe\Facades\Stripe;
-use Src\Domain\Subscription\Enums\SubscriptionPeriod;
 use Src\Domain\User\Models\User;
-use Stripe\Price as StripePrice;
-
 use function Pest\Laravel\actingAs;
 
-pest()->extend(Tests\TestCase::class)->in('Application', 'Domain', 'Architecture');
+pest()->extend(Tests\TestCase::class)
+    ->use(Illuminate\Foundation\Testing\DatabaseTransactions::class)
+    ->in('Filament', 'Application', 'Domain', 'Architecture');
 
 /*
 |--------------------------------------------------------------------------
@@ -49,68 +46,17 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function mock_stripe_price(string $id, float $amount, string $interval): Mockery\MockInterface
+function something(): void
 {
-    $priceMock = Mockery::mock(StripePrice::class, [$id])->makePartial();
-    $priceMock->unit_amount = (int) ($amount * 100);
-    $priceMock->currency = 'eur';
-    $priceMock->recurring = (object) ['interval' => $interval];
-    $priceMock->product = 'prod_premium';
-    $priceMock->active = true;
-
-    return $priceMock;
+    // ..
 }
 
-function create_stripe_price_and_mark_has_active(
-    SubscriptionPeriod $subscriptionPeriod,
-    string $oldPriceId,
-    $stripeServiceMock,
-): string {
-    $newPriceId = 'new_price_id';
-    $newPrice = 9.99;
+function actingAsUser()
+{
+    $user = User::factory()->create();
+    actingAs(
+        $user,
+    );
 
-    $stripe_interval = $subscriptionPeriod === SubscriptionPeriod::MONTHLY ? 'month' : 'year';
-
-    Stripe::shouldReceive('createActivePrice')
-        ->once()
-        ->with(Mockery::on(function ($data) use ($newPrice, $stripe_interval): bool {
-            return $data->product_id === config()->string('stripe-subscriptions.subscription_premium_id')
-                && $data->amount_in_cents === (int) round($newPrice * 100)
-                && $data->currency === 'eur'
-                && $data->interval === $stripe_interval;
-        }))
-        ->andReturn($newPriceId);
-
-    Stripe::shouldReceive('changeProductDefaultPrice')
-        ->with(Mockery::on(function ($data) use ($newPriceId): bool {
-            return $data->product_id === config()->string('stripe-subscriptions.subscription_premium_id')
-                && $data->default_price_id === $newPriceId;
-        }))
-        ->once();
-
-    // Mock retrievePrice for the old price that will be deactivated
-    Stripe::shouldReceive('retrievePrice')
-        ->with($oldPriceId)
-        ->andReturn(mock_stripe_price($oldPriceId, 10.99, 'month'));
-
-    Stripe::shouldReceive('deactivatePrice')
-        ->with($oldPriceId)
-        ->once();
-
-    $stripeServiceMock
-        ->shouldReceive('swap')
-        ->once();
-
-    $adminUser = User::factory()->create();
-
-    $updateData = [
-        'subscription_period' => $subscriptionPeriod->value,
-        'price' => $newPrice,
-    ];
-
-    actingAs($adminUser)
-        ->post(action([SubscriptionPriceController::class, 'store']), $updateData)
-        ->assertStatus(204);
-
-    return $newPriceId;
+    return $user;
 }
