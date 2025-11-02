@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Role;
 use Src\Application\Admin\User\Controllers\UserController;
+use Src\Application\Shared\Notifications\AccountCreatedNotification;
 use Src\Domain\AuditLog\Models\AuditLog;
 use Src\Domain\User\Enums\DocumentType;
 use Src\Domain\User\Enums\UserRole;
@@ -18,6 +20,8 @@ use function Pest\Laravel\post;
 use function Pest\Laravel\put;
 
 beforeEach(function (): void {
+    Notification::fake();
+
     // Create roles
     $this->superAdminRole = Role::firstOrCreate(['name' => UserRole::SUPER_ADMIN->value, 'guard_name' => 'web']);
     $this->adminRole = Role::firstOrCreate(['name' => UserRole::ADMIN->value, 'guard_name' => 'web']);
@@ -220,7 +224,6 @@ describe('store', function (): void {
             'phone' => '3001112233',
             'address' => 'Calle Falsa 123',
             'email' => $email,
-            'password' => 'StrongPassword123!@#',
             'roles' => [UserRole::ADMIN->value],
             'status' => UserStatus::ACTIVE->value,
         ];
@@ -263,7 +266,6 @@ describe('store', function (): void {
             'phone' => '3001112234',
             'address' => 'Calle Falsa 456',
             'email' => $email,
-            'password' => 'StrongPassword123!@#',
             'roles' => [UserRole::SECRETARY->value],
         ];
 
@@ -277,15 +279,18 @@ describe('store', function (): void {
     });
 
     it('creates user with default active status when status is not provided', function (): void {
+        $uniqueId = time() + 400;
+        $documentNumber = "100000{$uniqueId}";
+        $email = "sin.status.{$uniqueId}@example.com";
+
         $data = [
             'name' => 'Usuario',
             'last_name' => 'Sin Status',
             'document_type' => DocumentType::CEDULA_CIUDADANIA->value,
-            'document_number' => '1000000003',
+            'document_number' => $documentNumber,
             'phone' => '3001112235',
             'address' => 'Calle Falsa 789',
-            'email' => 'sin.status@example.com',
-            'password' => 'StrongPassword123!@#',
+            'email' => $email,
             'roles' => [UserRole::ADMIN->value],
         ];
 
@@ -293,7 +298,7 @@ describe('store', function (): void {
             ->post(action([UserController::class, 'store']), $data)
             ->assertStatus(201);
 
-        $createdUser = User::query()->where('email', 'sin.status@example.com')->first();
+        $createdUser = User::query()->where('email', $email)->first();
         expect($createdUser->status)->toBe(UserStatus::ACTIVE);
     });
 
@@ -306,7 +311,6 @@ describe('store', function (): void {
             'phone' => '3001112236',
             'address' => 'Calle Falsa 101',
             'email' => 'multi.rol@example.com',
-            'password' => 'StrongPassword123!@#',
             'roles' => [UserRole::ADMIN->value, UserRole::SECRETARY->value],
         ];
 
@@ -328,7 +332,6 @@ describe('store', function (): void {
             'phone' => '3001112237',
             'address' => 'Calle Falsa 202',
             'email' => 'no.autorizado@example.com',
-            'password' => 'StrongPassword123!@#',
             'roles' => [UserRole::ADMIN->value],
         ];
 
@@ -353,7 +356,6 @@ describe('store', function (): void {
             'phone' => '3001112238',
             'address' => 'Calle Falsa 303',
             'email' => 'sin.auth@example.com',
-            'password' => 'StrongPassword123!@#',
             'roles' => [UserRole::ADMIN->value],
         ];
 
@@ -391,7 +393,6 @@ describe('store', function (): void {
             'phone' => '3001112239',
             'address' => 'Calle Falsa 404',
             'email' => $this->admin->email, // Using existing email
-            'password' => 'StrongPassword123!@#',
             'roles' => [UserRole::ADMIN->value],
         ];
 
@@ -413,7 +414,6 @@ describe('store', function (): void {
             'phone' => '3001112240',
             'address' => 'Calle Falsa 505',
             'email' => 'duplicate.document@example.com',
-            'password' => 'StrongPassword123!@#',
             'roles' => [UserRole::ADMIN->value],
         ];
 
@@ -426,26 +426,29 @@ describe('store', function (): void {
         expect($messages)->toBeArray();
     });
 
-    it('fails validation with weak password', function (): void {
+    it('sends account created notification when creating user', function (): void {
+        $uniqueId = time() + 100;
+        $email = "notification.test.{$uniqueId}@example.com";
+        $documentNumber = "100000{$uniqueId}";
+
         $data = [
-            'name' => 'Weak',
-            'last_name' => 'Password',
+            'name' => 'Notification',
+            'last_name' => 'Test',
             'document_type' => DocumentType::CEDULA_CIUDADANIA->value,
-            'document_number' => '1000000008',
+            'document_number' => $documentNumber,
             'phone' => '3001112241',
             'address' => 'Calle Falsa 606',
-            'email' => 'weak.password@example.com',
-            'password' => 'short', // Weak password
+            'email' => $email,
             'roles' => [UserRole::ADMIN->value],
         ];
 
-        $response = actingAs($this->superAdmin)
-            ->post(action([UserController::class, 'store']), $data);
+        actingAs($this->superAdmin)
+            ->post(action([UserController::class, 'store']), $data)
+            ->assertStatus(201);
 
-        $response->assertStatus(422);
+        $createdUser = User::query()->where('email', $email)->first();
 
-        $messages = $response->json('messages');
-        expect($messages)->toBeArray();
+        Notification::assertSentTo($createdUser, AccountCreatedNotification::class);
     });
 
     it('fails validation with invalid role', function (): void {
@@ -457,7 +460,6 @@ describe('store', function (): void {
             'phone' => '3001112242',
             'address' => 'Calle Falsa 707',
             'email' => 'invalid.role@example.com',
-            'password' => 'StrongPassword123!@#',
             'roles' => ['invalid_role'], // Invalid role
         ];
 
@@ -479,7 +481,6 @@ describe('store', function (): void {
             'phone' => '3001112243',
             'address' => 'Calle Falsa 808',
             'email' => 'empty.roles@example.com',
-            'password' => 'StrongPassword123!@#',
             'roles' => [], // Empty roles
         ];
 
@@ -678,20 +679,6 @@ describe('update', function (): void {
         expect($this->admin->name)->toBe('Mismo Usuario');
     });
 
-    it('fails validation with weak password', function (): void {
-        $data = [
-            'password' => 'short',
-        ];
-
-        $response = actingAs($this->superAdmin)
-            ->put(action([UserController::class, 'update'], $this->admin->id), $data);
-
-        $response->assertStatus(422);
-
-        $messages = $response->json('messages');
-        expect($messages)->toBeArray();
-    });
-
     it('fails validation with invalid role', function (): void {
         $data = [
             'roles' => ['invalid_role'],
@@ -841,7 +828,6 @@ describe('destroy', function (): void {
             'phone' => '3009999999',
             'address' => 'Test Address',
             'email' => 'test.audit@example.com',
-            'password' => 'StrongPassword123!@#',
             'roles' => [UserRole::ADMIN->value],
         ];
 

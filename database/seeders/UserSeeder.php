@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use Src\Domain\User\Enums\DocumentType;
 use Src\Domain\User\Enums\UserStatus;
 use Src\Domain\User\Models\User;
 
@@ -19,6 +20,8 @@ class UserSeeder extends Seeder
         $superAdmin = User::factory()->create([
             'name' => 'Super',
             'last_name' => 'Administrador',
+            'document_type' => DocumentType::CEDULA_CIUDADANIA->value,
+            'document_number' => '1000000001',
             'email' => 'superadmin@tribunal.com',
             'password' => Hash::make('password'),
             'status' => UserStatus::ACTIVE->value,
@@ -30,6 +33,8 @@ class UserSeeder extends Seeder
         $admin = User::factory()->create([
             'name' => 'Admin',
             'last_name' => 'Sistema',
+            'document_type' => DocumentType::CEDULA_CIUDADANIA->value,
+            'document_number' => '1000000002',
             'email' => 'admin@tribunal.com',
             'password' => Hash::make('password'),
             'status' => UserStatus::ACTIVE->value,
@@ -41,6 +46,8 @@ class UserSeeder extends Seeder
         $secretary = User::factory()->create([
             'name' => 'Secretaria',
             'last_name' => 'General',
+            'document_type' => DocumentType::CEDULA_CIUDADANIA->value,
+            'document_number' => '1000000003',
             'email' => 'secretaria@tribunal.com',
             'password' => Hash::make('password'),
             'status' => UserStatus::ACTIVE->value,

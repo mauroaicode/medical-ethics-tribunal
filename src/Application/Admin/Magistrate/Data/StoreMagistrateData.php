@@ -9,7 +9,6 @@ use Illuminate\Validation\Validator;
 use Spatie\LaravelData\Attributes\Validation\Email;
 use Spatie\LaravelData\Attributes\Validation\Max;
 use Spatie\LaravelData\Attributes\Validation\Min;
-use Spatie\LaravelData\Attributes\Validation\Password;
 use Spatie\LaravelData\Attributes\Validation\Required;
 use Spatie\LaravelData\Attributes\Validation\Unique;
 use Spatie\LaravelData\Data;
@@ -41,15 +40,6 @@ class StoreMagistrateData extends Data
 
         #[Required, Email, Unique('users', 'email')]
         public string $email,
-
-        #[Required, Password(
-            min: 12,
-            letters: true,
-            mixedCase: true,
-            numbers: true,
-            symbols: true
-        )]
-        public string $password,
     ) {}
 
     public static function rules(): array
@@ -64,10 +54,6 @@ class StoreMagistrateData extends Data
         $validator->setCustomMessages([
             'document_type.enum' => __('validation.enum', ['attribute' => __('data.document_type')]),
             'document_type.in' => __('validation.in', ['attribute' => __('data.document_type')]),
-            'password.letters' => __('validation.password.letters', ['attribute' => __('data.password')]),
-            'password.mixed' => __('validation.password.mixed', ['attribute' => __('data.password')]),
-            'password.numbers' => __('validation.password.numbers', ['attribute' => __('data.password')]),
-            'password.symbols' => __('validation.password.symbols', ['attribute' => __('data.password')]),
         ]);
 
         $validator->setAttributeNames([
@@ -78,7 +64,6 @@ class StoreMagistrateData extends Data
             'phone' => __('data.phone'),
             'address' => __('data.address'),
             'email' => __('data.email'),
-            'password' => __('data.password'),
         ]);
     }
 }

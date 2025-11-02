@@ -28,19 +28,25 @@ class UserFactory extends Factory
     protected static ?string $password;
 
     /**
+     * Counter to ensure unique document numbers and emails.
+     */
+    protected static int $counter = 0;
+
+    /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
      */
     public function definition(): array
     {
-        $uniqueId = microtime(true) * 10000;
+        static::$counter++;
+        $uniqueId = (int) (microtime(true) * 10000) + static::$counter + random_int(1000, 9999);
 
         return [
             'name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
             'document_type' => fake()->randomElement(DocumentType::cases())->value,
-            'document_number' => (string) ((int) $uniqueId),
+            'document_number' => (string) $uniqueId,
             'phone' => fake()->numerify('3########'),
             'address' => fake()->address(),
             'email' => "user.{$uniqueId}@example.com",
@@ -51,6 +57,7 @@ class UserFactory extends Factory
             'last_login_ip' => null,
             'last_login_at' => null,
             'status' => UserStatus::ACTIVE->value,
+            'requires_password_change' => false,
             'email_verified_at' => now(),
             'remember_token' => Str::random(10),
         ];

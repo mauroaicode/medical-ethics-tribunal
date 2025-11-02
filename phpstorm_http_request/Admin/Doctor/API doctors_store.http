@@ -9,6 +9,7 @@
 
 ### Create Doctor - Success (Super Admin or Admin)
 # @name createDoctor
+# Note: Password is automatically generated and sent via email to the user
 POST {{bevalk_base_url}}{{apiVersion}}/doctors
 Accept: application/json
 Content-Type: application/json
@@ -22,7 +23,6 @@ Authorization: Bearer {{token}}
   "phone": "3001112233",
   "address": "Calle Falsa 123",
   "email": "juan.perez@example.com",
-  "password": "StrongPassword123!@#",
   "specialty_id": 1,
   "faculty": "Universidad Nacional",
   "medical_registration_number": "M12345678",
@@ -46,7 +46,7 @@ Content-Type: application/json
   "phone": "3001112233",
   "address": "Calle Falsa 123",
   "email": "juan.perez@example.com",
-  "password": "StrongPassword123!@#",
+  
   "specialty_id": 1,
   "faculty": "Universidad Nacional",
   "medical_registration_number": "M12345678",
@@ -69,7 +69,7 @@ Authorization: Bearer {{secretaryToken}}
   "phone": "3001112233",
   "address": "Calle Falsa 123",
   "email": "juan.perez@example.com",
-  "password": "StrongPassword123!@#",
+  
   "specialty_id": 1,
   "faculty": "Universidad Nacional",
   "medical_registration_number": "M12345678",
@@ -101,7 +101,6 @@ Authorization: Bearer {{token}}
   "phone": "3001112234",
   "address": "Calle Falsa 456",
   "email": "existing@example.com",
-  "password": "StrongPassword123!@#",
   "specialty_id": 1,
   "faculty": "Universidad Nacional",
   "medical_registration_number": "M12345679",
