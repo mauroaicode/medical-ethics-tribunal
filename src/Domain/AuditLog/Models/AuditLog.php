@@ -37,15 +37,6 @@ class AuditLog extends Model
         'created_at',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'old_values' => 'array',
-            'new_values' => 'array',
-            'created_at' => 'datetime',
-        ];
-    }
-
     /**
      * Get the parent auditable model.
      *
@@ -54,5 +45,14 @@ class AuditLog extends Model
     public function auditable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'old_values' => 'array',
+            'new_values' => 'array',
+            'created_at' => 'datetime',
+        ];
     }
 }

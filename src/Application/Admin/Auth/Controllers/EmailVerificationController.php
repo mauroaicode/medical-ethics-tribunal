@@ -10,16 +10,16 @@ use Src\Domain\User\Models\User;
 
 class EmailVerificationController
 {
-    public function __invoke(VerifyUserEmailData $data): View
+    public function __invoke(VerifyUserEmailData $verifyUserEmailData): View
     {
         /** @var User|null $user */
-        $user = User::query()->find($data->id);
+        $user = User::query()->find($verifyUserEmailData->id);
 
         if ($user === null) {
             return view('email-verification-unsuccessful');
         }
 
-        if (! hash_equals($data->hash, sha1($user->getEmailForVerification()))) {
+        if (! hash_equals($verifyUserEmailData->hash, sha1($user->getEmailForVerification()))) {
             return view('email-verification-unsuccessful');
         }
 

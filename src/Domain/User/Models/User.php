@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Src\Domain\User\Models;
 
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -47,11 +46,18 @@ use Src\Domain\User\QueryBuilders\UserQueryBuilder;
  * @property-read Carbon|null $deleted_at
  *
  * @method static UserQueryBuilder query()
+ * @method UserQueryBuilder withAdminRoles()
+ * @method UserQueryBuilder withRoles()
+ * @method UserQueryBuilder withoutTrashed()
  */
 class User extends Authenticatable implements HasMedia
 {
-    /** @use HasFactory<UserFactory> */
-    use HasApiTokens, HasFactory, HasRoles, InteractsWithCustomMedia, Notifiable, SoftDeletes;
+    use HasApiTokens;
+    use HasFactory;
+    use HasRoles;
+    use InteractsWithCustomMedia;
+    use Notifiable;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -89,24 +95,7 @@ class User extends Authenticatable implements HasMedia
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'document_type' => DocumentType::class,
-            'status' => UserStatus::class,
-            'email_verified_at' => 'datetime',
-            'last_login_at' => 'datetime',
-            'password' => 'hashed',
-            'google_2fa_enabled' => 'boolean',
-        ];
-    }
-
-    /**
-     * @return HasOne<Complainant>
+     * @return HasOne<Complainant, $this>
      */
     public function complainant(): HasOne
     {
@@ -114,7 +103,7 @@ class User extends Authenticatable implements HasMedia
     }
 
     /**
-     * @return HasOne<Doctor>
+     * @return HasOne<Doctor, $this>
      */
     public function doctor(): HasOne
     {
@@ -122,7 +111,7 @@ class User extends Authenticatable implements HasMedia
     }
 
     /**
-     * @return HasOne<Magistrate>
+     * @return HasOne<Magistrate, $this>
      */
     public function magistrate(): HasOne
     {
@@ -132,7 +121,7 @@ class User extends Authenticatable implements HasMedia
     /**
      * Get all audit logs for this user.
      *
-     * @return MorphMany<AuditLog>
+     * @return MorphMany<AuditLog, $this>
      */
     public function auditLogs(): MorphMany
     {
@@ -171,5 +160,22 @@ class User extends Authenticatable implements HasMedia
     public function newEloquentBuilder(mixed $query): UserQueryBuilder
     {
         return new UserQueryBuilder($query);
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'document_type' => DocumentType::class,
+            'status' => UserStatus::class,
+            'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
+            'password' => 'hashed',
+            'google_2fa_enabled' => 'boolean',
+        ];
     }
 }

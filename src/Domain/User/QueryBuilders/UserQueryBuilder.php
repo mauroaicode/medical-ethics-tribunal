@@ -13,32 +13,26 @@ class UserQueryBuilder extends Builder
 {
     /**
      * Filter users by admin roles (super_admin, admin, secretary)
-     *
-     * @return Builder<User>
      */
-    public function withAdminRoles(): Builder
+    public function withAdminRoles(): self
     {
-        return $this->whereHas('roles', function ($query) {
-            $query->whereIn('name', UserRole::values());
+        return $this->whereHas('roles', function (\Illuminate\Contracts\Database\Query\Builder $builder): void {
+            $builder->whereIn('name', UserRole::values());
         });
     }
 
     /**
      * Include roles relationship
-     *
-     * @return Builder<User>
      */
-    public function withRoles(): Builder
+    public function withRoles(): self
     {
         return $this->with('roles');
     }
 
     /**
      * Exclude soft deleted users
-     *
-     * @return Builder<User>
      */
-    public function withoutTrashed(): Builder
+    public function withoutTrashed(): self
     {
         return $this->whereNull('deleted_at');
     }

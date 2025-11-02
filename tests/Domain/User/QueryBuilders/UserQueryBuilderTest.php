@@ -107,7 +107,7 @@ it('can be chained with other query methods', function (): void {
 it('returns builder instance for further chaining', function (): void {
     $query = User::query()->withAdminRoles();
 
-    expect($query)->toBeInstanceOf(\Illuminate\Database\Eloquent\Builder::class);
+    expect($query)->toBeInstanceOf(Illuminate\Database\Eloquent\Builder::class);
 });
 
 it('loads roles relationship correctly', function (): void {
@@ -145,7 +145,7 @@ it('can chain withAdminRoles with withRoles', function (): void {
 it('returns empty collection when no admin users exist', function (): void {
     // Delete all admin users
     User::query()
-        ->whereHas('roles', function ($q) {
+        ->whereHas('roles', function ($q): void {
             $q->whereIn('name', UserRole::values());
         })
         ->delete();

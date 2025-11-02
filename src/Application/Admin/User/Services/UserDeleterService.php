@@ -21,7 +21,7 @@ class UserDeleterService
      */
     public function handle(User $user): User
     {
-        return DB::transaction(function () use ($user) {
+        return DB::transaction(function () use ($user): User {
             $oldValues = $user->getAttributes();
 
             $user->update([
@@ -32,9 +32,8 @@ class UserDeleterService
 
             $this->logAudit(
                 action: 'delete',
-                auditable: $user,
+                model: $user,
                 oldValues: $oldValues,
-                newValues: null,
             );
 
             return $user;

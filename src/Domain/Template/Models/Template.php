@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Src\Domain\Template\Models;
 
-use Database\Factories\TemplateFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,18 +23,19 @@ use Src\Domain\Shared\Traits\InteractsWithCustomMedia;
  */
 class Template extends Model implements \Spatie\MediaLibrary\HasMedia
 {
-    /** @use HasFactory<TemplateFactory> */
-    use HasFactory, InteractsWithCustomMedia, SoftDeletes;
-
-    public function getMediaCollectionName(): string
-    {
-        return FileType::TEMPLATE_FILE->value;
-    }
+    use HasFactory;
+    use InteractsWithCustomMedia;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',
         'description',
     ];
+
+    public function getMediaCollectionName(): string
+    {
+        return FileType::TEMPLATE_FILE->value;
+    }
 
     /**
      * @return HasMany<Process, $this>

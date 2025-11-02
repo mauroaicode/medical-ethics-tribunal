@@ -15,9 +15,9 @@ class AuthController
     /**
      * Authenticate user and generate token
      */
-    public function login(LoginData $data): Response|JsonResponse
+    public function login(LoginData $loginData): Response|JsonResponse
     {
-        $user = User::query()->where('email', $data->email)->first();
+        $user = User::query()->where('email', $loginData->email)->first();
 
         $token = $user->createToken('auth-token')->plainTextToken;
 

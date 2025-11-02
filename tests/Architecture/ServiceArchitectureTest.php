@@ -10,9 +10,9 @@ beforeEach(function (): void {
     // Check if any Services directories exist
     $hasServices = false;
     if (File::exists($servicesPath)) {
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($servicesPath, \RecursiveDirectoryIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::SELF_FIRST
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($servicesPath, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::SELF_FIRST
         );
 
         foreach ($iterator as $file) {

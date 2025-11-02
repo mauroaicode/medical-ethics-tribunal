@@ -15,7 +15,7 @@ class ComplainantFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var class-string<Model>
+     * @var class-string<Complainant>
      */
     protected $model = Complainant::class;
 

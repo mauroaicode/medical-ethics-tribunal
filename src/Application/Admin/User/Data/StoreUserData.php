@@ -21,7 +21,8 @@ use Src\Domain\User\Enums\UserStatus;
 
 class StoreUserData extends Data
 {
-    use TranslatableDataAttributesTrait, ValidatesRolesTrait;
+    use TranslatableDataAttributesTrait;
+    use ValidatesRolesTrait;
 
     public function __construct(
         #[Required, Min(2), Max(255)]

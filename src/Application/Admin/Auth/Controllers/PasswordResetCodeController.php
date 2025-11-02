@@ -21,9 +21,9 @@ class PasswordResetCodeController
     /**
      * @throws RandomException
      */
-    public function store(ForgotPasswordData $data): Response|JsonResponse
+    public function store(ForgotPasswordData $forgotPasswordData): Response|JsonResponse
     {
-        $user = User::query()->where('email', $data->email)->first();
+        $user = User::query()->where('email', $forgotPasswordData->email)->first();
 
         if (! $user) {
             return response()->json([
@@ -45,18 +45,18 @@ class PasswordResetCodeController
         return new Response(status: 200);
     }
 
-    public function update(ResetPasswordData $data): Response|JsonResponse
+    public function update(ResetPasswordData $resetPasswordData): Response|JsonResponse
     {
-        $cachedVerificationCode = Cache::get('password_reset_'.$data->email);
+        $cachedVerificationCode = Cache::get('password_reset_'.$resetPasswordData->email);
 
-        if ($cachedVerificationCode !== $data->code) {
+        if ($cachedVerificationCode !== $resetPasswordData->code) {
             return response()->json([
                 'messages' => [__('validation.invalid_or_expired_code')],
                 'code' => 422,
             ], 422);
         }
 
-        $user = User::query()->where('email', $data->email)->first();
+        $user = User::query()->where('email', $resetPasswordData->email)->first();
 
         if (! $user) {
             return response()->json([
@@ -65,18 +65,18 @@ class PasswordResetCodeController
             ], 422);
         }
 
-        $user->update(['password' => Hash::make($data->password)]);
-        Cache::forget('password_reset_'.$data->email);
+        $user->update(['password' => Hash::make($resetPasswordData->password)]);
+        Cache::forget('password_reset_'.$resetPasswordData->email);
         event(new PasswordReset($user));
 
         return new Response(status: 204);
     }
 
-    public function verifyPasswordResetCode(VerifyResetCodeData $data): Response|JsonResponse
+    public function verifyPasswordResetCode(VerifyResetCodeData $verifyResetCodeData): Response|JsonResponse
     {
-        $cachedCode = (int) Cache::get('password_reset_'.$data->email);
+        $cachedCode = (int) Cache::get('password_reset_'.$verifyResetCodeData->email);
 
-        if ($cachedCode !== $data->code) {
+        if ($cachedCode !== $verifyResetCodeData->code) {
             return response()->json([
                 'messages' => [__('validation.invalid_or_expired_code')],
                 'code' => 422,

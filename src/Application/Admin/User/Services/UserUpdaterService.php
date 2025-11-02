@@ -19,34 +19,34 @@ class UserUpdaterService
      *
      * @throws Throwable
      */
-    public function handle(UpdateUserData $data, User $user): User
+    public function handle(UpdateUserData $updateUserData, User $user): User
     {
-        return DB::transaction(function () use ($data, $user) {
+        return DB::transaction(function () use ($updateUserData, $user) {
             $oldValues = $user->getAttributes();
 
             $updateData = array_filter([
-                'name' => $data->name,
-                'last_name' => $data->last_name,
-                'document_type' => $data->document_type,
-                'document_number' => $data->document_number,
-                'phone' => $data->phone,
-                'address' => $data->address,
-                'email' => $data->email,
-                'password' => $data->password,
-                'status' => $data->status,
-            ], fn ($value) => ! is_null($value));
+                'name' => $updateUserData->name,
+                'last_name' => $updateUserData->last_name,
+                'document_type' => $updateUserData->document_type,
+                'document_number' => $updateUserData->document_number,
+                'phone' => $updateUserData->phone,
+                'address' => $updateUserData->address,
+                'email' => $updateUserData->email,
+                'password' => $updateUserData->password,
+                'status' => $updateUserData->status,
+            ], fn (\Src\Domain\User\Enums\DocumentType|string|\Src\Domain\User\Enums\UserStatus|null $value): bool => ! is_null($value));
 
             $user->update($updateData);
 
-            if (! is_null($data->roles)) {
-                $user->syncRoles($data->roles);
+            if (! is_null($updateUserData->roles)) {
+                $user->syncRoles($updateUserData->roles);
             }
 
             $updatedUser = $user->fresh(['roles']);
 
             $this->logAudit(
                 action: 'update',
-                auditable: $updatedUser,
+                model: $updatedUser,
                 oldValues: $oldValues,
                 newValues: $updatedUser->getAttributes(),
             );

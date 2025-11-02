@@ -15,7 +15,7 @@ class MagistrateFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var class-string<Model>
+     * @var class-string<Magistrate>
      */
     protected $model = Magistrate::class;
 

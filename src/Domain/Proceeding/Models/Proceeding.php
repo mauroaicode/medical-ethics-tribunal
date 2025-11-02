@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Src\Domain\Proceeding\Models;
 
-use Database\Factories\ProceedingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,13 +22,8 @@ use Src\Domain\Shared\Traits\InteractsWithCustomMedia;
  */
 class Proceeding extends Model implements \Spatie\MediaLibrary\HasMedia
 {
-    /** @use HasFactory<ProceedingFactory> */
-    use HasFactory, InteractsWithCustomMedia;
-
-    public function getMediaCollectionName(): string
-    {
-        return FileType::PROCEEDING_DOCUMENT->value;
-    }
+    use HasFactory;
+    use InteractsWithCustomMedia;
 
     protected $fillable = [
         'process_id',
@@ -37,11 +31,9 @@ class Proceeding extends Model implements \Spatie\MediaLibrary\HasMedia
         'proceeding_date',
     ];
 
-    protected function casts(): array
+    public function getMediaCollectionName(): string
     {
-        return [
-            'proceeding_date' => 'date',
-        ];
+        return FileType::PROCEEDING_DOCUMENT->value;
     }
 
     /**
@@ -50,5 +42,12 @@ class Proceeding extends Model implements \Spatie\MediaLibrary\HasMedia
     public function process(): BelongsTo
     {
         return $this->belongsTo(Process::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'proceeding_date' => 'date',
+        ];
     }
 }
