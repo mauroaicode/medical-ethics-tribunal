@@ -9,6 +9,7 @@
 
 ### Create Magistrate - Success (Super Admin)
 # @name createMagistrate
+# Note: Password is automatically generated and sent via email to the user
 POST {{bevalk_base_url}}{{apiVersion}}/magistrates
 Content-Type: application/json
 Accept: application/json
@@ -21,8 +22,7 @@ Authorization: Bearer {{token}}
   "document_number": "1000000001",
   "phone": "3001112233",
   "address": "Calle Falsa 123",
-  "email": "juan.perez@example.com",
-  "password": "StrongPassword123!@#"
+  "email": "juan.perez@example.com"
 }
 
 ### Create Magistrate - Success (Admin)
@@ -39,8 +39,7 @@ Authorization: Bearer {{adminToken}}
   "document_number": "1000000002",
   "phone": "3001112234",
   "address": "Calle Falsa 456",
-  "email": "maria.gonzalez@example.com",
-  "password": "StrongPassword123!@#"
+  "email": "maria.gonzalez@example.com"
 }
 
 ### Create Magistrate - Without Authentication
@@ -56,8 +55,7 @@ Accept: application/json
   "document_number": "1000000003",
   "phone": "3001112235",
   "address": "Calle Falsa 789",
-  "email": "sin.auth@example.com",
-  "password": "StrongPassword123!@#"
+  "email": "sin.auth@example.com"
 }
 
 ### Create Magistrate - Unauthorized (Secretary Role)
@@ -74,8 +72,7 @@ Authorization: Bearer {{secretaryToken}}
   "document_number": "1000000004",
   "phone": "3001112236",
   "address": "Calle Falsa 101",
-  "email": "no.autorizado@example.com",
-  "password": "StrongPassword123!@#"
+  "email": "no.autorizado@example.com"
 }
 
 ### Create Magistrate - Validation Error (Missing Required Fields)
@@ -103,25 +100,7 @@ Authorization: Bearer {{token}}
   "document_number": "1000000005",
   "phone": "3001112237",
   "address": "Calle Falsa 202",
-  "email": "duplicate@example.com",
-  "password": "StrongPassword123!@#"
+  "email": "duplicate@example.com"
 }
 
-### Create Magistrate - Validation Error (Weak Password)
-# Should return 422 Unprocessable Entity
-POST {{bevalk_base_url}}{{apiVersion}}/magistrates
-Content-Type: application/json
-Accept: application/json
-Authorization: Bearer {{token}}
-
-{
-  "name": "Weak",
-  "last_name": "Password",
-  "document_type": "cedula_ciudadania",
-  "document_number": "1000000006",
-  "phone": "3001112238",
-  "address": "Calle Falsa 303",
-  "email": "weak.password@example.com",
-  "password": "weak"
-}
 

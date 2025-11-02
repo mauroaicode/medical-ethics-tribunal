@@ -11,4 +11,8 @@ return [
     'password_reset_code' => 'Tu código de verificación es: :code',
     'password_reset_line_2' => 'Este código expirará en '.config('auth.expiration_time_code_forgot_password', 10).' minutos. Si no solicitaste este cambio, ignora este mensaje.',
     'unauthorized' => 'No tienes autorización para realizar esta acción.',
+    'account_created_subject' => 'Cuenta Creada - Credenciales de Acceso',
+    'account_created_line_1' => 'Se ha creado una cuenta para ti en '.config('app.name').'. A continuación encontrarás tus credenciales de acceso temporal:',
+    'account_created_warning' => '⚠️ Por seguridad, cambia tu contraseña inmediatamente después de iniciar sesión por primera vez.',
+    'account_created_line_2' => 'Si no esperabas recibir este correo, por favor contacta al administrador del sistema.',
 ];

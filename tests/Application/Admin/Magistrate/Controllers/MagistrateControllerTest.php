@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Role;
 use Src\Application\Admin\Magistrate\Controllers\MagistrateController;
+use Src\Application\Shared\Notifications\AccountCreatedNotification;
 use Src\Domain\AuditLog\Models\AuditLog;
 use Src\Domain\Magistrate\Models\Magistrate;
 use Src\Domain\User\Enums\DocumentType;
@@ -18,6 +20,8 @@ use function Pest\Laravel\post;
 use function Pest\Laravel\put;
 
 beforeEach(function (): void {
+    Notification::fake();
+
     // Create roles
     $this->superAdminRole = Role::firstOrCreate(['name' => UserRole::SUPER_ADMIN->value, 'guard_name' => 'web']);
     $this->adminRole = Role::firstOrCreate(['name' => UserRole::ADMIN->value, 'guard_name' => 'web']);
@@ -152,7 +156,6 @@ describe('store', function (): void {
             'phone' => '3001112233',
             'address' => 'Calle Falsa 123',
             'email' => $email,
-            'password' => 'StrongPassword123!@#',
         ];
 
         $response = actingAs($this->superAdmin)
@@ -183,7 +186,6 @@ describe('store', function (): void {
             'phone' => '3001112234',
             'address' => 'Calle Falsa 456',
             'email' => $email,
-            'password' => 'StrongPassword123!@#',
         ];
 
         actingAs($this->admin)
@@ -207,7 +209,6 @@ describe('store', function (): void {
             'phone' => '3009999999',
             'address' => 'Test Address',
             'email' => $email,
-            'password' => 'StrongPassword123!@#',
         ];
 
         $response = actingAs($this->superAdmin)
@@ -238,7 +239,6 @@ describe('store', function (): void {
             'phone' => '3001112235',
             'address' => 'Calle Falsa 789',
             'email' => "no.autorizado.{$uniqueId}@example.com",
-            'password' => 'StrongPassword123!@#',
         ];
 
         actingAs($this->secretary)
@@ -256,7 +256,6 @@ describe('store', function (): void {
             'phone' => '3001112236',
             'address' => 'Calle Falsa 101',
             'email' => "sin.auth.{$uniqueId}@example.com",
-            'password' => 'StrongPassword123!@#',
         ];
 
         post(action([MagistrateController::class, 'store']), $data)
@@ -281,7 +280,6 @@ describe('store', function (): void {
             'phone' => '3001112237',
             'address' => 'Calle Falsa 202',
             'email' => $existingUser->email,
-            'password' => 'StrongPassword123!@#',
         ];
 
         actingAs($this->superAdmin)
@@ -301,7 +299,6 @@ describe('store', function (): void {
             'phone' => '3001112238',
             'address' => 'Calle Falsa 303',
             'email' => "duplicate.document.{$uniqueId}@example.com",
-            'password' => 'StrongPassword123!@#',
         ];
 
         actingAs($this->superAdmin)
@@ -309,27 +306,62 @@ describe('store', function (): void {
             ->assertStatus(422);
     });
 
-    it('fails validation with weak password', function (): void {
-        $uniqueId = time() + 7;
+    it('does not send account created notification when email notification is disabled', function (): void {
+        config(['auth.doctor_magistrate.email_notification_enabled' => false]);
+
+        $uniqueId = time() + 300;
+        $email = "magistrate.notification.{$uniqueId}@example.com";
+        $documentNumber = "100000{$uniqueId}";
+
         $data = [
-            'name' => 'Weak',
-            'last_name' => 'Password',
+            'name' => 'Notification',
+            'last_name' => 'Test',
             'document_type' => DocumentType::CEDULA_CIUDADANIA->value,
-            'document_number' => "100000{$uniqueId}",
-            'phone' => '3001112239',
-            'address' => 'Calle Falsa 404',
-            'email' => "weak.password.{$uniqueId}@example.com",
-            'password' => 'weak',
+            'document_number' => $documentNumber,
+            'phone' => '3001112241',
+            'address' => 'Calle Falsa 606',
+            'email' => $email,
         ];
 
-        $response = actingAs($this->superAdmin)
-            ->post(action([MagistrateController::class, 'store']), $data);
+        actingAs($this->superAdmin)
+            ->post(action([MagistrateController::class, 'store']), $data)
+            ->assertStatus(201);
 
-        $response->assertStatus(422);
+        $createdMagistrate = Magistrate::query()->whereHas('user', fn ($q) => $q->where('email', $email))->first();
+        $createdUser = $createdMagistrate->user;
 
-        $messages = $response->json('messages');
-        expect($messages)->toBeArray()
-            ->and($messages)->not->toBeEmpty();
+        Notification::assertNothingSent();
+
+        expect($createdUser->requires_password_change)->toBeFalse();
+    });
+
+    it('sends account created notification when email notification is enabled', function (): void {
+        config(['auth.doctor_magistrate.email_notification_enabled' => true]);
+
+        $uniqueId = time() + 301;
+        $email = "magistrate.notification2.{$uniqueId}@example.com";
+        $documentNumber = "100000{$uniqueId}";
+
+        $data = [
+            'name' => 'Notification',
+            'last_name' => 'Test',
+            'document_type' => DocumentType::CEDULA_CIUDADANIA->value,
+            'document_number' => $documentNumber,
+            'phone' => '3001112242',
+            'address' => 'Calle Falsa 607',
+            'email' => $email,
+        ];
+
+        actingAs($this->superAdmin)
+            ->post(action([MagistrateController::class, 'store']), $data)
+            ->assertStatus(201);
+
+        $createdMagistrate = Magistrate::query()->whereHas('user', fn ($q) => $q->where('email', $email))->first();
+        $createdUser = $createdMagistrate->user;
+
+        Notification::assertSentTo($createdUser, AccountCreatedNotification::class);
+
+        expect($createdUser->requires_password_change)->toBeTrue();
     });
 });
 
@@ -429,20 +461,6 @@ describe('update', function (): void {
             ->assertStatus(422);
     });
 
-    it('fails validation with weak password', function (): void {
-        $data = [
-            'password' => 'weak',
-        ];
-
-        $response = actingAs($this->superAdmin)
-            ->put(action([MagistrateController::class, 'update'], $this->magistrate1->id), $data);
-
-        $response->assertStatus(422);
-
-        $messages = $response->json('messages');
-        expect($messages)->toBeArray()
-            ->and($messages)->not->toBeEmpty();
-    });
 });
 
 describe('destroy', function (): void {

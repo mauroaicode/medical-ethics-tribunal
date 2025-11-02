@@ -36,6 +36,7 @@ it('logs in successfully', function (): void {
                 'name',
                 'last_name',
                 'email',
+                'requires_password_change',
             ],
         ]);
 

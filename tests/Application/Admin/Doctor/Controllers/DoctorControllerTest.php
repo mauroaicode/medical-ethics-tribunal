@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Role;
 use Src\Application\Admin\Doctor\Controllers\DoctorController;
+use Src\Application\Shared\Notifications\AccountCreatedNotification;
 use Src\Domain\AuditLog\Models\AuditLog;
 use Src\Domain\Doctor\Models\Doctor;
 use Src\Domain\MedicalSpecialty\Models\MedicalSpecialty;
@@ -19,6 +21,8 @@ use function Pest\Laravel\post;
 use function Pest\Laravel\put;
 
 beforeEach(function (): void {
+    Notification::fake();
+
     // Create roles
     $this->superAdminRole = Role::firstOrCreate(['name' => UserRole::SUPER_ADMIN->value, 'guard_name' => 'web']);
     $this->adminRole = Role::firstOrCreate(['name' => UserRole::ADMIN->value, 'guard_name' => 'web']);
@@ -171,7 +175,6 @@ describe('store', function (): void {
             'phone' => '3001112233',
             'address' => 'Calle Falsa 123',
             'email' => "juan.perez.{$uniqueId}@example.com",
-            'password' => 'StrongPassword123!@#',
             'specialty_id' => $this->specialty->id,
             'faculty' => 'Universidad Nacional',
             'medical_registration_number' => "M{$uniqueId}",
@@ -211,7 +214,6 @@ describe('store', function (): void {
             'phone' => '3001112234',
             'address' => 'Calle Falsa 456',
             'email' => "maria.gonzalez.{$uniqueId}@example.com",
-            'password' => 'StrongPassword123!@#',
             'specialty_id' => $this->specialty->id,
             'faculty' => 'Universidad de Antioquia',
             'medical_registration_number' => "M{$uniqueId}",
@@ -228,18 +230,22 @@ describe('store', function (): void {
     });
 
     it('creates audit log entry when creating doctor', function (): void {
+        $uniqueId = time() + 500;
+        $documentNumber = "100000{$uniqueId}";
+        $email = "test.doctor.{$uniqueId}@example.com";
+        $medicalRegistrationNumber = "M{$uniqueId}";
+
         $data = [
             'name' => 'Test',
             'last_name' => 'Doctor',
             'document_type' => DocumentType::CEDULA_CIUDADANIA->value,
-            'document_number' => '9999999999',
+            'document_number' => $documentNumber,
             'phone' => '3009999999',
             'address' => 'Test Address',
-            'email' => 'test.doctor@example.com',
-            'password' => 'StrongPassword123!@#',
+            'email' => $email,
             'specialty_id' => $this->specialty->id,
             'faculty' => 'Test University',
-            'medical_registration_number' => 'M99999999',
+            'medical_registration_number' => $medicalRegistrationNumber,
             'medical_registration_place' => 'Test City',
             'medical_registration_date' => '2015-01-01',
         ];
@@ -271,7 +277,6 @@ describe('store', function (): void {
             'phone' => '3001112235',
             'address' => 'Calle Falsa 789',
             'email' => 'no.autorizado@example.com',
-            'password' => 'StrongPassword123!@#',
             'specialty_id' => $this->specialty->id,
             'faculty' => 'Universidad Test',
             'medical_registration_number' => 'M11111111',
@@ -296,7 +301,6 @@ describe('store', function (): void {
             'phone' => '3001112236',
             'address' => 'Calle Falsa 101',
             'email' => 'sin.auth@example.com',
-            'password' => 'StrongPassword123!@#',
             'specialty_id' => $this->specialty->id,
             'faculty' => 'Universidad Test',
             'medical_registration_number' => 'M22222222',
@@ -306,6 +310,74 @@ describe('store', function (): void {
 
         post(action([DoctorController::class, 'store']), $data)
             ->assertStatus(401);
+    });
+
+    it('does not send account created notification when email notification is disabled', function (): void {
+        config(['auth.doctor_magistrate.email_notification_enabled' => false]);
+
+        $uniqueId = time() + 200;
+        $email = "doctor.notification.{$uniqueId}@example.com";
+        $documentNumber = "100000{$uniqueId}";
+
+        $data = [
+            'name' => 'Notification',
+            'last_name' => 'Test',
+            'document_type' => DocumentType::CEDULA_CIUDADANIA->value,
+            'document_number' => $documentNumber,
+            'phone' => '3001112241',
+            'address' => 'Calle Falsa 606',
+            'email' => $email,
+            'specialty_id' => $this->specialty->id,
+            'faculty' => 'Universidad Test',
+            'medical_registration_number' => "M{$uniqueId}",
+            'medical_registration_place' => 'Test',
+            'medical_registration_date' => '2010-01-01',
+        ];
+
+        actingAs($this->superAdmin)
+            ->post(action([DoctorController::class, 'store']), $data)
+            ->assertStatus(201);
+
+        $createdDoctor = Doctor::query()->where('medical_registration_number', "M{$uniqueId}")->first();
+        $createdUser = $createdDoctor->user;
+
+        Notification::assertNothingSent();
+
+        expect($createdUser->requires_password_change)->toBeFalse();
+    });
+
+    it('sends account created notification when email notification is enabled', function (): void {
+        config(['auth.doctor_magistrate.email_notification_enabled' => true]);
+
+        $uniqueId = time() + 201;
+        $email = "doctor.notification2.{$uniqueId}@example.com";
+        $documentNumber = "100000{$uniqueId}";
+
+        $data = [
+            'name' => 'Notification',
+            'last_name' => 'Test',
+            'document_type' => DocumentType::CEDULA_CIUDADANIA->value,
+            'document_number' => $documentNumber,
+            'phone' => '3001112242',
+            'address' => 'Calle Falsa 607',
+            'email' => $email,
+            'specialty_id' => $this->specialty->id,
+            'faculty' => 'Universidad Test',
+            'medical_registration_number' => "M{$uniqueId}",
+            'medical_registration_place' => 'Test',
+            'medical_registration_date' => '2010-01-01',
+        ];
+
+        actingAs($this->superAdmin)
+            ->post(action([DoctorController::class, 'store']), $data)
+            ->assertStatus(201);
+
+        $createdDoctor = Doctor::query()->where('medical_registration_number', "M{$uniqueId}")->first();
+        $createdUser = $createdDoctor->user;
+
+        Notification::assertSentTo($createdUser, AccountCreatedNotification::class);
+
+        expect($createdUser->requires_password_change)->toBeTrue();
     });
 
     it('fails validation with missing required fields', function (): void {
@@ -325,7 +397,6 @@ describe('store', function (): void {
             'phone' => '3001112237',
             'address' => 'Calle Falsa 202',
             'email' => $existingUser->email,
-            'password' => 'StrongPassword123!@#',
             'specialty_id' => $this->specialty->id,
             'faculty' => 'Universidad Test',
             'medical_registration_number' => 'M33333333',
@@ -347,7 +418,6 @@ describe('store', function (): void {
             'phone' => '3001112238',
             'address' => 'Calle Falsa 303',
             'email' => 'duplicate.registration@example.com',
-            'password' => 'StrongPassword123!@#',
             'specialty_id' => $this->specialty->id,
             'faculty' => 'Universidad Test',
             'medical_registration_number' => $this->doctor1->medical_registration_number,

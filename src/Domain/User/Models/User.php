@@ -42,6 +42,7 @@ use Src\Domain\User\QueryBuilders\UserQueryBuilder;
  * @property-read string|null $last_login_ip
  * @property-read Carbon|null $last_login_at
  * @property-read UserStatus $status
+ * @property-read bool $requires_password_change
  * @property-read Carbon|null $email_verified_at
  * @property-read Carbon|null $created_at
  * @property-read Carbon|null $updated_at
@@ -81,6 +82,7 @@ class User extends Authenticatable implements HasMedia
         'last_login_ip',
         'last_login_at',
         'status',
+        'requires_password_change',
         'email_verified_at',
     ];
 
@@ -184,6 +186,7 @@ class User extends Authenticatable implements HasMedia
         return [
             'document_type' => DocumentType::class,
             'status' => UserStatus::class,
+            'requires_password_change' => 'boolean',
             'email_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
             'password' => 'hashed',

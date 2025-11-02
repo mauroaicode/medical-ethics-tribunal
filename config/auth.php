@@ -3,16 +3,35 @@
 return [
 
     'expiration_time_code_forgot_password' => (int) env('PASSWORD_RESET_EXPIRATION', 10),
+    'temporary_password_length' => (int) env('TEMPORARY_PASSWORD_LENGTH', 8),
+
     /*
     |--------------------------------------------------------------------------
-    | Authentication Defaults
+    | Doctor and Magistrate Account Creation
     |--------------------------------------------------------------------------
     |
-    | This option defines the default authentication "guard" and password
-    | reset "broker" for your application. You may change these values
-    | as required, but they're a perfect start for most applications.
+    | These options control how passwords are handled when creating doctors
+    | and magistrates. When email_notification_enabled is true, a random
+    | password is generated and sent via email. When false, a fixed password
+    | from the configuration is used and no email is sent.
     |
     */
+
+    'doctor_magistrate' => [
+        'email_notification_enabled' => (bool) env('DOCTOR_MAGISTRATE_EMAIL_NOTIFICATION_ENABLED', false),
+        'fixed_password' => env('DOCTOR_MAGISTRATE_FIXED_PASSWORD'),
+    ],
+
+    /*
+     |--------------------------------------------------------------------------
+     | Authentication Defaults
+     |--------------------------------------------------------------------------
+     |
+     | This option defines the default authentication "guard" and password
+     | reset "broker" for your application. You may change these values
+     | as required, but they're a perfect start for most applications.
+     |
+     */
 
     'defaults' => [
         'guard' => env('AUTH_GUARD', 'web'),

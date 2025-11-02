@@ -21,6 +21,7 @@ class UserResource extends Resource
         public ?string $address = null,
         public ?string $status = null,
         public ?array $roles = null,
+        public bool $requires_password_change = false,
     ) {}
 
     public static function fromModel(User $user): self
@@ -44,6 +45,7 @@ class UserResource extends Resource
             address: $user->address,
             status: $user->status->getLabel(),
             roles: $roles,
+            requires_password_change: $user->requires_password_change,
         );
     }
 }
