@@ -26,6 +26,11 @@ class LoginData extends Data
 
     public static function withValidator(Validator $validator): void
     {
+        $validator->setAttributeNames([
+            'email' => __('data.email'),
+            'password' => __('data.password'),
+        ]);
+
         $validator->after(function (Validator $validator): void {
             $data = $validator->getData();
 
@@ -44,6 +49,12 @@ class LoginData extends Data
 
             if (is_null($appUser->email_verified_at)) {
                 $validator->errors()->add('email', __('auth.email_not_verified'));
+
+                return;
+            }
+
+            if ($appUser->status->value !== 'active') {
+                $validator->errors()->add('email', __('auth.user_inactive'));
 
                 return;
             }

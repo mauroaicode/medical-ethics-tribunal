@@ -34,14 +34,16 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $uniqueId = microtime(true) * 10000;
+
         return [
             'name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
             'document_type' => fake()->randomElement(DocumentType::cases())->value,
-            'document_number' => fake()->unique()->numerify('##########'),
+            'document_number' => (string) ((int) $uniqueId),
             'phone' => fake()->numerify('3########'),
             'address' => fake()->address(),
-            'email' => fake()->unique()->safeEmail(),
+            'email' => "user.{$uniqueId}@example.com",
             'password' => static::$password ??= Hash::make('password'),
             'google_2fa_secret' => null,
             'google_2fa_enabled' => false,

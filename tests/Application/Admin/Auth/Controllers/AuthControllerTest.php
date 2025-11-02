@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Src\Application\Admin\Auth\Controllers\AuthController;
 use Src\Domain\Session\Models\Session;
+use Src\Domain\User\Enums\UserStatus;
 use Src\Domain\User\Models\User;
 
 use function Pest\Laravel\post;
@@ -104,6 +105,24 @@ it('fails login with unverify email', function (): void {
 
     $response->assertJson([
         'messages' => [__('auth.email_not_verified')],
+        'code' => 422,
+    ]);
+});
+
+it('fails login with inactive user', function (): void {
+    $this->user->update(['status' => UserStatus::INACTIVE]);
+
+    $data = [
+        'email' => $this->user->email,
+        'password' => $this->plaintextPassword,
+    ];
+
+    $response = post(action([AuthController::class, 'login']), $data);
+
+    $response->assertStatus(422);
+
+    $response->assertJson([
+        'messages' => [__('auth.user_inactive')],
         'code' => 422,
     ]);
 });

@@ -28,6 +28,16 @@ class UserController
     }
 
     /**
+     * Display the specified resource.
+     */
+    public function show(User $user): array
+    {
+        $user->load('roles');
+
+        return UserResource::fromModel($user)->toArray();
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @throws Throwable

@@ -13,4 +13,11 @@ return [
     'address' => 'Dirección',
     'roles' => 'Roles',
     'status' => 'Estado',
+    'specialty_id' => 'Especialidad médica',
+    'faculty' => 'Facultad',
+    'medical_registration_number' => 'Número de registro médico',
+    'medical_registration_place' => 'Lugar de registro médico',
+    'medical_registration_date' => 'Fecha de registro médico',
+    'main_practice_company' => 'Empresa de práctica principal',
+    'other_practice_company' => 'Otra empresa de práctica',
 ];

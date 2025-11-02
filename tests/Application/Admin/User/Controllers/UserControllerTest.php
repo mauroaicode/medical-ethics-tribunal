@@ -85,14 +85,18 @@ describe('index', function (): void {
             ->and($userIds)->toContain($this->secretary->id);
     });
 
-    it('fails when authenticated as secretary (unauthorized)', function (): void {
-        actingAs($this->secretary)
-            ->get(action([UserController::class, 'index']))
-            ->assertStatus(403)
-            ->assertJson([
-                'messages' => [__('auth.unauthorized')],
-                'code' => 403,
-            ]);
+    it('returns list of users with admin roles when authenticated as secretary', function (): void {
+        $response = actingAs($this->secretary)
+            ->get(action([UserController::class, 'index']));
+
+        $response->assertOk();
+
+        $users = $response->json();
+        $userIds = collect($users)->pluck('id');
+
+        expect($userIds)->toContain($this->superAdmin->id)
+            ->and($userIds)->toContain($this->admin->id)
+            ->and($userIds)->toContain($this->secretary->id);
     });
 
     it('returns only users with admin roles', function (): void {
@@ -122,16 +126,92 @@ describe('index', function (): void {
     });
 });
 
+describe('show', function (): void {
+    it('returns user details when authenticated as super admin', function (): void {
+        $response = actingAs($this->superAdmin)
+            ->get(action([UserController::class, 'show'], $this->admin->id))
+            ->assertOk()
+            ->assertJsonStructure([
+                'id',
+                'name',
+                'last_name',
+                'email',
+                'document_type',
+                'document_number',
+                'phone',
+                'address',
+                'status',
+                'roles',
+            ]);
+
+        expect($response->json('id'))->toBe($this->admin->id)
+            ->and($response->json('email'))->toBe($this->admin->email);
+    });
+
+    it('returns user details when authenticated as admin', function (): void {
+        $response = actingAs($this->admin)
+            ->get(action([UserController::class, 'show'], $this->secretary->id))
+            ->assertOk()
+            ->assertJsonStructure([
+                'id',
+                'name',
+                'last_name',
+                'email',
+                'document_type',
+                'document_number',
+                'phone',
+                'address',
+                'status',
+                'roles',
+            ]);
+
+        expect($response->json('id'))->toBe($this->secretary->id);
+    });
+
+    it('returns user details when authenticated as secretary', function (): void {
+        $response = actingAs($this->secretary)
+            ->get(action([UserController::class, 'show'], $this->admin->id))
+            ->assertOk()
+            ->assertJsonStructure([
+                'id',
+                'name',
+                'last_name',
+                'email',
+                'document_type',
+                'document_number',
+                'phone',
+                'address',
+                'status',
+                'roles',
+            ]);
+
+        expect($response->json('id'))->toBe($this->admin->id);
+    });
+
+    it('requires authentication', function (): void {
+        get(action([UserController::class, 'show'], $this->admin->id))
+            ->assertStatus(401)
+            ->assertJson([
+                'messages' => [__('auth.unauthorized')],
+                'code' => 401,
+            ]);
+    });
+});
+
 describe('store', function (): void {
     it('creates user successfully when authenticated as super admin', function (): void {
+        $uniqueId = time();
+        $email = "nuevo.usuario.{$uniqueId}@example.com";
+        $documentNumber = "100000{$uniqueId}";
+
         $data = [
             'name' => 'Nuevo',
             'last_name' => 'Usuario',
             'document_type' => DocumentType::CEDULA_CIUDADANIA->value,
-            'document_number' => '1000000001',
+            'document_number' => $documentNumber,
             'phone' => '3001112233',
             'address' => 'Calle Falsa 123',
-            'email' => 'nuevo.usuario@example.com',
+            'email' => $email,
             'password' => 'StrongPassword123!@#',
             'roles' => [UserRole::ADMIN->value],
             'status' => UserStatus::ACTIVE->value,
@@ -155,22 +235,26 @@ describe('store', function (): void {
 
         expect($response->json('name'))->toBe('Nuevo')
             ->and($response->json('last_name'))->toBe('Usuario')
-            ->and($response->json('email'))->toBe('nuevo.usuario@example.com');
+            ->and($response->json('email'))->toBe($email);
 
-        $createdUser = User::query()->where('email', 'nuevo.usuario@example.com')->first();
+        $createdUser = User::query()->where('email', $email)->first();
         expect($createdUser)->not->toBeNull()
             ->and($createdUser->hasRole(UserRole::ADMIN->value))->toBeTrue();
     });
 
     it('creates user successfully when authenticated as admin', function (): void {
+        $uniqueId = time() + 1;
+        $email = "otro.usuario.{$uniqueId}@example.com";
+        $documentNumber = "100000{$uniqueId}";
+
         $data = [
             'name' => 'Otro',
             'last_name' => 'Usuario',
             'document_type' => DocumentType::CEDULA_CIUDADANIA->value,
-            'document_number' => '1000000002',
+            'document_number' => $documentNumber,
             'phone' => '3001112234',
             'address' => 'Calle Falsa 456',
-            'email' => 'otro.usuario@example.com',
+            'email' => $email,
             'password' => 'StrongPassword123!@#',
             'roles' => [UserRole::SECRETARY->value],
         ];
@@ -179,7 +263,7 @@ describe('store', function (): void {
             ->post(action([UserController::class, 'store']), $data)
             ->assertStatus(201);
 
-        $createdUser = User::query()->where('email', 'otro.usuario@example.com')->first();
+        $createdUser = User::query()->where('email', $email)->first();
         expect($createdUser)->not->toBeNull()
             ->and($createdUser->hasRole(UserRole::SECRETARY->value))->toBeTrue();
     });

@@ -1,0 +1,27 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### DOCTOR ENDPOINTS - LIST DOCTORS
+### ============================================
+###
+
+### List Doctors - Success (Super Admin or Admin)
+# @name listDoctors
+GET {{bevalk_base_url}}{{apiVersion}}/doctors
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### List Doctors - Without Authentication
+# Should return 401 Unauthorized
+GET {{bevalk_base_url}}{{apiVersion}}/doctors
+Accept: application/json
+
+### List Doctors - Unauthorized (Secretary Role)
+# Should return 403 Forbidden
+# Note: Requires a token from a user with secretary role
+GET {{bevalk_base_url}}{{apiVersion}}/doctors
+Accept: application/json
+Authorization: Bearer {{secretaryToken}}
+
