@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Src\Application\Admin\Auth\Controllers\EmailVerificationController;
 use Src\Domain\User\Models\User;
 
 use function Pest\Laravel\get;
@@ -73,4 +72,3 @@ it('shows already verified message when email is already verified', function ():
     $response->assertOk()
         ->assertViewIs('email-verification-already-verified');
 });
-

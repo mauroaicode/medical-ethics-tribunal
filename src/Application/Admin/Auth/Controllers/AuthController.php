@@ -6,7 +6,6 @@ namespace Src\Application\Admin\Auth\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Hash;
 use Src\Application\Admin\Auth\Data\LoginData;
 use Src\Application\Admin\Auth\Resources\AuthResource;
 use Src\Domain\User\Models\User;
@@ -30,4 +29,3 @@ class AuthController
         return response(AuthResource::fromModel($user, $token)->toArray(), 200);
     }
 }
-

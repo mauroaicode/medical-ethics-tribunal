@@ -9,5 +9,5 @@ return [
     'password_reset_line_1' => 'We received a request to reset the password for your account.',
     'password_reset_code' => 'Your verification code is: :code',
     'password_reset_line_2' => 'This code will expire in '.config('auth.expiration_time_code_forgot_password', 10).' minutes. If you did not request this change, please ignore this message.',
+    'unauthorized' => 'You are not authorized to perform this action.',
 ];
-

@@ -9,8 +9,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Src\Domain\AuditLog\Models\AuditLog;
 use Src\Domain\Complainant\Models\Complainant;
 use Src\Domain\Doctor\Models\Doctor;
 use Src\Domain\Magistrate\Models\Magistrate;
@@ -107,5 +109,14 @@ class Process extends Model
     {
         return $this->hasMany(Proceeding::class);
     }
-}
 
+    /**
+     * Get all audit logs for this process.
+     *
+     * @return MorphMany<AuditLog>
+     */
+    public function auditLogs(): MorphMany
+    {
+        return $this->morphMany(AuditLog::class, 'auditable');
+    }
+}

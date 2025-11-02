@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-
 use Src\Domain\User\Enums\DocumentType;
 use Src\Domain\User\Enums\UserStatus;
 use Src\Domain\User\Models\User;

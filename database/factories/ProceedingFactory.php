@@ -4,8 +4,8 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
-use Src\Domain\Process\Models\Process;
 use Src\Domain\Proceeding\Models\Proceeding;
+use Src\Domain\Process\Models\Process;
 
 /**
  * @extends Factory<Proceeding>

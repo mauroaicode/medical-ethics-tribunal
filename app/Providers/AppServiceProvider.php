@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Factory::guessFactoryNamesUsing(
             function ($modelName) {
-                return 'Database\\Factories\\' . Str::after($modelName, "Models\\") . 'Factory';
+                return 'Database\\Factories\\'.Str::after($modelName, 'Models\\').'Factory';
             }
         );
         JsonResource::withoutWrapping();

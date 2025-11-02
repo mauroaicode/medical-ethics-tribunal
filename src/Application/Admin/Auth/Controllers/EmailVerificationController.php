@@ -32,4 +32,3 @@ class EmailVerificationController
         return view('email-verification-successful');
     }
 }
-

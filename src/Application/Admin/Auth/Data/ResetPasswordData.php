@@ -43,7 +43,5 @@ class ResetPasswordData extends Data
             ),
             Same('password')]
         public readonly string $password_confirmation,
-    ) {
-    }
+    ) {}
 }
-

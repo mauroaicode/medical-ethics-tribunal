@@ -10,4 +10,3 @@ enum FileType: string
     case TEMPLATE_FILE = 'template_file';
     case PROCEEDING_DOCUMENT = 'proceeding_document';
 }
-

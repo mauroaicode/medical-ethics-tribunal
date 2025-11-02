@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Src\Domain\Complainant\Models\Complainant;
 use Src\Domain\City\Models\City;
+use Src\Domain\Complainant\Models\Complainant;
 
 class ComplainantSeeder extends Seeder
 {

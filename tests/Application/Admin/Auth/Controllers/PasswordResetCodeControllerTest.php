@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
-use Src\Application\Admin\Auth\Controllers\PasswordResetCodeController;
 use Src\Domain\User\Models\User;
 
 use function Pest\Laravel\post;
@@ -179,4 +178,3 @@ it('fails reset password with non existent email', function (): void {
         'code' => 422,
     ]);
 });
-

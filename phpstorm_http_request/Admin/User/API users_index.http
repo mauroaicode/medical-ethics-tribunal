@@ -1,0 +1,27 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### USER ENDPOINTS - LIST USERS
+### ============================================
+###
+
+### List Users - Success (Super Admin or Admin)
+# @name listUsers
+GET {{bevalk_base_url}}{{apiVersion}}/users
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### List Users - Without Authentication
+# Should return 401 Unauthorized
+GET {{bevalk_base_url}}{{apiVersion}}/users
+Accept: application/json
+
+### List Users - Unauthorized (Secretary Role)
+# Should return 403 Forbidden
+# Note: Requires a token from a user with secretary role
+GET {{bevalk_base_url}}{{apiVersion}}/users
+Accept: application/json
+Authorization: Bearer {{secretaryToken}}
+

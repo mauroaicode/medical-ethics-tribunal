@@ -18,8 +18,7 @@ class VerifyUserEmailData extends Data
 
         #[FromRouteParameter('hash')]
         public readonly string $hash,
-    ) {
-    }
+    ) {}
 
     /**
      * Specifies attributes to be excluded from translation.
@@ -31,4 +30,3 @@ class VerifyUserEmailData extends Data
         return ['id', 'hash'];
     }
 }
-

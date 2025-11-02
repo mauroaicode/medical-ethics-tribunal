@@ -43,4 +43,3 @@ class City extends Model
         return $this->hasMany(Complainant::class);
     }
 }
-

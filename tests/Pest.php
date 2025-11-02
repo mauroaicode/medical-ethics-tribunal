@@ -14,6 +14,7 @@ declare(strict_types=1);
 */
 
 use Src\Domain\User\Models\User;
+
 use function Pest\Laravel\actingAs;
 
 pest()->extend(Tests\TestCase::class)

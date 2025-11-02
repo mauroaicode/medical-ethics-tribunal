@@ -9,6 +9,11 @@ return [
         'active' => 'Activo',
         'inactive' => 'Inactivo',
     ],
+    'user_role' => [
+        'super_admin' => 'Super Administrador',
+        'admin' => 'Administrador',
+        'secretary' => 'Secretaria',
+    ],
     'process_status' => [
         'pending' => 'Pendiente',
         'in_progress' => 'En Curso',
@@ -20,4 +25,3 @@ return [
         'proceeding_document' => 'Documento de Actuación',
     ],
 ];
-

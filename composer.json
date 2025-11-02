@@ -70,7 +70,19 @@
         "dev": [
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
-        ]
+        ],
+        "larastan": "vendor/bin/phpstan analyse --configuration=phpstan.neon --memory-limit=1G",
+        "rector": "vendor/bin/rector process src",
+        "pre-pr": [
+            "@composer larastan",
+            "@composer rector",
+            "@composer pint",
+            "@composer pest-tests"
+        ],
+        "pint": "vendor/bin/pint",
+        "pest-tests-coverage": "vendor/bin/pest",
+        "pest-tests-type-coverage": "vendor/bin/pest",
+        "pest-tests": "vendor/bin/pest"
     },
     "extra": {
         "laravel": {
