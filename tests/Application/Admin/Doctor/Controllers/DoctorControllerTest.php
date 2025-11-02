@@ -150,6 +150,14 @@ describe('show', function (): void {
         get(action([DoctorController::class, 'show'], $this->doctor1->id))
             ->assertStatus(401);
     });
+
+    it('returns 404 without JSON when doctor not found', function (): void {
+        $response = actingAs($this->superAdmin)
+            ->get(action([DoctorController::class, 'show'], 99999));
+
+        $response->assertStatus(404)
+            ->assertContent('');
+    });
 });
 
 describe('store', function (): void {
@@ -504,5 +512,25 @@ describe('destroy', function (): void {
 
         $this->doctor1->refresh();
         expect($this->doctor1->trashed())->toBeFalse();
+    });
+
+    it('returns 404 without JSON when doctor not found for destroy', function (): void {
+        $response = actingAs($this->superAdmin)
+            ->delete(action([DoctorController::class, 'destroy'], 99999));
+
+        $response->assertStatus(404)
+            ->assertContent('');
+    });
+
+    it('returns 404 without JSON when doctor not found for update', function (): void {
+        $data = [
+            'name' => 'Not Found',
+        ];
+
+        $response = actingAs($this->superAdmin)
+            ->put(action([DoctorController::class, 'update'], 99999), $data);
+
+        $response->assertStatus(404)
+            ->assertContent('');
     });
 });

@@ -7,6 +7,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
@@ -24,8 +25,18 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
+        $exceptions->render(function (ModelNotFoundException $e, Request $request) {
+            if ($request->is('api/*') || $request->wantsJson()) {
+                return response('', 404);
+            }
+        });
+
         $exceptions->render(function (HttpExceptionInterface $e, Request $request) {
             if ($request->is('api/*') || $request->wantsJson()) {
+                if ($e->getStatusCode() === 404 && str_contains($e->getMessage(), 'No query results for model')) {
+                    return response('', 404);
+                }
+
                 return response()->json(
                     data: [
                         'messages' => [$e->getMessage()],
