@@ -19,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('admin')->group(function (): void {
     require __DIR__.'/api/admin/auth.php';
     require __DIR__.'/api/admin/users.php';
+    require __DIR__.'/api/admin/roles.php';
+    require __DIR__.'/api/admin/document-types.php';
+    require __DIR__.'/api/admin/cities.php';
+    require __DIR__.'/api/admin/medical-specialties.php';
     require __DIR__.'/api/admin/complainants.php';
     require __DIR__.'/api/admin/doctors.php';
     require __DIR__.'/api/admin/magistrates.php';

@@ -1,0 +1,32 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### DOCUMENT TYPE LISTING ENDPOINTS
+### ============================================
+###
+
+### List Document Types - Success (Super Admin)
+# @name listDocumentTypesSuperAdmin
+GET {{bevalk_base_url}}{{apiVersion}}/document-types
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### List Document Types - Success (Admin)
+# @name listDocumentTypesAdmin
+GET {{bevalk_base_url}}{{apiVersion}}/document-types
+Accept: application/json
+Authorization: Bearer {{adminToken}}
+
+### List Document Types - Unauthorized (Secretary)
+# @name listDocumentTypesSecretaryUnauthorized
+GET {{bevalk_base_url}}{{apiVersion}}/document-types
+Accept: application/json
+Authorization: Bearer {{secretaryToken}}
+
+### List Document Types - Without Authentication
+# @name listDocumentTypesNoAuth
+GET {{bevalk_base_url}}{{apiVersion}}/document-types
+Accept: application/json
+

@@ -1,0 +1,32 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### MEDICAL SPECIALTY LISTING ENDPOINTS
+### ============================================
+###
+
+### List Medical Specialties - Success (Super Admin)
+# @name listMedicalSpecialtiesSuperAdmin
+GET {{bevalk_base_url}}{{apiVersion}}/medical-specialties
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### List Medical Specialties - Success (Admin)
+# @name listMedicalSpecialtiesAdmin
+GET {{bevalk_base_url}}{{apiVersion}}/medical-specialties
+Accept: application/json
+Authorization: Bearer {{adminToken}}
+
+### List Medical Specialties - Success (Secretary)
+# @name listMedicalSpecialtiesSecretary
+GET {{bevalk_base_url}}{{apiVersion}}/medical-specialties
+Accept: application/json
+Authorization: Bearer {{secretaryToken}}
+
+### List Medical Specialties - Without Authentication
+# @name listMedicalSpecialtiesNoAuth
+GET {{bevalk_base_url}}{{apiVersion}}/medical-specialties
+Accept: application/json
+

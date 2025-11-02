@@ -1,0 +1,32 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### CITY LISTING ENDPOINTS
+### ============================================
+###
+
+### List Cities - Success (Super Admin)
+# @name listCitiesSuperAdmin
+GET {{bevalk_base_url}}{{apiVersion}}/cities
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### List Cities - Success (Admin)
+# @name listCitiesAdmin
+GET {{bevalk_base_url}}{{apiVersion}}/cities
+Accept: application/json
+Authorization: Bearer {{adminToken}}
+
+### List Cities - Unauthorized (Secretary)
+# @name listCitiesSecretaryUnauthorized
+GET {{bevalk_base_url}}{{apiVersion}}/cities
+Accept: application/json
+Authorization: Bearer {{secretaryToken}}
+
+### List Cities - Without Authentication
+# @name listCitiesNoAuth
+GET {{bevalk_base_url}}{{apiVersion}}/cities
+Accept: application/json
+
