@@ -125,4 +125,16 @@ return [
 
     'logo' => env('APP_LOGO') ?: env('APP_URL', 'http://localhost').'/images/logo.png',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Default Department
+    |--------------------------------------------------------------------------
+    |
+    | This value determines the default department name for filtering cities.
+    | Cities will be filtered by this department by default.
+    |
+    */
+
+    'default_department' => env('APP_DEFAULT_DEPARTMENT', 'CAUCA'),
+
 ];

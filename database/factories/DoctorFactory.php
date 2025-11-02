@@ -5,6 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Src\Domain\Doctor\Models\Doctor;
+use Src\Domain\MedicalSpecialty\Models\MedicalSpecialty;
 use Src\Domain\User\Models\User;
 
 /**
@@ -28,16 +29,7 @@ class DoctorFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'specialty' => fake()->randomElement([
-                'Cardiología',
-                'Dermatología',
-                'Ginecología',
-                'Neurología',
-                'Pediatría',
-                'Traumatología',
-                'Medicina Interna',
-                'Cirugía General',
-            ]),
+            'specialty_id' => MedicalSpecialty::query()->inRandomOrder()->first()->id ?? MedicalSpecialty::factory(),
             'faculty' => fake()->randomElement([
                 'Universidad Nacional',
                 'Universidad de Antioquia',

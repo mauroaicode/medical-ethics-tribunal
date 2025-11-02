@@ -1,0 +1,32 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### ROLE LISTING ENDPOINTS
+### ============================================
+###
+
+### List Roles - Success (Super Admin)
+# @name listRolesSuperAdmin
+GET {{bevalk_base_url}}{{apiVersion}}/roles
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### List Roles - Success (Admin)
+# @name listRolesAdmin
+GET {{bevalk_base_url}}{{apiVersion}}/roles
+Accept: application/json
+Authorization: Bearer {{adminToken}}
+
+### List Roles - Unauthorized (Secretary)
+# @name listRolesSecretaryUnauthorized
+GET {{bevalk_base_url}}{{apiVersion}}/roles
+Accept: application/json
+Authorization: Bearer {{secretaryToken}}
+
+### List Roles - Without Authentication
+# @name listRolesNoAuth
+GET {{bevalk_base_url}}{{apiVersion}}/roles
+Accept: application/json
+

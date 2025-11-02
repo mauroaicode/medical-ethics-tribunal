@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('doctors', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->unique()->constrained();
-            $table->string('specialty');
+            $table->foreignId('specialty_id')->constrained('medical_specialties');
             $table->string('faculty');
             $table->string('medical_registration_number');
             $table->string('medical_registration_place');
