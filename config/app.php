@@ -135,6 +135,6 @@ return [
     |
     */
 
-    'default_department' => env('APP_DEFAULT_DEPARTMENT', 'CAUCA'),
+    'default_department' => env('APP_DEFAULT_DEPARTMENT'),
 
 ];

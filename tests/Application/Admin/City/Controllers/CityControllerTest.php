@@ -30,7 +30,7 @@ beforeEach(function (): void {
 
     // Find or create CAUCA department
     $this->caucaDepartment = Department::query()
-        ->where('descripcion', config('app.default_department', 'CAUCA'))
+        ->where('descripcion', config()->string('app.default_department'))
         ->first();
 
     if (! $this->caucaDepartment) {

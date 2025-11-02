@@ -1,0 +1,100 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### COMPLAINANT ENDPOINTS - UPDATE COMPLAINANT
+### ============================================
+###
+
+### Update Complainant - Success (Super Admin)
+# @name updateComplainant
+PUT {{base_url}}{{apiVersion}}/complainants/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "Actualizado",
+  "last_name": "Quejoso",
+  "municipality": "Nuevo Municipio",
+  "company": "Nueva Empresa"
+}
+
+### Update Complainant - Success (Admin)
+# @name updateComplainantAdmin
+PUT {{base_url}}{{apiVersion}}/complainants/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "phone": "3009999999",
+  "address": "Nueva Dirección 123"
+}
+
+### Update Complainant - Update Anonymous Flag
+# @name updateComplainantAnonymous
+PUT {{base_url}}{{apiVersion}}/complainants/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "is_anonymous": true
+}
+
+### Update Complainant - Change City
+# @name updateComplainantCity
+PUT {{base_url}}{{apiVersion}}/complainants/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "city_id": 2
+}
+
+### Update Complainant - Without Authentication
+# Should return 401 Unauthorized
+PUT {{base_url}}{{apiVersion}}/complainants/1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Sin Auth"
+}
+
+### Update Complainant - Unauthorized (Secretary Role)
+# Should return 403 Forbidden
+PUT {{base_url}}{{apiVersion}}/complainants/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "No Autorizado"
+}
+
+### Update Complainant - Not Found (404)
+# Should return 404 without JSON
+PUT {{base_url}}{{apiVersion}}/complainants/99999
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "No Existe"
+}
+
+### Update Complainant - Validation Error (Invalid City ID)
+# Should return 422 Unprocessable Entity
+PUT {{base_url}}{{apiVersion}}/complainants/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "city_id": 99999
+}
+

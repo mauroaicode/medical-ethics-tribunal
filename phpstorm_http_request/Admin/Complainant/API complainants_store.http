@@ -1,0 +1,152 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### COMPLAINANT ENDPOINTS - CREATE COMPLAINANT
+### ============================================
+###
+
+### Create Complainant - Success (Super Admin)
+# @name createComplainant
+# Note: Complainants don't receive password emails as they never access the system
+POST {{base_url}}{{apiVersion}}/complainants
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "Juan",
+  "last_name": "Pérez",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1000000001",
+  "phone": "3001112233",
+  "address": "Calle Falsa 123",
+  "email": "juan.perez@example.com",
+  "city_id": 1,
+  "municipality": "Popayán",
+  "company": "Empresa Test",
+  "is_anonymous": false
+}
+
+### Create Complainant - Success (Admin)
+# @name createComplainantAdmin
+POST {{base_url}}{{apiVersion}}/complainants
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "María",
+  "last_name": "González",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1000000002",
+  "phone": "3001112234",
+  "address": "Calle Falsa 456",
+  "email": "maria.gonzalez@example.com",
+  "city_id": 1,
+  "municipality": "Cali",
+  "is_anonymous": false
+}
+
+### Create Complainant - Anonymous
+# @name createComplainantAnonymous
+POST {{base_url}}{{apiVersion}}/complainants
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "Anónimo",
+  "last_name": "Usuario",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1000000003",
+  "phone": "3001112235",
+  "address": "Calle Falsa 789",
+  "email": "anonimo@example.com",
+  "city_id": 1,
+  "is_anonymous": true
+}
+
+### Create Complainant - Without Authentication
+# Should return 401 Unauthorized
+POST {{base_url}}{{apiVersion}}/complainants
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Sin",
+  "last_name": "Auth",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1000000004",
+  "phone": "3001112236",
+  "address": "Calle Falsa 101",
+  "email": "sin.auth@example.com",
+  "city_id": 1
+}
+
+### Create Complainant - Unauthorized (Secretary Role)
+# Should return 403 Forbidden
+POST {{base_url}}{{apiVersion}}/complainants
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "No",
+  "last_name": "Autorizado",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1000000005",
+  "phone": "3001112237",
+  "address": "Calle Falsa 202",
+  "email": "no.autorizado@example.com",
+  "city_id": 1
+}
+
+### Create Complainant - Validation Error (Missing Required Fields)
+# Should return 422 Unprocessable Entity
+POST {{base_url}}{{apiVersion}}/complainants
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "Incompleto"
+}
+
+### Create Complainant - Validation Error (Invalid City ID)
+# Should return 422 Unprocessable Entity
+POST {{base_url}}{{apiVersion}}/complainants
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "Test",
+  "last_name": "Quejoso",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1000000006",
+  "phone": "3001112238",
+  "address": "Calle Falsa 303",
+  "email": "invalid.city@example.com",
+  "city_id": 99999
+}
+
+### Create Complainant - Validation Error (Duplicate Email)
+# Should return 422 Unprocessable Entity
+POST {{base_url}}{{apiVersion}}/complainants
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "Duplicate",
+  "last_name": "Email",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1000000007",
+  "phone": "3001112239",
+  "address": "Calle Falsa 404",
+  "email": "duplicate@example.com",
+  "city_id": 1
+}
+
