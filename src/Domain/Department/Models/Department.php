@@ -43,4 +43,3 @@ class Department extends Model
         return $this->hasMany(City::class, 'iddepartamento');
     }
 }
-

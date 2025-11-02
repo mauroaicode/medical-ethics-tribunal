@@ -52,4 +52,3 @@ class Proceeding extends Model implements \Spatie\MediaLibrary\HasMedia
         return $this->belongsTo(Process::class);
     }
 }
-

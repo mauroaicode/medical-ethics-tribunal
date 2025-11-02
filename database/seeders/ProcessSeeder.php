@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 use Src\Domain\Complainant\Models\Complainant;
 use Src\Domain\Doctor\Models\Doctor;
 use Src\Domain\Magistrate\Models\Magistrate;
-use Src\Domain\Process\Enums\ProcessStatus;
 use Src\Domain\Process\Models\Process;
 use Src\Domain\Template\Models\Template;
 
@@ -31,11 +30,11 @@ class ProcessSeeder extends Seeder
 
         // Obtener el siguiente ID disponible para generar números de proceso únicos
         $lastProcessId = Process::max('id') ?? 0;
-        
+
         for ($i = 1; $i <= 30; $i++) {
             $processId = $lastProcessId + $i;
             $processNumber = 'PRO-'.Str::padLeft((string) $processId, 4, '0');
-            
+
             Process::factory()->create([
                 'complainant_id' => $complainants->random()->id,
                 'doctor_id' => $doctors->random()->id,

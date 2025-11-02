@@ -24,4 +24,3 @@ Route::prefix('admin')->group(function () {
     require __DIR__.'/api/admin/processes.php';
     require __DIR__.'/api/admin/proceedings.php';
 });
-

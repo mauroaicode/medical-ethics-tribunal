@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Src\Domain\Doctor\Models;
 
-use Src\Domain\User\Models\User;
 use Database\Factories\DoctorFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Src\Domain\AuditLog\Models\AuditLog;
 use Src\Domain\Process\Models\Process;
+use Src\Domain\User\Models\User;
 
 /**
  * @property-read int $id
@@ -66,5 +68,14 @@ class Doctor extends Model
     {
         return $this->hasMany(Process::class);
     }
-}
 
+    /**
+     * Get all audit logs for this doctor.
+     *
+     * @return MorphMany<AuditLog>
+     */
+    public function auditLogs(): MorphMany
+    {
+        return $this->morphMany(AuditLog::class, 'auditable');
+    }
+}

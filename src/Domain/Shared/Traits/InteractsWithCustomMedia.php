@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Src\Domain\Shared\Traits;
 
-use Src\Domain\Shared\Enums\FileType;
-use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia as SpatieInteractsWithMedia;
+use Src\Domain\Shared\Enums\FileType;
 
 trait InteractsWithCustomMedia
 {
@@ -30,4 +29,3 @@ trait InteractsWithCustomMedia
             ->singleFile();
     }
 }
-

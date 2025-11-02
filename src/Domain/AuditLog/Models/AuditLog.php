@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Src\Domain\AuditLog\Models;
 
-use Src\Domain\User\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
 
 /**
  * @property-read int $id
  * @property-read int $user_id
  * @property-read string $action
- * @property-read string $model_name
- * @property-read int|null $model_id
+ * @property-read string $auditable_type
+ * @property-read int $auditable_id
+ * @property-read Model $auditable
  * @property-read array|null $old_values
  * @property-read array|null $new_values
  * @property-read string $ip_address
@@ -28,12 +28,13 @@ class AuditLog extends Model
     protected $fillable = [
         'user_id',
         'action',
-        'model_name',
-        'model_id',
+        'auditable_type',
+        'auditable_id',
         'old_values',
         'new_values',
         'ip_address',
         'user_agent',
+        'created_at',
     ];
 
     protected function casts(): array
@@ -46,11 +47,12 @@ class AuditLog extends Model
     }
 
     /**
-     * @return BelongsTo<User, $this>
+     * Get the parent auditable model.
+     *
+     * @return MorphTo<Model, $this>
      */
-    public function user(): BelongsTo
+    public function auditable(): MorphTo
     {
-        return $this->belongsTo(User::class);
+        return $this->morphTo();
     }
 }
-

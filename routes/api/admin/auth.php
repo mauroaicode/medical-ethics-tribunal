@@ -12,4 +12,3 @@ Route::prefix('auth')->group(function () {
     Route::put('reset-password', [PasswordResetCodeController::class, 'update'])->name('password.reset');
     Route::post('verify-password-reset-code', [PasswordResetCodeController::class, 'verifyPasswordResetCode']);
 });
-

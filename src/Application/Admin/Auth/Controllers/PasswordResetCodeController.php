@@ -86,4 +86,3 @@ class PasswordResetCodeController
         return new Response(status: 200);
     }
 }
-

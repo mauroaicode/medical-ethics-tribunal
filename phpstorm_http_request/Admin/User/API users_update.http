@@ -1,0 +1,158 @@
+### Variables
+@apiVersion = /api/admin
+@userId = 1
+
+###
+### ============================================
+### USER ENDPOINTS - UPDATE USER
+### ============================================
+###
+
+### Update User - Success (Super Admin or Admin)
+# @name updateUser
+# Update multiple fields
+PUT {{bevalk_base_url}}{{apiVersion}}/users/{{userId}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Juan Actualizado",
+  "last_name": "Pérez Actualizado",
+  "document_type": "cedula_extranjeria",
+  "phone": "3009998877",
+  "address": "Nueva Dirección 456",
+  "email": "juan.actualizado@example.com"
+}
+
+### Update User - Update Only Name
+# Partial update
+PUT {{bevalk_base_url}}{{apiVersion}}/users/{{userId}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Solo Nombre Actualizado"
+}
+
+### Update User - Update Roles
+PUT {{bevalk_base_url}}{{apiVersion}}/users/{{userId}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "roles": ["admin", "secretary"]
+}
+
+### Update User - Update Password
+PUT {{bevalk_base_url}}{{apiVersion}}/users/{{userId}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "password": "NewStrongPassword123!@#"
+}
+
+### Update User - Update Status
+PUT {{bevalk_base_url}}{{apiVersion}}/users/{{userId}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "inactive"
+}
+
+### Update User - Duplicate Email
+# Should return 422 Validation Error
+PUT {{bevalk_base_url}}{{apiVersion}}/users/{{userId}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "email": "superadmin@tribunal.com"
+}
+
+### Update User - Duplicate Document Number
+# Should return 422 Validation Error
+PUT {{bevalk_base_url}}{{apiVersion}}/users/{{userId}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "document_number": "1234567890"
+}
+
+### Update User - Same Email and Document (Allowed)
+# This should succeed - same user can keep their email/document
+PUT {{bevalk_base_url}}{{apiVersion}}/users/{{userId}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Mismo Usuario",
+  "email": "juan.perez@example.com",
+  "document_number": "1234567890"
+}
+
+### Update User - Weak Password
+# Should return 422 Validation Error
+PUT {{bevalk_base_url}}{{apiVersion}}/users/{{userId}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "password": "short"
+}
+
+### Update User - Invalid Role
+# Should return 422 Validation Error
+PUT {{bevalk_base_url}}{{apiVersion}}/users/{{userId}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "roles": ["invalid_role"]
+}
+
+### Update User - Empty Roles Array
+# Should return 422 Validation Error
+PUT {{bevalk_base_url}}{{apiVersion}}/users/{{userId}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "roles": []
+}
+
+### Update User - Unauthorized (Secretary Role)
+# Should return 403 Forbidden
+# Note: Requires a token from a user with secretary role
+PUT {{bevalk_base_url}}{{apiVersion}}/users/{{userId}}
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{secretaryToken}}
+
+{
+  "name": "No Autorizado"
+}
+
+### Update User - Without Authentication
+# Should return 401 Unauthorized
+PUT {{bevalk_base_url}}{{apiVersion}}/users/{{userId}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Sin Auth"
+}
+

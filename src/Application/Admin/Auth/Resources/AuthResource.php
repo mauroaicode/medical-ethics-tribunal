@@ -12,8 +12,7 @@ class AuthResource extends Resource
     public function __construct(
         public string $token,
         public UserResource $user,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(User $user, string $token): self
     {
@@ -23,4 +22,3 @@ class AuthResource extends Resource
         );
     }
 }
-

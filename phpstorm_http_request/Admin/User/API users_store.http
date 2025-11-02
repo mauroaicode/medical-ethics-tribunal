@@ -1,0 +1,230 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### USER ENDPOINTS - CREATE USER
+### ============================================
+###
+
+### Create User - Success (Super Admin or Admin)
+# @name createUser
+POST {{bevalk_base_url}}{{apiVersion}}/users
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Juan",
+  "last_name": "Pérez",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1234567890",
+  "phone": "3001234567",
+  "address": "Calle 123 #45-67",
+  "email": "juan.perez@example.com",
+  "password": "Password123!@#",
+  "roles": ["admin"],
+  "status": "active"
+}
+
+### Create User - With Multiple Roles
+POST {{bevalk_base_url}}{{apiVersion}}/users
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "María",
+  "last_name": "González",
+  "document_type": "cedula_extranjeria",
+  "document_number": "CE987654321",
+  "phone": "3009876543",
+  "address": "Avenida Principal 123",
+  "email": "maria.gonzalez@example.com",
+  "password": "SecurePass456!@#",
+  "roles": ["admin", "secretary"],
+  "status": "active"
+}
+
+### Create User - Missing Required Fields
+# Should return 422 Validation Error
+POST {{bevalk_base_url}}{{apiVersion}}/users
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Test"
+}
+
+### Create User - Invalid Email Format
+# Should return 422 Validation Error
+POST {{bevalk_base_url}}{{apiVersion}}/users
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Test",
+  "last_name": "User",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1111111111",
+  "phone": "3001111111",
+  "address": "Test Address",
+  "email": "invalid-email",
+  "password": "Password123!@#",
+  "roles": ["admin"]
+}
+
+### Create User - Duplicate Email
+# Should return 422 Validation Error
+POST {{bevalk_base_url}}{{apiVersion}}/users
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Test",
+  "last_name": "User",
+  "document_type": "cedula_ciudadania",
+  "document_number": "2222222222",
+  "phone": "3002222222",
+  "address": "Test Address",
+  "email": "superadmin@tribunal.com",
+  "password": "Password123!@#",
+  "roles": ["admin"]
+}
+
+### Create User - Duplicate Document Number
+# Should return 422 Validation Error
+POST {{bevalk_base_url}}{{apiVersion}}/users
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Test",
+  "last_name": "User",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1234567890",
+  "phone": "3003333333",
+  "address": "Test Address",
+  "email": "test@example.com",
+  "password": "Password123!@#",
+  "roles": ["admin"]
+}
+
+### Create User - Weak Password (Too Short)
+# Should return 422 Validation Error
+POST {{bevalk_base_url}}{{apiVersion}}/users
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Test",
+  "last_name": "User",
+  "document_type": "cedula_ciudadania",
+  "document_number": "3333333333",
+  "phone": "3003333333",
+  "address": "Test Address",
+  "email": "test2@example.com",
+  "password": "Short1!",
+  "roles": ["admin"]
+}
+
+### Create User - Weak Password (No Symbols)
+# Should return 422 Validation Error
+POST {{bevalk_base_url}}{{apiVersion}}/users
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Test",
+  "last_name": "User",
+  "document_type": "cedula_ciudadania",
+  "document_number": "4444444444",
+  "phone": "3004444444",
+  "address": "Test Address",
+  "email": "test3@example.com",
+  "password": "Password123",
+  "roles": ["admin"]
+}
+
+### Create User - Invalid Role
+# Should return 422 Validation Error
+POST {{bevalk_base_url}}{{apiVersion}}/users
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Test",
+  "last_name": "User",
+  "document_type": "cedula_ciudadania",
+  "document_number": "5555555555",
+  "phone": "3005555555",
+  "address": "Test Address",
+  "email": "test4@example.com",
+  "password": "Password123!@#",
+  "roles": ["invalid_role"]
+}
+
+### Create User - Empty Roles Array
+# Should return 422 Validation Error
+POST {{bevalk_base_url}}{{apiVersion}}/users
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Test",
+  "last_name": "User",
+  "document_type": "cedula_ciudadania",
+  "document_number": "6666666666",
+  "phone": "3006666666",
+  "address": "Test Address",
+  "email": "test5@example.com",
+  "password": "Password123!@#",
+  "roles": []
+}
+
+### Create User - Unauthorized (Secretary Role)
+# Should return 403 Forbidden
+# Note: Requires a token from a user with secretary role
+POST {{bevalk_base_url}}{{apiVersion}}/users
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{secretaryToken}}
+
+{
+  "name": "Test",
+  "last_name": "User",
+  "document_type": "cedula_ciudadania",
+  "document_number": "7777777777",
+  "phone": "3007777777",
+  "address": "Test Address",
+  "email": "test6@example.com",
+  "password": "Password123!@#",
+  "roles": ["secretary"]
+}
+
+### Create User - Without Authentication
+# Should return 401 Unauthorized
+POST {{bevalk_base_url}}{{apiVersion}}/users
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Test",
+  "last_name": "User",
+  "document_type": "cedula_ciudadania",
+  "document_number": "8888888888",
+  "phone": "3008888888",
+  "address": "Test Address",
+  "email": "test7@example.com",
+  "password": "Password123!@#",
+  "roles": ["admin"]
+}
+

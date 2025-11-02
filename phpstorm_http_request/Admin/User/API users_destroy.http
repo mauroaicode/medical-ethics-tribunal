@@ -1,0 +1,34 @@
+### Variables
+@apiVersion = /api/admin
+@userId = 1
+
+###
+### ============================================
+### USER ENDPOINTS - DELETE USER (SOFT DELETE)
+### ============================================
+###
+
+### Delete User - Success (Super Admin or Admin)
+# @name deleteUser
+DELETE {{bevalk_base_url}}{{apiVersion}}/users/{{userId}}
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Delete User - Unauthorized (Secretary Role)
+# Should return 403 Forbidden
+# Note: Requires a token from a user with secretary role
+DELETE {{bevalk_base_url}}{{apiVersion}}/users/{{userId}}
+Accept: application/json
+Authorization: Bearer {{secretaryToken}}
+
+### Delete User - Without Authentication
+# Should return 401 Unauthorized
+DELETE {{bevalk_base_url}}{{apiVersion}}/users/{{userId}}
+Accept: application/json
+
+### Delete User - Not Found
+# Should return 404 Not Found if user doesn't exist
+DELETE {{bevalk_base_url}}{{apiVersion}}/users/99999
+Accept: application/json
+Authorization: Bearer {{token}}
+

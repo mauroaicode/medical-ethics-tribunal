@@ -7,19 +7,23 @@ namespace Src\Domain\User\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\Permission\Traits\HasRoles;
+use Src\Domain\AuditLog\Models\AuditLog;
 use Src\Domain\Complainant\Models\Complainant;
 use Src\Domain\Doctor\Models\Doctor;
 use Src\Domain\Magistrate\Models\Magistrate;
-use Src\Domain\Shared\Enums\FileType;
 use Src\Domain\Shared\Traits\InteractsWithCustomMedia;
 use Src\Domain\User\Enums\DocumentType;
 use Src\Domain\User\Enums\UserStatus;
+use Src\Domain\User\QueryBuilders\UserQueryBuilder;
 
 /**
  * @property-read int $id
@@ -40,11 +44,14 @@ use Src\Domain\User\Enums\UserStatus;
  * @property-read Carbon|null $email_verified_at
  * @property-read Carbon|null $created_at
  * @property-read Carbon|null $updated_at
+ * @property-read Carbon|null $deleted_at
+ *
+ * @method static UserQueryBuilder query()
  */
 class User extends Authenticatable implements HasMedia
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, InteractsWithCustomMedia, HasRoles, HasApiTokens;
+    use HasApiTokens, HasFactory, HasRoles, InteractsWithCustomMedia, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -123,6 +130,16 @@ class User extends Authenticatable implements HasMedia
     }
 
     /**
+     * Get all audit logs for this user.
+     *
+     * @return MorphMany<AuditLog>
+     */
+    public function auditLogs(): MorphMany
+    {
+        return $this->morphMany(AuditLog::class, 'auditable');
+    }
+
+    /**
      * Get the email address that should be used for verification.
      */
     public function getEmailForVerification(): string
@@ -147,5 +164,12 @@ class User extends Authenticatable implements HasMedia
             'email_verified_at' => now(),
         ]);
     }
-}
 
+    /**
+     * @param  Builder  $query
+     */
+    public function newEloquentBuilder(mixed $query): UserQueryBuilder
+    {
+        return new UserQueryBuilder($query);
+    }
+}

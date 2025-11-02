@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Src\Domain\Process\Models\Process;
 use Src\Domain\Proceeding\Models\Proceeding;
+use Src\Domain\Process\Models\Process;
 
 class ProceedingSeeder extends Seeder
 {

@@ -1,0 +1,24 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+
+    paths:
+        - app
+        - src
+        - database/migrations
+        - database/seeders
+        - database/factories
+
+    # Rule level: https://phpstan.org/user-guide/rule-levels
+    level: 5
+
+    ignoreErrors:
+        # Ignore errors in migrations and seeders
+        - '#Call to an undefined method Illuminate\\Database\\Schema\\Blueprint::.*#'
+        - '#Access to an undefined property.*Illuminate\\Database\\Schema\\Blueprint.*#'
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Factory::.*#'
+
+    excludePaths:
+        - ./*/*/FileToIgnore.php
+

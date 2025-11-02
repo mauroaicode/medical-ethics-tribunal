@@ -20,17 +20,17 @@ class AuditLogSeeder extends Seeder
     {
         $users = User::all();
         $models = [
-            ['model' => Process::class, 'name' => 'Process'],
-            ['model' => Complainant::class, 'name' => 'Complainant'],
-            ['model' => Doctor::class, 'name' => 'Doctor'],
-            ['model' => Magistrate::class, 'name' => 'Magistrate'],
-            ['model' => Template::class, 'name' => 'Template'],
+            Process::class,
+            Complainant::class,
+            Doctor::class,
+            Magistrate::class,
+            Template::class,
         ];
 
-        $actions = ['created', 'updated', 'deleted', 'viewed'];
+        $actions = ['create', 'update', 'delete', 'view'];
 
-        foreach ($models as $modelData) {
-            $instances = $modelData['model']::all();
+        foreach ($models as $modelClass) {
+            $instances = $modelClass::all();
 
             foreach ($instances as $instance) {
                 $action = fake()->randomElement($actions);
@@ -39,10 +39,10 @@ class AuditLogSeeder extends Seeder
                 AuditLog::create([
                     'user_id' => $user->id,
                     'action' => $action,
-                    'model_name' => $modelData['name'],
-                    'model_id' => $instance->id,
-                    'old_values' => $action === 'created' ? null : ['field' => 'old_value'],
-                    'new_values' => $action === 'deleted' ? null : ['field' => 'new_value'],
+                    'auditable_type' => $modelClass,
+                    'auditable_id' => $instance->id,
+                    'old_values' => $action === 'create' ? null : ['field' => 'old_value'],
+                    'new_values' => $action === 'delete' ? null : ['field' => 'new_value'],
                     'ip_address' => fake()->ipv4(),
                     'user_agent' => fake()->userAgent(),
                     'created_at' => fake()->dateTimeBetween('-6 months', 'now'),

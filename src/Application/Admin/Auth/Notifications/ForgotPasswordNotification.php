@@ -13,7 +13,6 @@ class ForgotPasswordNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-
     public function __construct(
         private readonly string $code
     ) {
@@ -42,4 +41,3 @@ class ForgotPasswordNotification extends Notification implements ShouldQueue
             ]);
     }
 }
-

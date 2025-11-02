@@ -21,4 +21,3 @@ class VerifyResetCodeData extends Data
     #[Required, Min(6)]
     public int $code;
 }
-

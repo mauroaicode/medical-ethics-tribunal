@@ -96,4 +96,3 @@ it('fails login with unverify email', function (): void {
         'code' => 422,
     ]);
 });
-

@@ -22,8 +22,7 @@ class LoginData extends Data
 
         #[Required]
         public string $password,
-    ) {
-    }
+    ) {}
 
     public static function withValidator(Validator $validator): void
     {
@@ -39,11 +38,13 @@ class LoginData extends Data
 
             if (! $appUser) {
                 $validator->errors()->add('email', __('auth.failed'));
+
                 return;
             }
 
             if (is_null($appUser->email_verified_at)) {
                 $validator->errors()->add('email', __('auth.email_not_verified'));
+
                 return;
             }
 
@@ -53,4 +54,3 @@ class LoginData extends Data
         });
     }
 }
-

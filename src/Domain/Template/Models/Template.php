@@ -25,7 +25,7 @@ use Src\Domain\Shared\Traits\InteractsWithCustomMedia;
 class Template extends Model implements \Spatie\MediaLibrary\HasMedia
 {
     /** @use HasFactory<TemplateFactory> */
-    use HasFactory, SoftDeletes, InteractsWithCustomMedia;
+    use HasFactory, InteractsWithCustomMedia, SoftDeletes;
 
     public function getMediaCollectionName(): string
     {
@@ -45,4 +45,3 @@ class Template extends Model implements \Spatie\MediaLibrary\HasMedia
         return $this->hasMany(Process::class);
     }
 }
-
