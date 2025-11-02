@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Src\Application\Admin\Auth\Controllers\AuthController;
+use Src\Domain\Session\Models\Session;
 use Src\Domain\User\Models\User;
 
 use function Pest\Laravel\post;
@@ -45,6 +46,16 @@ it('logs in successfully', function (): void {
 
     expect($this->user->last_login_at)->not->toBeNull()
         ->and($this->user->last_login_ip)->not->toBeNull();
+
+    // Verify session was created
+    $session = Session::query()
+        ->where('user_id', $this->user->id)
+        ->latest('last_activity')
+        ->first();
+
+    expect($session)->not->toBeNull()
+        ->and($session->ip_address)->not->toBeNull()
+        ->and($session->user_agent)->not->toBeNull();
 });
 
 it('fails login with non exist user email', function (): void {

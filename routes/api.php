@@ -23,6 +23,8 @@ Route::prefix('admin')->group(function (): void {
     require __DIR__.'/api/admin/document-types.php';
     require __DIR__.'/api/admin/cities.php';
     require __DIR__.'/api/admin/medical-specialties.php';
+    require __DIR__.'/api/admin/sessions.php';
+    require __DIR__.'/api/admin/audit-logs.php';
     require __DIR__.'/api/admin/complainants.php';
     require __DIR__.'/api/admin/doctors.php';
     require __DIR__.'/api/admin/magistrates.php';

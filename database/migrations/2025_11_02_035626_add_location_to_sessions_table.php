@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('medical_specialties', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->unique();
-            $table->text('description')->nullable();
-            $table->timestamps();
+        Schema::table('sessions', function (Blueprint $table) {
+            $table->string('location')->nullable()->after('user_agent');
         });
     }
 
@@ -24,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('medical_specialties');
+        Schema::table('sessions', function (Blueprint $table) {
+            $table->dropColumn('location');
+        });
     }
 };

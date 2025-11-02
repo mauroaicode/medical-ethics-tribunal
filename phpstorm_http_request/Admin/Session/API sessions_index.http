@@ -1,0 +1,32 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### SESSION LISTING ENDPOINTS
+### ============================================
+###
+
+### List Sessions - Success (Super Admin Only)
+# @name listSessionsSuperAdmin
+GET {{bevalk_base_url}}{{apiVersion}}/sessions
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### List Sessions - Unauthorized (Admin)
+# @name listSessionsAdminUnauthorized
+GET {{bevalk_base_url}}{{apiVersion}}/sessions
+Accept: application/json
+Authorization: Bearer {{adminToken}}
+
+### List Sessions - Unauthorized (Secretary)
+# @name listSessionsSecretaryUnauthorized
+GET {{bevalk_base_url}}{{apiVersion}}/sessions
+Accept: application/json
+Authorization: Bearer {{secretaryToken}}
+
+### List Sessions - Without Authentication
+# @name listSessionsNoAuth
+GET {{bevalk_base_url}}{{apiVersion}}/sessions
+Accept: application/json
+
