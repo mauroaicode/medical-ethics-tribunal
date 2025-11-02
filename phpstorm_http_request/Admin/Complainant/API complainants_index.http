@@ -1,0 +1,32 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### COMPLAINANT ENDPOINTS - LIST COMPLAINANTS
+### ============================================
+###
+
+### List Complainants - Success (Super Admin)
+# @name listComplainants
+GET {{base_url}}{{apiVersion}}/complainants
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### List Complainants - Success (Admin)
+# @name listComplainantsAdmin
+GET {{base_url}}{{apiVersion}}/complainants
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### List Complainants - Success (Secretary)
+# @name listComplainantsSecretary
+GET {{base_url}}{{apiVersion}}/complainants
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### List Complainants - Without Authentication
+# Should return 401 Unauthorized
+GET {{base_url}}{{apiVersion}}/complainants
+Accept: application/json
+

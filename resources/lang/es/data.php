@@ -20,4 +20,8 @@ return [
     'medical_registration_date' => 'Fecha de registro médico',
     'main_practice_company' => 'Empresa de práctica principal',
     'other_practice_company' => 'Otra empresa de práctica',
+    'city_id' => 'Ciudad',
+    'municipality' => 'Municipio',
+    'company' => 'Empresa',
+    'is_anonymous' => 'Es anónimo',
 ];

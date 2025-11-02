@@ -20,4 +20,8 @@ return [
     'medical_registration_date' => 'Medical registration date',
     'main_practice_company' => 'Main practice company',
     'other_practice_company' => 'Other practice company',
+    'city_id' => 'City',
+    'municipality' => 'Municipality',
+    'company' => 'Company',
+    'is_anonymous' => 'Is anonymous',
 ];

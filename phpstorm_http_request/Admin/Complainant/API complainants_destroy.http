@@ -1,0 +1,38 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### COMPLAINANT ENDPOINTS - DELETE COMPLAINANT
+### ============================================
+###
+
+### Delete Complainant - Success (Super Admin)
+# @name deleteComplainant
+DELETE {{base_url}}{{apiVersion}}/complainants/1
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Delete Complainant - Success (Admin)
+# @name deleteComplainantAdmin
+DELETE {{base_url}}{{apiVersion}}/complainants/2
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Delete Complainant - Without Authentication
+# Should return 401 Unauthorized
+DELETE {{base_url}}{{apiVersion}}/complainants/1
+Accept: application/json
+
+### Delete Complainant - Unauthorized (Secretary Role)
+# Should return 403 Forbidden
+DELETE {{base_url}}{{apiVersion}}/complainants/1
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Delete Complainant - Not Found (404)
+# Should return 404 without JSON
+DELETE {{base_url}}{{apiVersion}}/complainants/99999
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
