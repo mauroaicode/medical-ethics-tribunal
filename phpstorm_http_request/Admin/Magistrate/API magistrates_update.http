@@ -1,0 +1,115 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### MAGISTRATE ENDPOINTS - UPDATE MAGISTRATE
+### ============================================
+###
+
+### Update Magistrate - Success (Super Admin)
+# @name updateMagistrate
+# Replace {magistrateId} with an actual magistrate ID
+PUT {{bevalk_base_url}}{{apiVersion}}/magistrates/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Juan Actualizado",
+  "last_name": "Pérez Actualizado",
+  "phone": "3009999999",
+  "address": "Nueva Dirección 123"
+}
+
+### Update Magistrate - Success (Admin)
+# @name updateMagistrateAdmin
+# Replace {magistrateId} with an actual magistrate ID
+PUT {{bevalk_base_url}}{{apiVersion}}/magistrates/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "email": "nuevo.email@example.com",
+  "phone": "3008888888"
+}
+
+### Update Magistrate - Partial Update (Only Name)
+# @name updateMagistratePartial
+# Replace {magistrateId} with an actual magistrate ID
+PUT {{bevalk_base_url}}{{apiVersion}}/magistrates/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Solo Nombre Actualizado"
+}
+
+### Update Magistrate - Change Password
+# @name updateMagistratePassword
+# Replace {magistrateId} with an actual magistrate ID
+PUT {{bevalk_base_url}}{{apiVersion}}/magistrates/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "password": "NewStrongPassword123!@#"
+}
+
+### Update Magistrate - Without Authentication
+# Should return 401 Unauthorized
+PUT {{bevalk_base_url}}{{apiVersion}}/magistrates/1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Sin Auth"
+}
+
+### Update Magistrate - Unauthorized (Secretary Role)
+# Should return 403 Forbidden
+PUT {{bevalk_base_url}}{{apiVersion}}/magistrates/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{secretaryToken}}
+
+{
+  "name": "No Autorizado"
+}
+
+### Update Magistrate - Validation Error (Duplicate Email)
+# Should return 422 Unprocessable Entity
+PUT {{bevalk_base_url}}{{apiVersion}}/magistrates/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "email": "existing@example.com"
+}
+
+### Update Magistrate - Validation Error (Weak Password)
+# Should return 422 Unprocessable Entity
+PUT {{bevalk_base_url}}{{apiVersion}}/magistrates/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "password": "weak"
+}
+
+### Update Magistrate - Not Found
+# Should return 404 Not Found
+PUT {{bevalk_base_url}}{{apiVersion}}/magistrates/99999
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Not Found"
+}
+

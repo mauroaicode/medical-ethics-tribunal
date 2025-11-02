@@ -1,0 +1,40 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### MAGISTRATE ENDPOINTS - DELETE MAGISTRATE
+### ============================================
+###
+
+### Delete Magistrate - Success (Super Admin)
+# @name deleteMagistrate
+# Replace {magistrateId} with an actual magistrate ID
+DELETE {{bevalk_base_url}}{{apiVersion}}/magistrates/1
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Delete Magistrate - Success (Admin)
+# @name deleteMagistrateAdmin
+# Replace {magistrateId} with an actual magistrate ID
+DELETE {{bevalk_base_url}}{{apiVersion}}/magistrates/1
+Accept: application/json
+Authorization: Bearer {{adminToken}}
+
+### Delete Magistrate - Without Authentication
+# Should return 401 Unauthorized
+DELETE {{bevalk_base_url}}{{apiVersion}}/magistrates/1
+Accept: application/json
+
+### Delete Magistrate - Unauthorized (Secretary Role)
+# Should return 403 Forbidden
+DELETE {{bevalk_base_url}}{{apiVersion}}/magistrates/1
+Accept: application/json
+Authorization: Bearer {{secretaryToken}}
+
+### Delete Magistrate - Not Found
+# Should return 404 Not Found
+DELETE {{bevalk_base_url}}{{apiVersion}}/magistrates/99999
+Accept: application/json
+Authorization: Bearer {{token}}
+

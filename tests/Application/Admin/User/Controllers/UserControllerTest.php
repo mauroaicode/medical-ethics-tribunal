@@ -196,6 +196,14 @@ describe('show', function (): void {
                 'code' => 401,
             ]);
     });
+
+    it('returns 404 without JSON when user not found', function (): void {
+        $response = actingAs($this->superAdmin)
+            ->get(action([UserController::class, 'show'], 99999));
+
+        $response->assertStatus(404)
+            ->assertContent('');
+    });
 });
 
 describe('store', function (): void {
@@ -802,6 +810,26 @@ describe('destroy', function (): void {
 
         expect($this->admin->trashed())->toBeFalse()
             ->and($this->admin->status)->toBe($originalStatus);
+    });
+
+    it('returns 404 without JSON when user not found for destroy', function (): void {
+        $response = actingAs($this->superAdmin)
+            ->delete(action([UserController::class, 'destroy'], 99999));
+
+        $response->assertStatus(404)
+            ->assertContent('');
+    });
+
+    it('returns 404 without JSON when user not found for update', function (): void {
+        $data = [
+            'name' => 'Not Found',
+        ];
+
+        $response = actingAs($this->superAdmin)
+            ->put(action([UserController::class, 'update'], 99999), $data);
+
+        $response->assertStatus(404)
+            ->assertContent('');
     });
 
     it('creates audit log entry when creating user', function (): void {

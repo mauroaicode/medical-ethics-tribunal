@@ -1,0 +1,32 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### MAGISTRATE ENDPOINTS - LIST MAGISTRATES
+### ============================================
+###
+
+### List Magistrates - Success (Super Admin)
+# @name listMagistrates
+GET {{bevalk_base_url}}{{apiVersion}}/magistrates
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### List Magistrates - Success (Admin)
+# @name listMagistratesAdmin
+GET {{bevalk_base_url}}{{apiVersion}}/magistrates
+Accept: application/json
+Authorization: Bearer {{adminToken}}
+
+### List Magistrates - Success (Secretary)
+# @name listMagistratesSecretary
+GET {{bevalk_base_url}}{{apiVersion}}/magistrates
+Accept: application/json
+Authorization: Bearer {{secretaryToken}}
+
+### List Magistrates - Without Authentication
+# Should return 401 Unauthorized
+GET {{bevalk_base_url}}{{apiVersion}}/magistrates
+Accept: application/json
+

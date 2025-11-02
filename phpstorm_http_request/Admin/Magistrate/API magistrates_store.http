@@ -1,0 +1,127 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### MAGISTRATE ENDPOINTS - CREATE MAGISTRATE
+### ============================================
+###
+
+### Create Magistrate - Success (Super Admin)
+# @name createMagistrate
+POST {{bevalk_base_url}}{{apiVersion}}/magistrates
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Juan",
+  "last_name": "Pérez",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1000000001",
+  "phone": "3001112233",
+  "address": "Calle Falsa 123",
+  "email": "juan.perez@example.com",
+  "password": "StrongPassword123!@#"
+}
+
+### Create Magistrate - Success (Admin)
+# @name createMagistrateAdmin
+POST {{bevalk_base_url}}{{apiVersion}}/magistrates
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "name": "María",
+  "last_name": "González",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1000000002",
+  "phone": "3001112234",
+  "address": "Calle Falsa 456",
+  "email": "maria.gonzalez@example.com",
+  "password": "StrongPassword123!@#"
+}
+
+### Create Magistrate - Without Authentication
+# Should return 401 Unauthorized
+POST {{bevalk_base_url}}{{apiVersion}}/magistrates
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Sin",
+  "last_name": "Auth",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1000000003",
+  "phone": "3001112235",
+  "address": "Calle Falsa 789",
+  "email": "sin.auth@example.com",
+  "password": "StrongPassword123!@#"
+}
+
+### Create Magistrate - Unauthorized (Secretary Role)
+# Should return 403 Forbidden
+POST {{bevalk_base_url}}{{apiVersion}}/magistrates
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{secretaryToken}}
+
+{
+  "name": "No",
+  "last_name": "Autorizado",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1000000004",
+  "phone": "3001112236",
+  "address": "Calle Falsa 101",
+  "email": "no.autorizado@example.com",
+  "password": "StrongPassword123!@#"
+}
+
+### Create Magistrate - Validation Error (Missing Required Fields)
+# Should return 422 Unprocessable Entity
+POST {{bevalk_base_url}}{{apiVersion}}/magistrates
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Incompleto"
+}
+
+### Create Magistrate - Validation Error (Duplicate Email)
+# Should return 422 Unprocessable Entity
+POST {{bevalk_base_url}}{{apiVersion}}/magistrates
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Duplicate",
+  "last_name": "Email",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1000000005",
+  "phone": "3001112237",
+  "address": "Calle Falsa 202",
+  "email": "duplicate@example.com",
+  "password": "StrongPassword123!@#"
+}
+
+### Create Magistrate - Validation Error (Weak Password)
+# Should return 422 Unprocessable Entity
+POST {{bevalk_base_url}}{{apiVersion}}/magistrates
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Weak",
+  "last_name": "Password",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1000000006",
+  "phone": "3001112238",
+  "address": "Calle Falsa 303",
+  "email": "weak.password@example.com",
+  "password": "weak"
+}
+
