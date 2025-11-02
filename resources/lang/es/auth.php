@@ -5,6 +5,7 @@ return [
     'password' => 'La contraseña proporcionada es incorrecta.',
     'throttle' => 'Demasiados intentos de acceso. Por favor intente nuevamente en :seconds segundos.',
     'email_not_verified' => 'Su correo electrónico no ha sido verificado.',
+    'user_inactive' => 'Su cuenta ha sido desactivada. Contacte al administrador.',
     'password_reset_subject' => 'Código de Restablecimiento de Contraseña',
     'password_reset_line_1' => 'Hemos recibido una solicitud para restablecer la contraseña de tu cuenta.',
     'password_reset_code' => 'Tu código de verificación es: :code',

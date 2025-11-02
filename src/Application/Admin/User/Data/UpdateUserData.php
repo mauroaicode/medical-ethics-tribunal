@@ -78,6 +78,7 @@ class UpdateUserData extends Data
     public static function rules(): array
     {
         return [
+            'document_type' => ['sometimes', Rule::enum(DocumentType::class)],
             'roles' => ['sometimes', 'array', 'min:1'],
             'roles.*' => ['required', 'string', Rule::in(UserRole::values())],
         ];
@@ -85,6 +86,28 @@ class UpdateUserData extends Data
 
     public static function withValidator(Validator $validator): void
     {
+        $validator->setCustomMessages([
+            'document_type.enum' => __('validation.enum', ['attribute' => __('data.document_type')]),
+            'document_type.in' => __('validation.in', ['attribute' => __('data.document_type')]),
+            'password.letters' => __('validation.password.letters', ['attribute' => __('data.password')]),
+            'password.mixed' => __('validation.password.mixed', ['attribute' => __('data.password')]),
+            'password.numbers' => __('validation.password.numbers', ['attribute' => __('data.password')]),
+            'password.symbols' => __('validation.password.symbols', ['attribute' => __('data.password')]),
+        ]);
+
+        $validator->setAttributeNames([
+            'name' => __('data.name'),
+            'last_name' => __('data.last_name'),
+            'document_type' => __('data.document_type'),
+            'document_number' => __('data.document_number'),
+            'phone' => __('data.phone'),
+            'address' => __('data.address'),
+            'email' => __('data.email'),
+            'password' => __('data.password'),
+            'roles' => __('data.roles'),
+            'status' => __('data.status'),
+        ]);
+
         static::validateRoles($validator, requireRoles: false);
     }
 }

@@ -2,27 +2,28 @@
 
 declare(strict_types=1);
 
-namespace Src\Application\Admin\User\Data;
+namespace Src\Application\Admin\Doctor\Data;
 
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
+use Spatie\LaravelData\Attributes\Validation\Date;
 use Spatie\LaravelData\Attributes\Validation\Email;
+use Spatie\LaravelData\Attributes\Validation\Exists;
 use Spatie\LaravelData\Attributes\Validation\Max;
 use Spatie\LaravelData\Attributes\Validation\Min;
 use Spatie\LaravelData\Attributes\Validation\Password;
 use Spatie\LaravelData\Attributes\Validation\Required;
 use Spatie\LaravelData\Attributes\Validation\Unique;
+use Spatie\LaravelData\Attributes\WithCast;
+use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Data;
 use Src\Application\Shared\Traits\TranslatableDataAttributesTrait;
-use Src\Application\Shared\Traits\ValidatesRolesTrait;
 use Src\Domain\User\Enums\DocumentType;
-use Src\Domain\User\Enums\UserRole;
-use Src\Domain\User\Enums\UserStatus;
 
-class StoreUserData extends Data
+class StoreDoctorData extends Data
 {
     use TranslatableDataAttributesTrait;
-    use ValidatesRolesTrait;
 
     public function __construct(
         #[Required, Min(2), Max(255)]
@@ -55,18 +56,32 @@ class StoreUserData extends Data
         )]
         public string $password,
 
-        #[Required]
-        public array $roles,
+        #[Required, Exists('medical_specialties', 'id')]
+        public int $specialty_id,
 
-        public ?UserStatus $status = null,
+        #[Required, Max(255)]
+        public string $faculty,
+
+        #[Required, Max(255), Unique('doctors', 'medical_registration_number')]
+        public string $medical_registration_number,
+
+        #[Required, Max(255)]
+        public string $medical_registration_place,
+
+        #[Required, Date, WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
+        public Carbon $medical_registration_date,
+
+        #[Max(255)]
+        public ?string $main_practice_company = null,
+
+        #[Max(255)]
+        public ?string $other_practice_company = null,
     ) {}
 
     public static function rules(): array
     {
         return [
             'document_type' => ['required', Rule::enum(DocumentType::class)],
-            'roles' => ['required', 'array', 'min:1'],
-            'roles.*' => ['required', 'string', Rule::in(UserRole::values())],
         ];
     }
 
@@ -90,10 +105,13 @@ class StoreUserData extends Data
             'address' => __('data.address'),
             'email' => __('data.email'),
             'password' => __('data.password'),
-            'roles' => __('data.roles'),
-            'status' => __('data.status'),
+            'specialty_id' => __('data.specialty_id'),
+            'faculty' => __('data.faculty'),
+            'medical_registration_number' => __('data.medical_registration_number'),
+            'medical_registration_place' => __('data.medical_registration_place'),
+            'medical_registration_date' => __('data.medical_registration_date'),
+            'main_practice_company' => __('data.main_practice_company'),
+            'other_practice_company' => __('data.other_practice_company'),
         ]);
-
-        static::validateRoles($validator, requireRoles: true);
     }
 }

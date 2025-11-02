@@ -1,0 +1,111 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### DOCTOR ENDPOINTS - CREATE DOCTOR
+### ============================================
+###
+
+### Create Doctor - Success (Super Admin or Admin)
+# @name createDoctor
+POST {{bevalk_base_url}}{{apiVersion}}/doctors
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Juan",
+  "last_name": "Pérez",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1000000001",
+  "phone": "3001112233",
+  "address": "Calle Falsa 123",
+  "email": "juan.perez@example.com",
+  "password": "StrongPassword123!@#",
+  "specialty_id": 1,
+  "faculty": "Universidad Nacional",
+  "medical_registration_number": "M12345678",
+  "medical_registration_place": "Bogotá",
+  "medical_registration_date": "2010-01-15",
+  "main_practice_company": "Hospital Central",
+  "other_practice_company": "Clínica San Rafael"
+}
+
+### Create Doctor - Without Authentication
+# Should return 401 Unauthorized
+POST {{bevalk_base_url}}{{apiVersion}}/doctors
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Juan",
+  "last_name": "Pérez",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1000000001",
+  "phone": "3001112233",
+  "address": "Calle Falsa 123",
+  "email": "juan.perez@example.com",
+  "password": "StrongPassword123!@#",
+  "specialty_id": 1,
+  "faculty": "Universidad Nacional",
+  "medical_registration_number": "M12345678",
+  "medical_registration_place": "Bogotá",
+  "medical_registration_date": "2010-01-15"
+}
+
+### Create Doctor - Unauthorized (Secretary Role)
+# Should return 403 Forbidden
+POST {{bevalk_base_url}}{{apiVersion}}/doctors
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{secretaryToken}}
+
+{
+  "name": "Juan",
+  "last_name": "Pérez",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1000000001",
+  "phone": "3001112233",
+  "address": "Calle Falsa 123",
+  "email": "juan.perez@example.com",
+  "password": "StrongPassword123!@#",
+  "specialty_id": 1,
+  "faculty": "Universidad Nacional",
+  "medical_registration_number": "M12345678",
+  "medical_registration_place": "Bogotá",
+  "medical_registration_date": "2010-01-15"
+}
+
+### Create Doctor - Validation Error (Missing Required Fields)
+POST {{bevalk_base_url}}{{apiVersion}}/doctors
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Juan"
+}
+
+### Create Doctor - Validation Error (Duplicate Email)
+POST {{bevalk_base_url}}{{apiVersion}}/doctors
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Juan",
+  "last_name": "Pérez",
+  "document_type": "cedula_ciudadania",
+  "document_number": "1000000002",
+  "phone": "3001112234",
+  "address": "Calle Falsa 456",
+  "email": "existing@example.com",
+  "password": "StrongPassword123!@#",
+  "specialty_id": 1,
+  "faculty": "Universidad Nacional",
+  "medical_registration_number": "M12345679",
+  "medical_registration_place": "Bogotá",
+  "medical_registration_date": "2010-01-15"
+}
+

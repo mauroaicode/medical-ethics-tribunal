@@ -1,0 +1,41 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### USER ENDPOINTS - SHOW USER
+### ============================================
+###
+
+### Show User - Success (Super Admin)
+# @name showUser
+# Replace {userId} with an actual user ID
+GET {{bevalk_base_url}}{{apiVersion}}/users/1
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Show User - Success (Admin)
+# @name showUserAdmin
+# Replace {userId} with an actual user ID
+GET {{bevalk_base_url}}{{apiVersion}}/users/1
+Accept: application/json
+Authorization: Bearer {{adminToken}}
+
+### Show User - Success (Secretary)
+# @name showUserSecretary
+# Replace {userId} with an actual user ID
+GET {{bevalk_base_url}}{{apiVersion}}/users/1
+Accept: application/json
+Authorization: Bearer {{secretaryToken}}
+
+### Show User - Without Authentication
+# Should return 401 Unauthorized
+GET {{bevalk_base_url}}{{apiVersion}}/users/1
+Accept: application/json
+
+### Show User - Not Found
+# Should return 404 Not Found
+GET {{bevalk_base_url}}{{apiVersion}}/users/99999
+Accept: application/json
+Authorization: Bearer {{token}}
+

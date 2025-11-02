@@ -1,0 +1,77 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### DOCTOR ENDPOINTS - UPDATE DOCTOR
+### ============================================
+###
+
+### Update Doctor - Success (Super Admin or Admin)
+# @name updateDoctor
+# Replace {doctorId} with an actual doctor ID
+PUT {{bevalk_base_url}}{{apiVersion}}/doctors/1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "faculty": "Nueva Universidad",
+  "medical_registration_place": "Nueva Ciudad",
+  "main_practice_company": "Nueva Clínica"
+}
+
+### Update Doctor User Data - Success
+PUT {{bevalk_base_url}}{{apiVersion}}/doctors/1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Actualizado",
+  "last_name": "Nombre",
+  "phone": "3009998877",
+  "address": "Nueva Dirección 456"
+}
+
+### Update Doctor - Without Authentication
+# Should return 401 Unauthorized
+PUT {{bevalk_base_url}}{{apiVersion}}/doctors/1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "faculty": "Nueva Universidad"
+}
+
+### Update Doctor - Unauthorized (Secretary Role)
+# Should return 403 Forbidden
+PUT {{bevalk_base_url}}{{apiVersion}}/doctors/1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{secretaryToken}}
+
+{
+  "faculty": "Nueva Universidad"
+}
+
+### Update Doctor - Partial Update (Only Some Fields)
+PUT {{bevalk_base_url}}{{apiVersion}}/doctors/1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "faculty": "Solo Facultad Actualizada"
+}
+
+### Update Doctor - Validation Error (Duplicate Medical Registration Number)
+PUT {{bevalk_base_url}}{{apiVersion}}/doctors/1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "medical_registration_number": "M12345678"
+}
+

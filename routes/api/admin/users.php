@@ -5,8 +5,12 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Route;
 use Src\Application\Admin\User\Controllers\UserController;
 
-Route::middleware(['auth:sanctum', 'admin'])->prefix('users')->group(function (): void {
+Route::middleware(['auth:sanctum'])->prefix('users')->group(function (): void {
     Route::get('/', [UserController::class, 'index']);
+    Route::get('/{user}', [UserController::class, 'show']);
+});
+
+Route::middleware(['auth:sanctum', 'admin'])->prefix('users')->group(function (): void {
     Route::post('/', [UserController::class, 'store']);
     Route::put('/{user}', [UserController::class, 'update']);
     Route::delete('/{user}', [UserController::class, 'destroy']);

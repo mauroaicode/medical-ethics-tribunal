@@ -27,6 +27,8 @@ class DoctorFactory extends Factory
      */
     public function definition(): array
     {
+        $uniqueId = microtime(true) * 10000;
+
         return [
             'user_id' => User::factory(),
             'specialty_id' => MedicalSpecialty::query()->inRandomOrder()->first()->id ?? MedicalSpecialty::factory(),
@@ -37,7 +39,7 @@ class DoctorFactory extends Factory
                 'Universidad del Rosario',
                 'Universidad de los Andes',
             ]),
-            'medical_registration_number' => fake()->unique()->numerify('M#######'),
+            'medical_registration_number' => "M{$uniqueId}",
             'medical_registration_place' => fake()->city(),
             'medical_registration_date' => fake()->dateTimeBetween('-20 years', '-1 year'),
             'main_practice_company' => fake()->optional()->company(),

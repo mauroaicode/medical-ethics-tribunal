@@ -10,8 +10,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 use Src\Domain\AuditLog\Models\AuditLog;
+use Src\Domain\Doctor\QueryBuilders\DoctorQueryBuilder;
 use Src\Domain\MedicalSpecialty\Models\MedicalSpecialty;
 use Src\Domain\Process\Models\Process;
 use Src\Domain\User\Models\User;
@@ -20,7 +22,8 @@ use Src\Domain\User\Models\User;
  * @property-read int $id
  * @property-read int $user_id
  * @property-read int $specialty_id
- * @property-read MedicalSpecialty $specialty
+ * @property-read MedicalSpecialty|null $specialty
+ * @property-read User|null $user
  * @property-read string $faculty
  * @property-read string $medical_registration_number
  * @property-read string $medical_registration_place
@@ -30,6 +33,13 @@ use Src\Domain\User\Models\User;
  * @property-read Carbon|null $created_at
  * @property-read Carbon|null $updated_at
  * @property-read Carbon|null $deleted_at
+ *
+ * @method static DoctorQueryBuilder query()
+ * @method DoctorQueryBuilder withUser()
+ * @method DoctorQueryBuilder withSpecialty()
+ * @method DoctorQueryBuilder withRelations()
+ * @method DoctorQueryBuilder withoutTrashed()
+ * @method DoctorQueryBuilder orderedByCreatedAt()
  */
 class Doctor extends Model
 {
@@ -79,6 +89,14 @@ class Doctor extends Model
     public function auditLogs(): MorphMany
     {
         return $this->morphMany(AuditLog::class, 'auditable');
+    }
+
+    /**
+     * @param  Builder  $query
+     */
+    public function newEloquentBuilder(mixed $query): DoctorQueryBuilder
+    {
+        return new DoctorQueryBuilder($query);
     }
 
     protected function casts(): array

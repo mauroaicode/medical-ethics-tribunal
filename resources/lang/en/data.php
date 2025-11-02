@@ -13,4 +13,11 @@ return [
     'address' => 'Address',
     'roles' => 'Roles',
     'status' => 'Status',
+    'specialty_id' => 'Medical specialty',
+    'faculty' => 'Faculty',
+    'medical_registration_number' => 'Medical registration number',
+    'medical_registration_place' => 'Medical registration place',
+    'medical_registration_date' => 'Medical registration date',
+    'main_practice_company' => 'Main practice company',
+    'other_practice_company' => 'Other practice company',
 ];
