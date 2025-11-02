@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Src\Domain\Process\Models;
 
-use Database\Factories\ProcessFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -38,8 +37,8 @@ use Src\Domain\Template\Models\Template;
  */
 class Process extends Model
 {
-    /** @use HasFactory<ProcessFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'complainant_id',
@@ -53,14 +52,6 @@ class Process extends Model
         'status',
         'description',
     ];
-
-    protected function casts(): array
-    {
-        return [
-            'start_date' => 'date',
-            'status' => ProcessStatus::class,
-        ];
-    }
 
     /**
      * @return BelongsTo<Complainant, $this>
@@ -113,10 +104,18 @@ class Process extends Model
     /**
      * Get all audit logs for this process.
      *
-     * @return MorphMany<AuditLog>
+     * @return MorphMany<AuditLog, $this>
      */
     public function auditLogs(): MorphMany
     {
         return $this->morphMany(AuditLog::class, 'auditable');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'start_date' => 'date',
+            'status' => ProcessStatus::class,
+        ];
     }
 }

@@ -35,7 +35,7 @@ it('sends password reset code successfully', function (): void {
 
     $response->assertOk();
 
-    Notification::assertSentTo($this->user, \Src\Application\Admin\Auth\Notifications\ForgotPasswordNotification::class);
+    Notification::assertSentTo($this->user, Src\Application\Admin\Auth\Notifications\ForgotPasswordNotification::class);
 
     $cachedCode = Cache::get('password_reset_'.$this->user->email);
     expect($cachedCode)->toBeInt()

@@ -11,20 +11,6 @@ enum UserRole: string
     case SECRETARY = 'secretary';
 
     /**
-     * Get the label for the role
-     *
-     * @return non-empty-string
-     */
-    public function getLabel(): string
-    {
-        return match ($this) {
-            self::SUPER_ADMIN => __('enums.user_role.super_admin'),
-            self::ADMIN => __('enums.user_role.admin'),
-            self::SECRETARY => __('enums.user_role.secretary'),
-        };
-    }
-
-    /**
      * Get label for a role by string value
      */
     public static function getLabelFor(string $roleName): ?string
@@ -55,5 +41,19 @@ enum UserRole: string
             self::SUPER_ADMIN->value,
             self::ADMIN->value,
         ];
+    }
+
+    /**
+     * Get the label for the role
+     *
+     * @return non-empty-string
+     */
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::SUPER_ADMIN => __('enums.user_role.super_admin'),
+            self::ADMIN => __('enums.user_role.admin'),
+            self::SECRETARY => __('enums.user_role.secretary'),
+        };
     }
 }

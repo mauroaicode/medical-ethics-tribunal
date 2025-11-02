@@ -24,14 +24,6 @@ class Zone extends Model
     /** @use HasFactory<ZoneFactory> */
     use HasFactory;
 
-    /**
-     * Create a new factory instance for the model.
-     */
-    protected static function newFactory(): Factory
-    {
-        return ZoneFactory::new();
-    }
-
     protected $fillable = [
         'name',
         'description',
@@ -43,5 +35,13 @@ class Zone extends Model
     public function departments(): HasMany
     {
         return $this->hasMany(Department::class, 'idZona');
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): Factory
+    {
+        return ZoneFactory::new();
     }
 }

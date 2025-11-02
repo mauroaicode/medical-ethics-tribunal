@@ -25,23 +25,24 @@ class UserResource extends Resource
 
     public static function fromModel(User $user): self
     {
-        $roles = $user->roles->map(function ($role) {
-            return [
-                'value' => $role->name,
-                'label' => UserRole::getLabelFor($role->name) ?? $role->name,
-            ];
-        })->toArray();
+        /** @var \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $userRoles */
+        $userRoles = $user->roles;
+
+        $roles = $userRoles->map(fn (\Spatie\Permission\Models\Role $role): array => [
+            'value' => $role->name,
+            'label' => UserRole::getLabelFor($role->name) ?? $role->name,
+        ])->all();
 
         return new self(
             id: $user->id,
             name: $user->name,
             last_name: $user->last_name,
             email: $user->email,
-            document_type: $user->document_type?->getLabel(),
+            document_type: $user->document_type->getLabel(),
             document_number: $user->document_number,
             phone: $user->phone,
             address: $user->address,
-            status: $user->status?->getLabel(),
+            status: $user->status->getLabel(),
             roles: $roles,
         );
     }

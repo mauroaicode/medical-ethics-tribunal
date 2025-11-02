@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Admin routes
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->group(function (): void {
     require __DIR__.'/api/admin/auth.php';
     require __DIR__.'/api/admin/users.php';
     require __DIR__.'/api/admin/complainants.php';

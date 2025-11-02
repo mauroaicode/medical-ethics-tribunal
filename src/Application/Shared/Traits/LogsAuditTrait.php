@@ -15,7 +15,7 @@ trait LogsAuditTrait
      */
     protected function logAudit(
         string $action,
-        Model $auditable,
+        Model $model,
         ?array $oldValues = null,
         ?array $newValues = null,
     ): void {
@@ -28,8 +28,8 @@ trait LogsAuditTrait
         AuditLog::query()->create([
             'user_id' => $authUser->id,
             'action' => $action,
-            'auditable_type' => $auditable::class,
-            'auditable_id' => $auditable->id,
+            'auditable_type' => $model::class,
+            'auditable_id' => $model->getKey(),
             'old_values' => $oldValues,
             'new_values' => $newValues,
             'ip_address' => request()->ip(),

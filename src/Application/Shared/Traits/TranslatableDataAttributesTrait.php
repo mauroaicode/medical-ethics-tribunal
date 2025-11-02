@@ -16,18 +16,18 @@ trait TranslatableDataAttributesTrait
      */
     public static function attributes(): array
     {
-        $classReflection = new ReflectionClass(static::class);
+        $reflectionClass = new ReflectionClass(static::class);
 
         $attributeNames = array_filter(
-            array_map(fn ($property): string => $property->getName(), $classReflection->getProperties(ReflectionProperty::IS_PUBLIC)),
+            array_map(fn (ReflectionProperty $reflectionProperty): string => $reflectionProperty->getName(), $reflectionClass->getProperties(ReflectionProperty::IS_PUBLIC)),
             fn ($attributeName): bool => ! in_array($attributeName, self::excludedAttributesFromTranslation(), true),
         );
 
         return array_combine(
             $attributeNames,
             array_map(
-                fn ($attributeName) => __("data.{$attributeName}") !== $attributeName
-                    ? __("data.{$attributeName}")
+                fn ($attributeName) => __('data.'.$attributeName) !== $attributeName
+                    ? __('data.'.$attributeName)
                     : ucfirst(str_replace('_', ' ', $attributeName)),
                 $attributeNames,
             ),

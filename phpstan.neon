@@ -14,10 +14,7 @@ parameters:
     level: 5
 
     ignoreErrors:
-        # Ignore errors in migrations and seeders
-        - '#Call to an undefined method Illuminate\\Database\\Schema\\Blueprint::.*#'
-        - '#Access to an undefined property.*Illuminate\\Database\\Schema\\Blueprint.*#'
-        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Factory::.*#'
+        []
 
     excludePaths:
         - ./*/*/FileToIgnore.php

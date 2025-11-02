@@ -20,28 +20,28 @@ class UserCreatorService
      *
      * @throws Throwable
      */
-    public function handle(StoreUserData $data): User
+    public function handle(StoreUserData $storeUserData): User
     {
-        return DB::transaction(function () use ($data) {
+        return DB::transaction(function () use ($storeUserData) {
             $user = User::query()->create([
-                'name' => $data->name,
-                'last_name' => $data->last_name,
-                'document_type' => $data->document_type,
-                'document_number' => $data->document_number,
-                'phone' => $data->phone,
-                'address' => $data->address,
-                'email' => $data->email,
-                'password' => $data->password,
-                'status' => $data->status ?? UserStatus::ACTIVE,
+                'name' => $storeUserData->name,
+                'last_name' => $storeUserData->last_name,
+                'document_type' => $storeUserData->document_type,
+                'document_number' => $storeUserData->document_number,
+                'phone' => $storeUserData->phone,
+                'address' => $storeUserData->address,
+                'email' => $storeUserData->email,
+                'password' => $storeUserData->password,
+                'status' => $storeUserData->status ?? UserStatus::ACTIVE,
             ]);
 
             // TODO: When permissions are implemented, check if admin has 'create users' permission
 
-            $user->assignRole($data->roles);
+            $user->assignRole($storeUserData->roles);
 
             $this->logAudit(
                 action: 'create',
-                auditable: $user,
+                model: $user,
                 oldValues: null,
                 newValues: $user->getAttributes(),
             );

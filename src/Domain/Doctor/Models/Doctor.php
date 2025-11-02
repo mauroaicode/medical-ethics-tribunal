@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Src\Domain\Doctor\Models;
 
-use Database\Factories\DoctorFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,8 +31,8 @@ use Src\Domain\User\Models\User;
  */
 class Doctor extends Model
 {
-    /** @use HasFactory<DoctorFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -45,13 +44,6 @@ class Doctor extends Model
         'main_practice_company',
         'other_practice_company',
     ];
-
-    protected function casts(): array
-    {
-        return [
-            'medical_registration_date' => 'date',
-        ];
-    }
 
     /**
      * @return BelongsTo<User, $this>
@@ -72,10 +64,17 @@ class Doctor extends Model
     /**
      * Get all audit logs for this doctor.
      *
-     * @return MorphMany<AuditLog>
+     * @return MorphMany<AuditLog, $this>
      */
     public function auditLogs(): MorphMany
     {
         return $this->morphMany(AuditLog::class, 'auditable');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'medical_registration_date' => 'date',
+        ];
     }
 }

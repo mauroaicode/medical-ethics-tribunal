@@ -21,7 +21,8 @@ use Src\Domain\User\Enums\UserStatus;
 
 class UpdateUserData extends Data
 {
-    use TranslatableDataAttributesTrait, ValidatesRolesTrait;
+    use TranslatableDataAttributesTrait;
+    use ValidatesRolesTrait;
 
     public function __construct(
         #[Max(255),

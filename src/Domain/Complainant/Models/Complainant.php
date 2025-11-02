@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Src\Domain\Complainant\Models;
 
-use Database\Factories\ComplainantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,8 +29,8 @@ use Src\Domain\User\Models\User;
  */
 class Complainant extends Model
 {
-    /** @use HasFactory<ComplainantFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -40,13 +39,6 @@ class Complainant extends Model
         'company',
         'is_anonymous',
     ];
-
-    protected function casts(): array
-    {
-        return [
-            'is_anonymous' => 'boolean',
-        ];
-    }
 
     /**
      * @return BelongsTo<User, $this>
@@ -75,10 +67,17 @@ class Complainant extends Model
     /**
      * Get all audit logs for this complainant.
      *
-     * @return MorphMany<AuditLog>
+     * @return MorphMany<AuditLog, $this>
      */
     public function auditLogs(): MorphMany
     {
         return $this->morphMany(AuditLog::class, 'auditable');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'is_anonymous' => 'boolean',
+        ];
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Src\Domain\Magistrate\Models;
 
-use Database\Factories\MagistrateFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,8 +22,8 @@ use Src\Domain\User\Models\User;
  */
 class Magistrate extends Model
 {
-    /** @use HasFactory<MagistrateFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'user_id',
