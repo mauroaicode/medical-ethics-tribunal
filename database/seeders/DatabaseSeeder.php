@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             TemplateSeeder::class,
             ProcessSeeder::class,
             ProceedingSeeder::class,
+            SessionSeeder::class,
             AuditLogSeeder::class,
         ]);
     }

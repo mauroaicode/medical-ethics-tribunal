@@ -45,6 +45,18 @@ class AuditLogSeeder extends Seeder
                     'new_values' => $action === 'delete' ? null : ['field' => 'new_value'],
                     'ip_address' => fake()->ipv4(),
                     'user_agent' => fake()->userAgent(),
+                    'location' => fake()->optional()->randomElement([
+                        'Bogotá, Cundinamarca, Colombia',
+                        'Medellín, Antioquia, Colombia',
+                        'Cali, Valle del Cauca, Colombia',
+                        'Barranquilla, Atlántico, Colombia',
+                        'Cartagena, Bolívar, Colombia',
+                        'Pereira, Risaralda, Colombia',
+                        'Santa Marta, Magdalena, Colombia',
+                        'Manizales, Caldas, Colombia',
+                        'Popayán, Cauca, Colombia',
+                        null,
+                    ]),
                     'created_at' => fake()->dateTimeBetween('-6 months', 'now'),
                 ]);
             }

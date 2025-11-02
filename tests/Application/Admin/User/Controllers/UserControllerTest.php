@@ -668,7 +668,8 @@ describe('destroy', function (): void {
             ->and($auditLog->old_values)->toBeArray()
             ->and($auditLog->new_values)->toBeNull()
             ->and($auditLog->ip_address)->not->toBeNull()
-            ->and($auditLog->user_agent)->not->toBeNull();
+            ->and($auditLog->user_agent)->not->toBeNull()
+            ->and($auditLog->location)->not->toBeNull();
     });
 
     it('excludes deleted user from list', function (): void {
@@ -749,7 +750,8 @@ describe('destroy', function (): void {
             ->and($auditLog->old_values)->toBeNull()
             ->and($auditLog->new_values)->toBeArray()
             ->and($auditLog->ip_address)->not->toBeNull()
-            ->and($auditLog->user_agent)->not->toBeNull();
+            ->and($auditLog->user_agent)->not->toBeNull()
+            ->and($auditLog->location)->not->toBeNull();
     });
 
     it('creates audit log entry when updating user', function (): void {
@@ -772,6 +774,7 @@ describe('destroy', function (): void {
             ->and($auditLog->old_values)->toBeArray()
             ->and($auditLog->new_values)->toBeArray()
             ->and($auditLog->ip_address)->not->toBeNull()
-            ->and($auditLog->user_agent)->not->toBeNull();
+            ->and($auditLog->user_agent)->not->toBeNull()
+            ->and($auditLog->location)->not->toBeNull();
     });
 });

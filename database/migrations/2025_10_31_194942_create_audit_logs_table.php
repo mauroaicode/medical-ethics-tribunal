@@ -20,6 +20,7 @@ return new class extends Migration
             $table->json('new_values')->nullable();
             $table->string('ip_address');
             $table->string('user_agent')->nullable();
+            $table->string('location')->nullable();
             $table->timestamp('created_at');
         });
     }

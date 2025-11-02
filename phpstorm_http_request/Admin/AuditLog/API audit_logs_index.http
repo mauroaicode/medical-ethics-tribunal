@@ -1,0 +1,32 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### AUDIT LOG LISTING ENDPOINTS
+### ============================================
+###
+
+### List Audit Logs - Success (Super Admin)
+# @name listAuditLogsSuperAdmin
+GET {{bevalk_base_url}}{{apiVersion}}/audit-logs
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### List Audit Logs - Success (Admin)
+# @name listAuditLogsAdmin
+GET {{bevalk_base_url}}{{apiVersion}}/audit-logs
+Accept: application/json
+Authorization: Bearer {{adminToken}}
+
+### List Audit Logs - Unauthorized (Secretary)
+# @name listAuditLogsSecretaryUnauthorized
+GET {{bevalk_base_url}}{{apiVersion}}/audit-logs
+Accept: application/json
+Authorization: Bearer {{secretaryToken}}
+
+### List Audit Logs - Without Authentication
+# @name listAuditLogsNoAuth
+GET {{bevalk_base_url}}{{apiVersion}}/audit-logs
+Accept: application/json
+

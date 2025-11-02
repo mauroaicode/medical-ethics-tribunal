@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Src\Domain\User\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -19,6 +20,7 @@ use Src\Domain\AuditLog\Models\AuditLog;
 use Src\Domain\Complainant\Models\Complainant;
 use Src\Domain\Doctor\Models\Doctor;
 use Src\Domain\Magistrate\Models\Magistrate;
+use Src\Domain\Session\Models\Session;
 use Src\Domain\Shared\Traits\InteractsWithCustomMedia;
 use Src\Domain\User\Enums\DocumentType;
 use Src\Domain\User\Enums\UserStatus;
@@ -126,6 +128,16 @@ class User extends Authenticatable implements HasMedia
     public function auditLogs(): MorphMany
     {
         return $this->morphMany(AuditLog::class, 'auditable');
+    }
+
+    /**
+     * Get all sessions for this user.
+     *
+     * @return HasMany<Session, $this>
+     */
+    public function sessions(): HasMany
+    {
+        return $this->hasMany(Session::class);
     }
 
     /**
