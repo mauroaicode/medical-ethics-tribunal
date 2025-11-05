@@ -1,0 +1,20 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### TEMPLATE ENDPOINTS - LIST TEMPLATES
+### ============================================
+###
+
+### List Templates - Success
+# @name listTemplates
+GET {{bevalk_base_url}}{{apiVersion}}/templates
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### List Templates - Without Authentication
+# Should return 401 Unauthorized
+GET {{bevalk_base_url}}{{apiVersion}}/templates
+Accept: application/json
+

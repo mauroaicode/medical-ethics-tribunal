@@ -1,0 +1,52 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### GOOGLE AUTH ENDPOINTS - AUTHENTICATE
+### ============================================
+###
+
+### Authenticate with Google - Success (Manual POST)
+# Use this after getting the code from the callback URL
+# @name authenticate
+POST {{bevalk_base_url}}{{apiVersion}}/google-auth/callback
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "code": "4/0Ab32j921oA2IWL-ceSgXjKDQw3XVAI9Jky8vPTNJmQ-cKlYmjw55XPWOseJYzt0VL9fIAA"
+}
+
+### Authenticate with Google - Missing Code
+# Should return 422 Validation Error
+POST {{bevalk_base_url}}{{apiVersion}}/google-auth/callback
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+}
+
+### Authenticate with Google - Invalid Code
+# Should return 400 Bad Request
+POST {{bevalk_base_url}}{{apiVersion}}/google-auth/callback
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "code": "invalid-code-123"
+}
+
+### Authenticate with Google - Without Authentication
+# Should return 401 Unauthorized
+POST {{bevalk_base_url}}{{apiVersion}}/google-auth/callback
+Accept: application/json
+Content-Type: application/json
+
+{
+  "code": "some-code"
+}
+

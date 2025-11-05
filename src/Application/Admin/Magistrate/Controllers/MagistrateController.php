@@ -21,9 +21,9 @@ class MagistrateController
     /**
      * Display a listing of the resource.
      */
-    public function index(): Collection
+    public function index(MagistrateFinderService $magistrateFinderService): Collection
     {
-        return (new MagistrateFinderService)->handle()
+        return $magistrateFinderService->handle()
             ->map(fn (Magistrate $magistrate): array => MagistrateResource::fromModel($magistrate)->toArray());
     }
 
@@ -42,9 +42,9 @@ class MagistrateController
      *
      * @throws Throwable
      */
-    public function store(StoreMagistrateData $storeMagistrateData): Response
+    public function store(MagistrateCreatorService $magistrateCreatorService, StoreMagistrateData $storeMagistrateData): Response
     {
-        $magistrate = (new MagistrateCreatorService)->handle($storeMagistrateData);
+        $magistrate = $magistrateCreatorService->handle($storeMagistrateData);
 
         return response(MagistrateResource::fromModel($magistrate)->toArray(), 201);
     }
@@ -54,9 +54,12 @@ class MagistrateController
      *
      * @throws Throwable
      */
-    public function update(UpdateMagistrateData $updateMagistrateData, Magistrate $magistrate): Response
-    {
-        $updatedMagistrate = (new MagistrateUpdaterService)->handle($updateMagistrateData, $magistrate);
+    public function update(
+        MagistrateUpdaterService $magistrateUpdaterService,
+        UpdateMagistrateData $updateMagistrateData,
+        Magistrate $magistrate
+    ): Response {
+        $updatedMagistrate = $magistrateUpdaterService->handle($updateMagistrateData, $magistrate);
 
         return response(MagistrateResource::fromModel($updatedMagistrate)->toArray(), 200);
     }
@@ -66,9 +69,9 @@ class MagistrateController
      *
      * @throws Throwable
      */
-    public function destroy(Magistrate $magistrate): Response
+    public function destroy(MagistrateDeleterService $magistrateDeleterService, Magistrate $magistrate): Response
     {
-        (new MagistrateDeleterService)->handle($magistrate);
+        $magistrateDeleterService->handle($magistrate);
 
         return new Response(status: 204);
     }

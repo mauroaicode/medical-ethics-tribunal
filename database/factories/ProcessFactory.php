@@ -30,6 +30,10 @@ class ProcessFactory extends Factory
      */
     public function definition(): array
     {
+        static $counter = 0;
+        $counter++;
+        $uniqueId = (int) (microtime(true) * 100000) + $counter;
+
         return [
             'complainant_id' => Complainant::factory(),
             'doctor_id' => Doctor::factory(),
@@ -39,7 +43,7 @@ class ProcessFactory extends Factory
                 ? Template::inRandomOrder()->first()?->id
                 : null,
             'name' => fake()->sentence(4),
-            'process_number' => fake()->unique()->numerify('PRO-####'),
+            'process_number' => sprintf('PRO-%06d', $uniqueId % 1000000),
             'start_date' => fake()->dateTimeBetween('-2 years', 'now'),
             'status' => fake()->randomElement(ProcessStatus::cases())->value,
             'description' => fake()->paragraph(),

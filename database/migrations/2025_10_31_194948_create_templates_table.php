@@ -15,7 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->text('description')->nullable();
+            $table->string('google_drive_id')->nullable();
+            $table->string('google_drive_file_id')->nullable()->unique();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -51,6 +51,7 @@ class Session extends Model
         'location',
         'payload',
         'last_activity',
+        'login_at',
     ];
 
     /**

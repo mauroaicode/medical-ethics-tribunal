@@ -15,7 +15,7 @@ class EmailVerificationController
         /** @var User|null $user */
         $user = User::query()->find($verifyUserEmailData->id);
 
-        if ($user === null) {
+        if (is_null($user)) {
             return view('email-verification-unsuccessful');
         }
 

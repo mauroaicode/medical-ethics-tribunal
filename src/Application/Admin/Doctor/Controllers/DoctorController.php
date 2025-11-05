@@ -21,9 +21,9 @@ class DoctorController
     /**
      * Display a listing of the resource.
      */
-    public function index(): Collection
+    public function index(DoctorFinderService $doctorFinderService): Collection
     {
-        return (new DoctorFinderService)->handle()
+        return $doctorFinderService->handle()
             ->map(fn (Doctor $doctor): array => DoctorResource::fromModel($doctor)->toArray());
     }
 
@@ -42,9 +42,9 @@ class DoctorController
      *
      * @throws Throwable
      */
-    public function store(StoreDoctorData $storeDoctorData): Response
+    public function store(DoctorCreatorService $doctorCreatorService, StoreDoctorData $storeDoctorData): Response
     {
-        $doctor = (new DoctorCreatorService)->handle($storeDoctorData);
+        $doctor = $doctorCreatorService->handle($storeDoctorData);
 
         return response(DoctorResource::fromModel($doctor)->toArray(), 201);
     }
@@ -54,9 +54,12 @@ class DoctorController
      *
      * @throws Throwable
      */
-    public function update(UpdateDoctorData $updateDoctorData, Doctor $doctor): Response
-    {
-        $updatedDoctor = (new DoctorUpdaterService)->handle($updateDoctorData, $doctor);
+    public function update(
+        DoctorUpdaterService $doctorUpdaterService,
+        UpdateDoctorData $updateDoctorData,
+        Doctor $doctor
+    ): Response {
+        $updatedDoctor = $doctorUpdaterService->handle($updateDoctorData, $doctor);
 
         return response(DoctorResource::fromModel($updatedDoctor)->toArray(), 200);
     }

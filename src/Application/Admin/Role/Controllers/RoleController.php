@@ -13,9 +13,9 @@ class RoleController
     /**
      * Display a listing of available roles.
      */
-    public function index(): Collection
+    public function index(RoleFinderService $roleFinderService): Collection
     {
-        return (new RoleFinderService)->handle()
+        return $roleFinderService->handle()
             ->map(fn (array $role): array => RoleResource::fromArray($role)->toArray());
     }
 }

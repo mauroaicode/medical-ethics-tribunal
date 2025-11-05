@@ -1,0 +1,20 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### TEMPLATE ENDPOINTS - SYNC TEMPLATES
+### ============================================
+###
+
+### Sync Templates - Success
+# @name syncTemplates
+POST {{bevalk_base_url}}{{apiVersion}}/templates/sync
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Sync Templates - Without Authentication
+# Should return 401 Unauthorized
+POST {{bevalk_base_url}}{{apiVersion}}/templates/sync
+Accept: application/json
+

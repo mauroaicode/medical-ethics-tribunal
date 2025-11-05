@@ -14,9 +14,9 @@ class MedicalSpecialtyController
     /**
      * Display a listing of available medical specialties.
      */
-    public function index(): Collection
+    public function index(MedicalSpecialtyFinderService $medicalSpecialtyFinderService): Collection
     {
-        return (new MedicalSpecialtyFinderService)->handle()
+        return $medicalSpecialtyFinderService->handle()
             ->map(fn (MedicalSpecialty $specialty): array => MedicalSpecialtyResource::fromModel($specialty)->toArray());
     }
 }

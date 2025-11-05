@@ -18,12 +18,12 @@ class ChangePasswordController
      *
      * @throws Throwable
      */
-    public function __invoke(ChangePasswordData $changePasswordData): Response
+    public function __invoke(ChangePasswordService $changePasswordService, ChangePasswordData $changePasswordData): Response
     {
         /** @var User $user */
         $user = auth()->user();
 
-        $updatedUser = (new ChangePasswordService)->handle($changePasswordData, $user);
+        $updatedUser = $changePasswordService->handle($changePasswordData, $user);
 
         return response(UserResource::fromModel($updatedUser)->toArray(), 200);
     }

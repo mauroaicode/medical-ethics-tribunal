@@ -21,9 +21,9 @@ class ComplainantController
     /**
      * Display a listing of the resource.
      */
-    public function index(): Collection
+    public function index(ComplainantFinderService $complainantFinderService): Collection
     {
-        return (new ComplainantFinderService)->handle()
+        return $complainantFinderService->handle()
             ->map(fn (Complainant $complainant): array => ComplainantResource::fromModel($complainant)->toArray());
     }
 
@@ -42,9 +42,9 @@ class ComplainantController
      *
      * @throws Throwable
      */
-    public function store(StoreComplainantData $storeComplainantData): Response
+    public function store(ComplainantCreatorService $complainantCreatorService, StoreComplainantData $storeComplainantData): Response
     {
-        $complainant = (new ComplainantCreatorService)->handle($storeComplainantData);
+        $complainant = $complainantCreatorService->handle($storeComplainantData);
 
         return response(ComplainantResource::fromModel($complainant)->toArray(), 201);
     }
@@ -54,9 +54,12 @@ class ComplainantController
      *
      * @throws Throwable
      */
-    public function update(UpdateComplainantData $updateComplainantData, Complainant $complainant): Response
-    {
-        $updatedComplainant = (new ComplainantUpdaterService)->handle($updateComplainantData, $complainant);
+    public function update(
+        ComplainantUpdaterService $complainantUpdaterService,
+        UpdateComplainantData $updateComplainantData,
+        Complainant $complainant
+    ): Response {
+        $updatedComplainant = $complainantUpdaterService->handle($updateComplainantData, $complainant);
 
         return response(ComplainantResource::fromModel($updatedComplainant)->toArray(), 200);
     }
@@ -66,9 +69,9 @@ class ComplainantController
      *
      * @throws Throwable
      */
-    public function destroy(Complainant $complainant): Response
+    public function destroy(ComplainantDeleterService $complainantDeleterService, Complainant $complainant): Response
     {
-        (new ComplainantDeleterService)->handle($complainant);
+        $complainantDeleterService->handle($complainant);
 
         return new Response(status: 204);
     }

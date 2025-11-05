@@ -1,0 +1,25 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### GOOGLE AUTH ENDPOINTS - GET AUTHORIZATION URL
+### ============================================
+###
+
+### Get Google Auth URL - Success
+# @name getAuthUrl
+GET {{bevalk_base_url}}{{apiVersion}}/google-auth/auth-url
+Accept: application/json
+Authorization: Bearer {{token}}
+
+> {%
+    client.global.set("authUrl", response.body.auth_url);
+    client.log("Auth URL: " + response.body.auth_url);
+%}
+
+### Get Google Auth URL - Without Authentication
+# Should return 401 Unauthorized
+GET {{bevalk_base_url}}{{apiVersion}}/google-auth/auth-url
+Accept: application/json
+

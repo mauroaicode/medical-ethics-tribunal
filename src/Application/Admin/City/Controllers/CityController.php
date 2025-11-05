@@ -14,9 +14,9 @@ class CityController
     /**
      * Display a listing of available cities.
      */
-    public function index(): Collection
+    public function index(CityFinderService $cityFinderService): Collection
     {
-        return (new CityFinderService)->handle()
+        return $cityFinderService->handle()
             ->map(fn (City $city): array => CityResource::fromModel($city)->toArray());
     }
 }

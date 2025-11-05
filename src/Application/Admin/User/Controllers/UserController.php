@@ -21,9 +21,9 @@ class UserController
     /**
      * Display a listing of the resource.
      */
-    public function index(): Collection
+    public function index(UserFinderService $userFinderService): Collection
     {
-        return (new UserFinderService)->handle()
+        return $userFinderService->handle()
             ->map(fn (User $user): array => UserResource::fromModel($user)->toArray());
     }
 
@@ -42,9 +42,9 @@ class UserController
      *
      * @throws Throwable
      */
-    public function store(StoreUserData $storeUserData): Response
+    public function store(UserCreatorService $userCreatorService, StoreUserData $storeUserData): Response
     {
-        $user = (new UserCreatorService)->handle($storeUserData);
+        $user = $userCreatorService->handle($storeUserData);
 
         return response(UserResource::fromModel($user)->toArray(), 201);
     }

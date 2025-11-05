@@ -13,9 +13,9 @@ class DocumentTypeController
     /**
      * Display a listing of available document types.
      */
-    public function index(): Collection
+    public function index(DocumentTypeFinderService $documentTypeFinderService): Collection
     {
-        return (new DocumentTypeFinderService)->handle()
+        return $documentTypeFinderService->handle()
             ->map(fn (array $documentType): array => DocumentTypeResource::fromArray($documentType)->toArray());
     }
 }
