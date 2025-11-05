@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             ComplainantSeeder::class,
             DoctorSeeder::class,
             MagistrateSeeder::class,
-            TemplateSeeder::class,
+//            TemplateSeeder::class,
             ProcessSeeder::class,
             ProceedingSeeder::class,
             SessionSeeder::class,

@@ -28,6 +28,7 @@ Route::prefix('admin')->group(function (): void {
     require __DIR__.'/api/admin/complainants.php';
     require __DIR__.'/api/admin/doctors.php';
     require __DIR__.'/api/admin/magistrates.php';
+    require __DIR__.'/api/admin/google-auth.php';
     require __DIR__.'/api/admin/templates.php';
     require __DIR__.'/api/admin/processes.php';
     require __DIR__.'/api/admin/proceedings.php';

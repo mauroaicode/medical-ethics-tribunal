@@ -14,9 +14,9 @@ class SessionController
     /**
      * Display a listing of sessions.
      */
-    public function index(): Collection
+    public function index(SessionFinderService $sessionFinderService): Collection
     {
-        return (new SessionFinderService)->handle()
+        return $sessionFinderService->handle()
             ->map(fn (Session $session): array => SessionResource::fromModel($session)->toArray());
     }
 }

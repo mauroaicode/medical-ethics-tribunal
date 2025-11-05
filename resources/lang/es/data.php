@@ -24,4 +24,7 @@ return [
     'municipality' => 'Municipio',
     'company' => 'Empresa',
     'is_anonymous' => 'Es anónimo',
+    'folder_name' => 'Nombre de carpeta',
+    'template_id' => 'ID de plantilla',
+    'process_id' => 'ID de proceso',
 ];

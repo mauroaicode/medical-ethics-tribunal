@@ -1,0 +1,100 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### TEMPLATE ENDPOINTS - ASSIGN TEMPLATE TO PROCESS
+### ============================================
+###
+
+### Assign Template to Process - Success
+# @name assignTemplateToProcess
+POST {{bevalk_base_url}}{{apiVersion}}/templates/assign-to-process
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "template_id": 1,
+  "process_id": 1
+}
+
+### Assign Template to Process - Invalid Template ID
+# Should return 422 Validation Error
+POST {{bevalk_base_url}}{{apiVersion}}/templates/assign-to-process
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "template_id": 999999,
+  "process_id": 1
+}
+
+### Assign Template to Process - Invalid Process ID
+# Should return 422 Validation Error
+POST {{bevalk_base_url}}{{apiVersion}}/templates/assign-to-process
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "template_id": 1,
+  "process_id": 999999
+}
+
+### Assign Template to Process - Missing Template ID
+# Should return 422 Validation Error
+POST {{bevalk_base_url}}{{apiVersion}}/templates/assign-to-process
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "process_id": 1
+}
+
+### Assign Template to Process - Missing Process ID
+# Should return 422 Validation Error
+POST {{bevalk_base_url}}{{apiVersion}}/templates/assign-to-process
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "template_id": 1
+}
+
+### Assign Template to Process - Missing Both IDs
+# Should return 422 Validation Error
+POST {{bevalk_base_url}}{{apiVersion}}/templates/assign-to-process
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+}
+
+### Assign Template to Process - Without Authentication
+# Should return 401 Unauthorized
+POST {{bevalk_base_url}}{{apiVersion}}/templates/assign-to-process
+Accept: application/json
+Content-Type: application/json
+
+{
+  "template_id": 1,
+  "process_id": 1
+}
+
+### Assign Template to Process - Document Already Exists
+# Should return 409 Conflict if document was already created for this process
+POST {{bevalk_base_url}}{{apiVersion}}/templates/assign-to-process
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "template_id": 1,
+  "process_id": 1
+}
+

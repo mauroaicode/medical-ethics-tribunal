@@ -14,9 +14,9 @@ class AuditLogController
     /**
      * Display a listing of audit logs.
      */
-    public function index(): Collection
+    public function index(AuditLogFinderService $auditLogFinderService): Collection
     {
-        return (new AuditLogFinderService)->handle()
+        return $auditLogFinderService->handle()
             ->map(fn (AuditLog $auditLog): array => AuditLogResource::fromModel($auditLog)->toArray());
     }
 }

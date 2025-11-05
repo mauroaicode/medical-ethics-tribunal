@@ -24,4 +24,7 @@ return [
     'municipality' => 'Municipality',
     'company' => 'Company',
     'is_anonymous' => 'Is anonymous',
+    'folder_name' => 'Folder name',
+    'template_id' => 'Template ID',
+    'process_id' => 'Process ID',
 ];

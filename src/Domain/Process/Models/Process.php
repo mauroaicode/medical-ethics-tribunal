@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Src\Domain\Process\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,6 +18,7 @@ use Src\Domain\Doctor\Models\Doctor;
 use Src\Domain\Magistrate\Models\Magistrate;
 use Src\Domain\Proceeding\Models\Proceeding;
 use Src\Domain\Process\Enums\ProcessStatus;
+use Src\Domain\ProcessTemplateDocument\Models\ProcessTemplateDocument;
 use Src\Domain\Template\Models\Template;
 
 /**
@@ -34,6 +36,14 @@ use Src\Domain\Template\Models\Template;
  * @property-read Carbon|null $created_at
  * @property-read Carbon|null $updated_at
  * @property-read Carbon|null $deleted_at
+ * @property-read Complainant $complainant
+ * @property-read Doctor $doctor
+ * @property-read Magistrate $magistrateInstructor
+ * @property-read Magistrate $magistratePonente
+ * @property-read Template|null $template
+ * @property-read Collection<int, Proceeding> $proceedings
+ * @property-read Collection<int, ProcessTemplateDocument> $templateDocuments
+ * @property-read Collection<int, AuditLog> $auditLogs
  */
 class Process extends Model
 {
@@ -99,6 +109,14 @@ class Process extends Model
     public function proceedings(): HasMany
     {
         return $this->hasMany(Proceeding::class);
+    }
+
+    /**
+     * @return HasMany<ProcessTemplateDocument, $this>
+     */
+    public function templateDocuments(): HasMany
+    {
+        return $this->hasMany(ProcessTemplateDocument::class);
     }
 
     /**

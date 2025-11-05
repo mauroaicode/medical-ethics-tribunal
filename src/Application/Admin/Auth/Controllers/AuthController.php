@@ -22,15 +22,15 @@ class AuthController
      *
      * @throws Throwable
      */
-    public function login(LoginData $loginData): Response|JsonResponse
+    public function login(LocationService $locationService, LoginData $loginData): Response|JsonResponse
     {
-        return DB::transaction(function () use ($loginData): Response {
+        return DB::transaction(function () use ($loginData, $locationService): Response {
             $user = User::query()->where('email', $loginData->email)->first();
 
             $token = $user->createToken('auth-token')->plainTextToken;
 
             $ipAddress = request()->ip();
-            $locationService = new LocationService;
+
             $location = $locationService->getLocationFromIp($ipAddress);
 
             $user->update([

@@ -127,6 +127,14 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        'google' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/google.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => env('LOG_GOOGLE_DAYS', 30),
+            'replace_placeholders' => true,
+        ],
+
     ],
 
 ];
