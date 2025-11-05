@@ -30,8 +30,7 @@ class ProcessTemplateDocumentFactory extends Factory
             'process_id' => Process::factory(),
             'template_id' => Template::factory(),
             'google_drive_file_id' => fake()->unique()->uuid(),
-            'file_name' => fake()->unique()->word().'.docx',
-            'local_path' => fake()->optional()->filePath(),
+            'file_name' => fake()->unique()->word().'.pdf',
             'google_docs_name' => fake()->word(),
         ];
     }

@@ -12,7 +12,7 @@ use Src\Domain\Template\Models\Template;
 class ProcessTemplateDocumentService
 {
     /**
-     * Validate template and process, generate file name and validate if document already exists
+     * Validate template and process, generate file name and validate if a document already exists
      *
      * @return array{template: Template, process: Process, file_name: string, exists: bool}
      */
@@ -73,7 +73,7 @@ class ProcessTemplateDocumentService
         $cleanName = rtrim($process->name, '.');
         $formatProcessName = Str::of($cleanName)->replace(' ', '_');
 
-        return "{$process->process_number}_{$formatProcessName}.docx";
+        return "{$process->process_number}_{$formatProcessName}.pdf";
     }
 
     /**

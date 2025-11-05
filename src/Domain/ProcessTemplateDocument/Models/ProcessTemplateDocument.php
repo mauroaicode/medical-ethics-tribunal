@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace Src\Domain\ProcessTemplateDocument\Models;
 
+use Database\Factories\ProcessTemplateDocumentFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
+use Spatie\MediaLibrary\HasMedia;
 use Src\Domain\AuditLog\Models\AuditLog;
 use Src\Domain\Process\Models\Process;
+use Src\Domain\Shared\Enums\FileType;
+use Src\Domain\Shared\Traits\InteractsWithCustomMedia;
 use Src\Domain\Template\Models\Template;
 
 /**
@@ -20,14 +24,14 @@ use Src\Domain\Template\Models\Template;
  * @property-read int $template_id
  * @property-read string $google_drive_file_id
  * @property-read string $file_name
- * @property-read string|null $local_path
  * @property-read string $google_docs_name
  * @property-read Carbon $created_at
  * @property-read Carbon $updated_at
  */
-class ProcessTemplateDocument extends Model
+class ProcessTemplateDocument extends Model implements HasMedia
 {
     use HasFactory;
+    use InteractsWithCustomMedia;
 
     protected $table = 'process_template_documents';
 
@@ -36,9 +40,13 @@ class ProcessTemplateDocument extends Model
         'template_id',
         'google_drive_file_id',
         'file_name',
-        'local_path',
         'google_docs_name',
     ];
+
+    public function getMediaCollectionName(): string
+    {
+        return FileType::PROCESS_DOCUMENT->value;
+    }
 
     /**
      * @return BelongsTo<Process, $this>
@@ -67,12 +75,40 @@ class ProcessTemplateDocument extends Model
     }
 
     /**
-     * Create a new factory instance for the model.
-     *
-     * @return \Database\Factories\ProcessTemplateDocumentFactory
+     * Get the URL of the document file
      */
-    protected static function newFactory()
+    public function getDocumentUrl(): ?string
     {
-        return \Database\Factories\ProcessTemplateDocumentFactory::new();
+        $media = $this->getFirstMedia($this->getMediaCollectionName());
+
+        return $media?->getUrl();
+    }
+
+    /**
+     * Get the full path of the document file
+     */
+    public function getDocumentPath(): ?string
+    {
+        $media = $this->getFirstMedia($this->getMediaCollectionName());
+
+        return $media?->getPath();
+    }
+
+    /**
+     * Get the disk where the document is stored
+     */
+    public function getDocumentDisk(): ?string
+    {
+        $media = $this->getFirstMedia($this->getMediaCollectionName());
+
+        return $media?->disk;
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): ProcessTemplateDocumentFactory
+    {
+        return ProcessTemplateDocumentFactory::new();
     }
 }

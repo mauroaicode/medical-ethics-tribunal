@@ -181,7 +181,7 @@ describe('assignToProcess', function (): void {
         // Generate the file name that will be created
         $cleanName = rtrim($process->name, '.');
         $formatProcessName = str_replace(' ', '_', $cleanName);
-        $fileName = "{$process->process_number}_{$formatProcessName}.docx";
+        $fileName = "{$process->process_number}_{$formatProcessName}.pdf";
 
         // Create existing document with same file name
         ProcessTemplateDocument::factory()->create([

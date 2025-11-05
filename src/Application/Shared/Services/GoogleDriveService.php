@@ -328,6 +328,25 @@ class GoogleDriveService
     }
 
     /**
+     * Download document as PDF
+     *
+     * @return string File path
+     *
+     * @throws Exception
+     */
+    public function downloadAsPdf(string $fileId, string $savePath): string
+    {
+        $response = $this->getDriveService()->files->export($fileId, 'application/pdf', [
+            'alt' => 'media',
+        ]);
+
+        $content = $response->getBody()->getContents();
+        file_put_contents($savePath, $content);
+
+        return $savePath;
+    }
+
+    /**
      * Get file metadata
      *
      * @return array<string, mixed>
@@ -346,6 +365,22 @@ class GoogleDriveService
             'created_time' => $file->getCreatedTime(),
             'web_view_link' => $file->getWebViewLink(),
         ];
+    }
+
+    /**
+     * Delete a file from Google Drive
+     */
+    public function deleteFile(string $fileId): void
+    {
+        try {
+            $this->getDriveService()->files->delete($fileId);
+        } catch (Exception $e) {
+            Log::channel('google')->error('Error deleting file from Google Drive', [
+                'file_id' => $fileId,
+                'error' => $e->getMessage(),
+            ]);
+            throw new RuntimeException('Error deleting file from Google Drive: '.$e->getMessage(), 0, $e);
+        }
     }
 
     /**
@@ -427,7 +462,7 @@ class GoogleDriveService
     }
 
     /**
-     * Initialize Google API client with credentials
+     * Initialize Google AI client with credentials
      */
     private function initializeClient(): void
     {

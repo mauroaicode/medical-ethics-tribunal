@@ -6,15 +6,17 @@ namespace Src\Application\Admin\Template\Services;
 
 use Google\Service\Exception;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 use Src\Application\Shared\Services\GoogleDriveService;
+use Src\Application\Shared\Traits\StoresDocumentsTrait;
 use Src\Domain\Process\Models\Process;
 use Src\Domain\Template\Models\Template;
 use Throwable;
 
 class TemplateProcessorService
 {
+    use StoresDocumentsTrait;
+
     private GoogleDriveService $googleDriveService;
 
     /**
@@ -43,12 +45,16 @@ class TemplateProcessorService
 
             $this->replacePlaceholders($copiedFile['id'], $process);
 
-            $localPath = $this->saveToStorage($copiedFile['id'], $fileName);
+            $tempPath = $this->downloadDocumentFromGoogleDrive(
+                $this->googleDriveService,
+                $copiedFile['id'],
+                $fileName
+            );
 
             return [
                 'google_drive_file_id' => $copiedFile['id'],
                 'file_name' => $fileName,
-                'local_path' => $localPath,
+                'temp_path' => $tempPath,
                 'google_docs_name' => $copiedFile['name'],
             ];
         });
@@ -139,7 +145,7 @@ class TemplateProcessorService
         ?string $destinationFolderId
     ): array {
 
-        $googleDocsName = str_replace(['.docx', '.doc'], '', $newFileName);
+        $googleDocsName = preg_replace('/\.(docx?|pdf)$/i', '', $newFileName);
 
         $copiedFileId = $this->googleDriveService->convertWordToGoogleDocs(
             $template->google_drive_file_id,
@@ -264,44 +270,5 @@ class TemplateProcessorService
             'magistrate_ponente_phone' => $magistratePonenteUser ? $magistratePonenteUser->phone : 'N/A',
             'magistrate_ponente_email' => $magistratePonenteUser ? $magistratePonenteUser->email : 'N/A',
         ];
-    }
-
-    /**
-     * Save document to storage (AWS S3 or local)
-     *
-     * @return string Local path or S3 path
-     *
-     * @throws Exception
-     */
-    private function saveToStorage(string $fileId, string $fileName): string
-    {
-        // Determine storage disk (S3 if configured, otherwise local)
-        $disk = config('filesystems.default');
-
-        if ($disk === 's3' && config('filesystems.disks.s3.bucket')) {
-            // Save to S3
-            $tempPath = storage_path('app/temp/'.$fileName);
-            $this->googleDriveService->downloadAsDocx($fileId, $tempPath);
-
-            $s3Path = "processes/documents/{$fileName}";
-            Storage::disk('s3')->put($s3Path, file_get_contents($tempPath));
-
-            // Delete temp file
-            @unlink($tempPath);
-
-            return $s3Path;
-        }
-
-        // Save locally
-        $localPath = storage_path('app/private/processes/documents/'.$fileName);
-        $directory = dirname($localPath);
-
-        if (! is_dir($directory)) {
-            mkdir($directory, 0755, true);
-        }
-
-        $this->googleDriveService->downloadAsDocx($fileId, $localPath);
-
-        return $localPath;
     }
 }
