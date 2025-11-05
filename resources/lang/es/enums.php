@@ -23,5 +23,6 @@ return [
         'profile_image' => 'Imagen de Perfil',
         'template_file' => 'Archivo de Plantilla',
         'proceeding_document' => 'Documento de Actuación',
+        'process_document' => 'Acta de Proceso',
     ],
 ];

@@ -23,5 +23,6 @@ return [
         'profile_image' => 'Profile Image',
         'template_file' => 'Template File',
         'proceeding_document' => 'Proceeding Document',
+        'process_document' => 'Process Document',
     ],
 ];

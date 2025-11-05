@@ -9,4 +9,5 @@ enum FileType: string
     case PROFILE_IMAGE = 'profile_image';
     case TEMPLATE_FILE = 'template_file';
     case PROCEEDING_DOCUMENT = 'proceeding_document';
+    case PROCESS_DOCUMENT = 'process_document';
 }
