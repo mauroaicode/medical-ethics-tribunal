@@ -86,10 +86,6 @@ class TemplateController
             $result
         );
 
-        if (! $validation['process']->template_id) {
-            $validation['process']->update(['template_id' => $validation['template']->id]);
-        }
-
         $resource = AssignTemplateResponseResource::fromDocument(
             message: __('template.assigned_successfully'),
             document: $result,

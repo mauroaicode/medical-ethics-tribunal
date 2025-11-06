@@ -9,7 +9,6 @@ use Src\Domain\Doctor\Models\Doctor;
 use Src\Domain\Magistrate\Models\Magistrate;
 use Src\Domain\Process\Enums\ProcessStatus;
 use Src\Domain\Process\Models\Process;
-use Src\Domain\Template\Models\Template;
 
 /**
  * @extends Factory<Process>
@@ -39,9 +38,6 @@ class ProcessFactory extends Factory
             'doctor_id' => Doctor::factory(),
             'magistrate_instructor_id' => Magistrate::factory(),
             'magistrate_ponente_id' => Magistrate::factory(),
-            'template_id' => Template::exists() && fake()->boolean(70)
-                ? Template::inRandomOrder()->first()?->id
-                : null,
             'name' => fake()->sentence(4),
             'process_number' => sprintf('PRO-%06d', $uniqueId % 1000000),
             'start_date' => fake()->dateTimeBetween('-2 years', 'now'),

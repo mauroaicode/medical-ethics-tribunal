@@ -27,4 +27,12 @@ return [
     'folder_name' => 'Nombre de carpeta',
     'template_id' => 'ID de plantilla',
     'process_id' => 'ID de proceso',
+    'complainant_id' => 'Quejoso',
+    'doctor_id' => 'Médico',
+    'magistrate_instructor_id' => 'Magistrado instructor',
+    'magistrate_ponente_id' => 'Magistrado ponente',
+    'start_date' => 'Fecha de inicio',
+    'description' => 'Descripción',
+    'process_number' => 'Número de proceso',
+    'deleted_reason' => 'Razón de eliminación',
 ];

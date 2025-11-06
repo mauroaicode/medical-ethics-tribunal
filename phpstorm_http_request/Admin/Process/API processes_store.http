@@ -1,0 +1,158 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### PROCESS ENDPOINTS - CREATE PROCESS
+### ============================================
+###
+
+### Create Process - Success (Super Admin)
+# @name createProcess
+# Note: New processes are always created with "borrador" (draft) status
+POST {{base_url}}{{apiVersion}}/processes
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "complainant_id": 1,
+  "doctor_id": 1,
+  "magistrate_instructor_id": 1,
+  "magistrate_ponente_id": 2,
+  "name": "Proceso de Ética Médica - Caso 001",
+  "start_date": "2025-01-15",
+  "description": "Descripción detallada del proceso de ética médica relacionado con el caso número 001"
+}
+
+### Create Process - Success (Admin)
+# @name createProcessAdmin
+# Note: New processes are always created with "borrador" (draft) status
+POST {{base_url}}{{apiVersion}}/processes
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "complainant_id": 2,
+  "doctor_id": 2,
+  "magistrate_instructor_id": 1,
+  "magistrate_ponente_id": 2,
+  "name": "Proceso de Ética Médica - Caso 002",
+  "start_date": "2025-01-20",
+  "description": "Descripción detallada del proceso de ética médica relacionado con el caso número 002"
+}
+
+### Create Process - Without Authentication
+# Should return 401 Unauthorized
+POST {{base_url}}{{apiVersion}}/processes
+Content-Type: application/json
+Accept: application/json
+
+{
+  "complainant_id": 1,
+  "doctor_id": 1,
+  "magistrate_instructor_id": 1,
+  "magistrate_ponente_id": 2,
+  "name": "Sin Auth",
+  "start_date": "2025-01-15",
+  "description": "Descripción"
+}
+
+### Create Process - Unauthorized (Secretary Role)
+# Should return 403 Forbidden
+POST {{base_url}}{{apiVersion}}/processes
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "complainant_id": 1,
+  "doctor_id": 1,
+  "magistrate_instructor_id": 1,
+  "magistrate_ponente_id": 2,
+  "name": "No Autorizado",
+  "start_date": "2025-01-15",
+  "description": "Descripción"
+}
+
+### Create Process - Validation Error (Missing Required Fields)
+# Should return 422 Unprocessable Entity
+POST {{base_url}}{{apiVersion}}/processes
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "Incompleto"
+}
+
+### Create Process - Validation Error (Invalid Complainant ID)
+# Should return 422 Unprocessable Entity
+POST {{base_url}}{{apiVersion}}/processes
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "complainant_id": 99999,
+  "doctor_id": 1,
+  "magistrate_instructor_id": 1,
+  "magistrate_ponente_id": 2,
+  "name": "Test",
+  "start_date": "2025-01-15",
+  "description": "Descripción"
+}
+
+### Create Process - Validation Error (Invalid Doctor ID)
+# Should return 422 Unprocessable Entity
+POST {{base_url}}{{apiVersion}}/processes
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "complainant_id": 1,
+  "doctor_id": 99999,
+  "magistrate_instructor_id": 1,
+  "magistrate_ponente_id": 2,
+  "name": "Test",
+  "start_date": "2025-01-15",
+  "description": "Descripción"
+}
+
+### Create Process - Validation Error (Invalid Magistrate Instructor ID)
+# Should return 422 Unprocessable Entity
+POST {{base_url}}{{apiVersion}}/processes
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "complainant_id": 1,
+  "doctor_id": 1,
+  "magistrate_instructor_id": 99999,
+  "magistrate_ponente_id": 2,
+  "name": "Test",
+  "start_date": "2025-01-15",
+  "description": "Descripción"
+}
+
+### Create Process - Validation Error (Invalid Magistrate Ponente ID)
+# Should return 422 Unprocessable Entity
+POST {{base_url}}{{apiVersion}}/processes
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "complainant_id": 1,
+  "doctor_id": 1,
+  "magistrate_instructor_id": 1,
+  "magistrate_ponente_id": 99999,
+  "name": "Test",
+  "start_date": "2025-01-15",
+  "description": "Descripción"
+}
+
+

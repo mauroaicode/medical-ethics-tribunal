@@ -137,11 +137,10 @@ Table processes {
   doctor_id int [ref: > doctors.id]
   magistrate_instructor_id int [ref: > magistrates.id, note: "magistrado instructor"]
   magistrate_ponente_id int [ref: > magistrates.id, note: "magistrado ponente"]
-  template_id int [ref: > templates.id]
   name varchar
   process_number varchar [unique, note: "número consecutivo automático"]
   start_date date [note: "fecha de inicio del proceso"]
-  status varchar [note: "pending, in_progress, closed"]
+  status varchar [note: "borrador, in_progress, closed"]
   description text
   created_at timestamp
   updated_at timestamp

@@ -15,7 +15,7 @@ return [
         'secretary' => 'Secretary',
     ],
     'process_status' => [
-        'pending' => 'Pending',
+        'borrador' => 'Draft',
         'in_progress' => 'In Progress',
         'closed' => 'Closed',
     ],
