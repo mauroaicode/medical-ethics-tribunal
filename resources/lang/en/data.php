@@ -27,4 +27,12 @@ return [
     'folder_name' => 'Folder name',
     'template_id' => 'Template ID',
     'process_id' => 'Process ID',
+    'complainant_id' => 'Complainant',
+    'doctor_id' => 'Doctor',
+    'magistrate_instructor_id' => 'Magistrate instructor',
+    'magistrate_ponente_id' => 'Magistrate ponente',
+    'start_date' => 'Start date',
+    'description' => 'Description',
+    'process_number' => 'Process number',
+    'deleted_reason' => 'Deletion reason',
 ];

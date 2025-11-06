@@ -1,0 +1,202 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### PROCESS ENDPOINTS - UPDATE PROCESS
+### ============================================
+###
+
+### Update Process - Success (Super Admin)
+# @name updateProcess
+PUT {{base_url}}{{apiVersion}}/processes/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "Proceso Actualizado - Caso 001",
+  "status": "in_progress",
+  "description": "Descripción actualizada del proceso"
+}
+
+### Update Process - Success (Admin)
+# @name updateProcessAdmin
+PUT {{base_url}}{{apiVersion}}/processes/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "description": "Nueva descripción del proceso"
+}
+
+### Update Process - Change Status to Draft
+# @name updateProcessStatusDraft
+PUT {{base_url}}{{apiVersion}}/processes/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "status": "borrador"
+}
+
+### Update Process - Change Status to Closed
+# @name updateProcessStatusClosed
+PUT {{base_url}}{{apiVersion}}/processes/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "status": "closed"
+}
+
+### Update Process - Change Complainant
+# @name updateProcessComplainant
+PUT {{base_url}}{{apiVersion}}/processes/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "complainant_id": 2
+}
+
+### Update Process - Change Doctor
+# @name updateProcessDoctor
+PUT {{base_url}}{{apiVersion}}/processes/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "doctor_id": 2
+}
+
+### Update Process - Change Magistrates
+# @name updateProcessMagistrates
+PUT {{base_url}}{{apiVersion}}/processes/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "magistrate_instructor_id": 2,
+  "magistrate_ponente_id": 1
+}
+
+### Update Process - Change Start Date
+# @name updateProcessStartDate
+PUT {{base_url}}{{apiVersion}}/processes/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "start_date": "2025-02-01"
+}
+
+### Update Process - Multiple Fields
+# @name updateProcessMultiple
+PUT {{base_url}}{{apiVersion}}/processes/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "Proceso Actualizado Completo",
+  "status": "in_progress",
+  "description": "Descripción actualizada completa",
+  "start_date": "2025-02-15"
+}
+
+### Update Process - Without Authentication
+# Should return 401 Unauthorized
+PUT {{base_url}}{{apiVersion}}/processes/1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Sin Auth"
+}
+
+### Update Process - Unauthorized (Secretary Role)
+# Should return 403 Forbidden
+PUT {{base_url}}{{apiVersion}}/processes/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "No Autorizado"
+}
+
+### Update Process - Not Found (404)
+# Should return 404 without JSON
+PUT {{base_url}}{{apiVersion}}/processes/99999
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "No Existe"
+}
+
+### Update Process - Validation Error (Invalid Complainant ID)
+# Should return 422 Unprocessable Entity
+PUT {{base_url}}{{apiVersion}}/processes/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "complainant_id": 99999
+}
+
+### Update Process - Validation Error (Invalid Doctor ID)
+# Should return 422 Unprocessable Entity
+PUT {{base_url}}{{apiVersion}}/processes/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "doctor_id": 99999
+}
+
+### Update Process - Validation Error (Invalid Magistrate Instructor ID)
+# Should return 422 Unprocessable Entity
+PUT {{base_url}}{{apiVersion}}/processes/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "magistrate_instructor_id": 99999
+}
+
+### Update Process - Validation Error (Invalid Magistrate Ponente ID)
+# Should return 422 Unprocessable Entity
+PUT {{base_url}}{{apiVersion}}/processes/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "magistrate_ponente_id": 99999
+}
+
+### Update Process - Validation Error (Invalid Status)
+# Should return 422 Unprocessable Entity
+PUT {{base_url}}{{apiVersion}}/processes/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "status": "invalid_status"
+}
+
+

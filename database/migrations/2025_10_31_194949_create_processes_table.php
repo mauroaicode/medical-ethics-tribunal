@@ -17,12 +17,12 @@ return new class extends Migration
             $table->foreignId('doctor_id')->constrained();
             $table->foreignId('magistrate_instructor_id')->constrained('magistrates');
             $table->foreignId('magistrate_ponente_id')->constrained('magistrates');
-            $table->foreignId('template_id')->nullable()->constrained();
             $table->string('name');
             $table->string('process_number')->unique();
             $table->date('start_date');
-            $table->string('status'); // enum: pending, in_progress, closed
+            $table->string('status'); // enum: borrador, in_progress, closed
             $table->text('description');
+            $table->text('deleted_reason')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

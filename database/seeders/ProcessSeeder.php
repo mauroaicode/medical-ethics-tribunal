@@ -8,7 +8,6 @@ use Src\Domain\Complainant\Models\Complainant;
 use Src\Domain\Doctor\Models\Doctor;
 use Src\Domain\Magistrate\Models\Magistrate;
 use Src\Domain\Process\Models\Process;
-use Src\Domain\Template\Models\Template;
 
 class ProcessSeeder extends Seeder
 {
@@ -20,7 +19,6 @@ class ProcessSeeder extends Seeder
         $complainants = Complainant::all();
         $doctors = Doctor::all();
         $magistrates = Magistrate::all();
-        $templates = Template::all();
 
         if ($complainants->isEmpty() || $doctors->isEmpty() || $magistrates->count() < 2) {
             $this->command->warn('Se necesitan al menos 2 magistrados para crear procesos.');
@@ -40,7 +38,6 @@ class ProcessSeeder extends Seeder
                 'doctor_id' => $doctors->random()->id,
                 'magistrate_instructor_id' => $magistrates->random()->id,
                 'magistrate_ponente_id' => $magistrates->random()->id,
-                'template_id' => $templates->isNotEmpty() && fake()->boolean(70) ? $templates->random()->id : null,
                 'process_number' => $processNumber,
             ]);
         }

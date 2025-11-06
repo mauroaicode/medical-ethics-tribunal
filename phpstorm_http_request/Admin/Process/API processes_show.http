@@ -1,0 +1,38 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### PROCESS ENDPOINTS - SHOW PROCESS
+### ============================================
+###
+
+### Show Process - Success (Super Admin)
+# @name showProcess
+GET {{base_url}}{{apiVersion}}/processes/1
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Show Process - Success (Admin)
+# @name showProcessAdmin
+GET {{base_url}}{{apiVersion}}/processes/1
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Show Process - Success (Secretary)
+# @name showProcessSecretary
+GET {{base_url}}{{apiVersion}}/processes/1
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Show Process - Without Authentication
+# Should return 401 Unauthorized
+GET {{base_url}}{{apiVersion}}/processes/1
+Accept: application/json
+
+### Show Process - Not Found (404)
+# Should return 404 without JSON
+GET {{base_url}}{{apiVersion}}/processes/99999
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+

@@ -6,7 +6,7 @@ namespace Src\Domain\Process\Enums;
 
 enum ProcessStatus: string
 {
-    case PENDING = 'pending';
+    case DRAFT = 'borrador';
     case IN_PROGRESS = 'in_progress';
     case CLOSED = 'closed';
 
@@ -18,7 +18,7 @@ enum ProcessStatus: string
     public function getLabel(): string
     {
         return match ($this) {
-            self::PENDING => __('enums.process_status.pending'),
+            self::DRAFT => __('enums.process_status.borrador'),
             self::IN_PROGRESS => __('enums.process_status.in_progress'),
             self::CLOSED => __('enums.process_status.closed'),
         };
