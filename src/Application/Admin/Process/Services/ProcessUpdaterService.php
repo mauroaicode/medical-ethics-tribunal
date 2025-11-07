@@ -6,6 +6,7 @@ namespace Src\Application\Admin\Process\Services;
 
 use Illuminate\Support\Facades\DB;
 use Src\Application\Admin\Process\Data\UpdateProcessData;
+use Src\Application\Admin\ProcessTemplateDocument\Services\ProcessDocumentRegeneratorService;
 use Src\Application\Shared\Traits\LogsAuditTrait;
 use Src\Domain\Process\Models\Process;
 use Throwable;
@@ -56,6 +57,12 @@ class ProcessUpdaterService
                 oldValues: $oldValues,
                 newValues: $updatedProcess->getAttributes(),
             );
+
+            // Regenerate documents if a process has any template documents
+            DB::afterCommit(function () use ($updatedProcess): void {
+                $regeneratorService = new ProcessDocumentRegeneratorService;
+                $regeneratorService->handle($updatedProcess);
+            });
 
             return $updatedProcess;
         });

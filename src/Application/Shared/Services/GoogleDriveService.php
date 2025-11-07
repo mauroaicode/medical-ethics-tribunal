@@ -24,12 +24,6 @@ class GoogleDriveService
 
     private bool $initialized = false;
 
-    public function __construct()
-    {
-        // Initialize lazily to allow mocking in tests
-        // The service can be instantiated without credentials for testing
-    }
-
     /**
      * Save refresh token for future use
      */

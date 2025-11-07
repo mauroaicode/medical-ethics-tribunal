@@ -129,7 +129,7 @@ class ProcessResource extends Resource
                     'google_drive_file_id' => $templateDocument->google_drive_file_id,
                     'google_docs_name' => $templateDocument->google_docs_name,
                     'document_url' => $media?->getUrl(),
-                    'template' => ($templateDocument->relationLoaded('template') && $templateDocument->template) ? [
+                    'template' => $templateDocument->relationLoaded('template') ? [
                         'id' => $templateDocument->template->id,
                         'name' => $templateDocument->template->name,
                         'description' => $templateDocument->template->description,
