@@ -27,6 +27,8 @@ use Src\Domain\Template\Models\Template;
  * @property-read string $google_docs_name
  * @property-read Carbon $created_at
  * @property-read Carbon $updated_at
+ * @property-read Process $process
+ * @property-read Template $template
  */
 class ProcessTemplateDocument extends Model implements HasMedia
 {

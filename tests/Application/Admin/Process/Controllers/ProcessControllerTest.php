@@ -20,12 +20,11 @@ use function Pest\Laravel\post;
 use function Pest\Laravel\put;
 
 beforeEach(function (): void {
-    // Create roles
+
     $this->superAdminRole = Role::firstOrCreate(['name' => UserRole::SUPER_ADMIN->value, 'guard_name' => 'web']);
     $this->adminRole = Role::firstOrCreate(['name' => UserRole::ADMIN->value, 'guard_name' => 'web']);
     $this->secretaryRole = Role::firstOrCreate(['name' => UserRole::SECRETARY->value, 'guard_name' => 'web']);
 
-    // Create users with different roles
     $this->superAdmin = User::factory()->create();
     $this->superAdmin->assignRole($this->superAdminRole);
 
@@ -35,13 +34,11 @@ beforeEach(function (): void {
     $this->secretary = User::factory()->create();
     $this->secretary->assignRole($this->secretaryRole);
 
-    // Create related entities for testing
     $this->complainant = Complainant::factory()->create();
     $this->doctor = Doctor::factory()->create();
     $this->magistrate1 = Magistrate::factory()->create();
     $this->magistrate2 = Magistrate::factory()->create();
 
-    // Create processes for testing
     $this->process1 = Process::factory()->create([
         'complainant_id' => $this->complainant->id,
         'doctor_id' => $this->doctor->id,

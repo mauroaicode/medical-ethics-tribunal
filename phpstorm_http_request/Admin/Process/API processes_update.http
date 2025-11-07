@@ -16,9 +16,9 @@ Authorization: Bearer {{auth_token}}
 
 {
   "name": "Proceso Actualizado - Caso 001",
-  "status": "in_progress",
-  "description": "Descripción actualizada del proceso"
+  "description": "La paciente acudió a mi consultorio el 8 de septiembre de 2024 presentando síntomas de cansancio y dolor muscular generalizado, que inicialmente atribuyó a estrés laboral y sedentarismo. Realicé un examen clínico general que no reveló hallazgos relevantes en ese momento, ordené pruebas básicas de laboratorio (hemograma y químico sanguíneo) cuyos resultados iniciales fueron reportados como normales por el laboratorio contratado. Basándome en estos resultados y en la presentación clínica de la paciente, diagnostiqué síndrome de fatiga asociado a estrés y recomendé reposo, ejercicio moderado y control de estrés. Sin embargo, reconozco que no solicité pruebas adicionales como marcadores de autoinmunidad o análisis más específicos que, en retrospectiva, podrían haber permitido un diagnóstico más temprano. El retraso diagnóstico de aproximadamente dos meses se debió a que la presentación clínica inicial no era concluyente, y las pruebas solicitadas fueron interpretadas conforme a los protocolos estándar de atención primaria vigentes en el momento. Cuando la paciente retornó en noviembre con síntomas agravados, se ordenaron investigaciones más exhaustivas que confirmaron la sospecha diagnóstica. Aunque reconozco que la oportunidad en el diagnóstico puede mejorarse, mis acciones se ajustaron a los estándares de cuidado razonables en medicina general, considerando la información disponible en ese momento y la naturaleza inespecífica de la presentación clínica inicial. La negligencia no puede imputarse simplemente porque el diagnóstico no fue inmediato, cuando en realidad seguí un razonamiento clínico coherente basado en la evidencia disponible. Solicito al Tribunal que, al evaluar esta queja, considere el contexto clínico, la complejidad diagnóstica de las enfermedades sistémicas, y los limitados hallazgos iniciales que no permitían sospechar una patología autoinmune severa desde la primera evaluación."
 }
+
 
 ### Update Process - Success (Admin)
 # @name updateProcessAdmin
