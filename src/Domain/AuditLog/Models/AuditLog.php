@@ -47,6 +47,7 @@ class AuditLog extends Model
         'user_agent',
         'location',
         'created_at',
+        'context_action',
     ];
 
     /**

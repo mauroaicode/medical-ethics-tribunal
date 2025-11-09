@@ -1,0 +1,57 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### STEP-UP AUTHENTICATION - SEND CODE
+### ============================================
+###
+
+### Send Code - Process Update Action
+# @name sendCodeProcessUpdate
+POST {{bevalk_base_url}}{{apiVersion}}/step-up/send-code
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "action": "process.update"
+}
+
+> {%
+    client.log("Step-up code sent to email for process.update action");
+%}
+
+### Send Code - Process Delete Action
+# @name sendCodeProcessDelete
+POST {{bevalk_base_url}}{{apiVersion}}/step-up/send-code
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "action": "process.delete"
+}
+
+> {%
+    client.log("Step-up code sent to email for process.delete action");
+%}
+
+### Send Code - Missing Action (Validation Error)
+POST {{bevalk_base_url}}{{apiVersion}}/step-up/send-code
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+}
+
+### Send Code - Unauthenticated (401)
+POST {{bevalk_base_url}}{{apiVersion}}/step-up/send-code
+Content-Type: application/json
+Accept: application/json
+
+{
+  "action": "process.update"
+}
+

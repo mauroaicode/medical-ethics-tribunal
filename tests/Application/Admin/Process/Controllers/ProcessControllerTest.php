@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Models\Role;
 use Src\Application\Admin\Process\Controllers\ProcessController;
 use Src\Domain\AuditLog\Models\AuditLog;
@@ -347,6 +348,10 @@ describe('store', function (): void {
 
 describe('update', function (): void {
     it('updates process successfully when authenticated as super admin', function (): void {
+        // Verify step-up code first
+        $verificationKey = config('step-up.verification.cache_key_prefix')."_{$this->superAdmin->id}_process.update";
+        Cache::put($verificationKey, true, now()->addMinutes(10));
+
         $data = [
             'name' => 'Proceso Actualizado',
             'status' => ProcessStatus::IN_PROGRESS->value,
@@ -363,6 +368,9 @@ describe('update', function (): void {
     });
 
     it('updates process successfully when authenticated as admin', function (): void {
+        $verificationKey = config('step-up.verification.cache_key_prefix')."_{$this->admin->id}_process.update";
+        Cache::put($verificationKey, true, now()->addMinutes(10));
+
         $data = [
             'description' => 'Nueva descripción',
         ];
@@ -377,13 +385,16 @@ describe('update', function (): void {
     });
 
     it('creates audit log entry when updating process', function (): void {
-        $oldValues = $this->process1->getAttributes();
+        $verificationKey = config('step-up.verification.cache_key_prefix')."_{$this->superAdmin->id}_process.update";
+        Cache::put($verificationKey, true, now()->addMinutes(10));
+
+        $this->process1->getAttributes();
 
         $data = [
             'description' => 'Descripción Actualizada',
         ];
 
-        $response = actingAs($this->superAdmin)
+        actingAs($this->superAdmin)
             ->put(action([ProcessController::class, 'update'], $this->process1->id), $data)
             ->assertStatus(200);
 
@@ -440,6 +451,9 @@ describe('destroy', function (): void {
             'magistrate_ponente_id' => $this->magistrate2->id,
         ]);
 
+        $verificationKey = config('step-up.verification.cache_key_prefix')."_{$this->superAdmin->id}_process.delete";
+        Cache::put($verificationKey, true, now()->addMinutes(10));
+
         actingAs($this->superAdmin)
             ->delete(action([ProcessController::class, 'destroy'], $processToDelete->id), [
                 'deleted_reason' => 'Proceso duplicado',
@@ -460,6 +474,9 @@ describe('destroy', function (): void {
             'magistrate_ponente_id' => $this->magistrate2->id,
         ]);
 
+        $verificationKey = config('step-up.verification.cache_key_prefix')."_{$this->admin->id}_process.delete";
+        Cache::put($verificationKey, true, now()->addMinutes(10));
+
         actingAs($this->admin)
             ->delete(action([ProcessController::class, 'destroy'], $processToDelete->id), [
                 'deleted_reason' => 'Error en el proceso',
@@ -477,7 +494,11 @@ describe('destroy', function (): void {
             'magistrate_instructor_id' => $this->magistrate1->id,
             'magistrate_ponente_id' => $this->magistrate2->id,
         ]);
-        $oldValues = $processToDelete->getAttributes();
+
+        $processToDelete->getAttributes();
+
+        $verificationKey = config('step-up.verification.cache_key_prefix')."_{$this->superAdmin->id}_process.delete";
+        Cache::put($verificationKey, true, now()->addMinutes(10));
 
         actingAs($this->superAdmin)
             ->delete(action([ProcessController::class, 'destroy'], $processToDelete->id), [
@@ -525,6 +546,10 @@ describe('destroy', function (): void {
     });
 
     it('requires deleted_reason when deleting process', function (): void {
+
+        $verificationKey = config('step-up.verification.cache_key_prefix')."_{$this->superAdmin->id}_process.delete";
+        Cache::put($verificationKey, true, now()->addMinutes(10));
+
         $processToDelete = Process::factory()->create([
             'complainant_id' => $this->complainant->id,
             'doctor_id' => $this->doctor->id,
@@ -545,6 +570,10 @@ describe('destroy', function (): void {
     });
 
     it('validates deleted_reason minimum length', function (): void {
+
+        $verificationKey = config('step-up.verification.cache_key_prefix')."_{$this->superAdmin->id}_process.delete";
+        Cache::put($verificationKey, true, now()->addMinutes(10));
+
         $processToDelete = Process::factory()->create([
             'complainant_id' => $this->complainant->id,
             'doctor_id' => $this->doctor->id,
@@ -560,6 +589,10 @@ describe('destroy', function (): void {
     });
 
     it('validates deleted_reason maximum length', function (): void {
+
+        $verificationKey = config('step-up.verification.cache_key_prefix')."_{$this->superAdmin->id}_process.delete";
+        Cache::put($verificationKey, true, now()->addMinutes(10));
+
         $processToDelete = Process::factory()->create([
             'complainant_id' => $this->complainant->id,
             'doctor_id' => $this->doctor->id,

@@ -2,6 +2,8 @@
 
 use App\Http\Middleware\EnsureAdminRole;
 use App\Http\Middleware\EnsureSuperAdminRole;
+use Src\Application\Admin\StepUp\Exceptions\UserBlockedException;
+use Src\Application\Admin\StepUp\Middleware\RequireStepUpVerification;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -22,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => EnsureAdminRole::class,
             'super_admin' => EnsureSuperAdminRole::class,
+            'step_up' => RequireStepUpVerification::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
@@ -64,6 +67,12 @@ return Application::configure(basePath: dirname(__DIR__))
                     ],
                     status: 422,
                 );
+            }
+        });
+
+        $exceptions->render(function (UserBlockedException $e, Request $request) {
+            if ($request->is('api/*') || $request->wantsJson()) {
+                return $e->render();
             }
         });
 
