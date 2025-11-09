@@ -5,6 +5,75 @@
 ### ============================================
 ### PROCESS ENDPOINTS - DELETE PROCESS
 ### ============================================
+### NOTE: Update and Delete actions require Step-Up Authentication
+### When you try to update/delete without verification, you'll receive:
+### - Status 428 (Precondition Required)
+### - A code will be automatically sent to your email
+### - You must verify the code before the action can be completed
+###
+
+###
+### ============================================
+### STEP-UP FLOW EXAMPLE FOR DELETE
+### ============================================
+###
+
+### Step 1: Try to Delete Process (Will trigger Step-Up - Code sent automatically)
+# This will return 428 and send code to email
+# @name deleteProcessStepUp1
+DELETE {{base_url}}{{apiVersion}}/processes/1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "deleted_reason": "Proceso duplicado o error en la creación"
+}
+
+> {%
+    if (response.status === 428) {
+        client.log("Step-up code has been sent to your email");
+        client.log("Check your email for the 6-digit code");
+        client.log("Next: Use the verify-code endpoint with the code you received");
+    }
+%}
+
+### Step 2: Verify Code (Use code from email)
+# Replace "123456" with the actual code received via email
+# @name verifyCodeForDelete
+POST {{base_url}}{{apiVersion}}/step-up/verify-code
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "action": "process.delete",
+  "code": "123456"
+}
+
+> {%
+    if (response.status === 200) {
+        client.log("Code verified! You can now delete the process");
+        client.log("Next: Retry the delete request");
+    }
+%}
+
+### Step 3: Retry Delete Process (Now it will work)
+# After verifying the code, this request will succeed
+# @name deleteProcessAfterVerification
+DELETE {{base_url}}{{apiVersion}}/processes/1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "deleted_reason": "Proceso duplicado o error en la creación"
+}
+
+###
+### ============================================
+### REGULAR DELETE EXAMPLES
+### ============================================
 ###
 
 ### Delete Process - Success (Super Admin)

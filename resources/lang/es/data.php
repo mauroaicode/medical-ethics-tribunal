@@ -35,4 +35,5 @@ return [
     'description' => 'Descripción',
     'process_number' => 'Número de proceso',
     'deleted_reason' => 'Razón de eliminación',
+    'action' => 'Acción',
 ];

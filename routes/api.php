@@ -32,4 +32,5 @@ Route::prefix('admin')->group(function (): void {
     require __DIR__.'/api/admin/templates.php';
     require __DIR__.'/api/admin/processes.php';
     require __DIR__.'/api/admin/proceedings.php';
+    require __DIR__.'/api/admin/step-up.php';
 });

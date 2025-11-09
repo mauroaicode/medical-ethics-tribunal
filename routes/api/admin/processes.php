@@ -12,6 +12,10 @@ Route::middleware(['auth:sanctum'])->prefix('processes')->group(function (): voi
 
 Route::middleware(['auth:sanctum', 'admin'])->prefix('processes')->group(function (): void {
     Route::post('/', [ProcessController::class, 'store']);
-    Route::put('/{process}', [ProcessController::class, 'update']);
-    Route::delete('/{process}', [ProcessController::class, 'destroy']);
+    Route::middleware(['step_up:process.update'])->group(function (): void {
+        Route::put('/{process}', [ProcessController::class, 'update']);
+    });
+    Route::middleware(['step_up:process.delete'])->group(function (): void {
+        Route::delete('/{process}', [ProcessController::class, 'destroy']);
+    });
 });

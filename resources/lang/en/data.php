@@ -35,4 +35,5 @@ return [
     'description' => 'Description',
     'process_number' => 'Process number',
     'deleted_reason' => 'Deletion reason',
+    'action' => 'Action',
 ];

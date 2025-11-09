@@ -1,0 +1,178 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### STEP-UP AUTHENTICATION - VERIFY CODE
+### ============================================
+###
+
+### Verify Code - Process Update Action (Success)
+# Replace {code} with the 6-digit code received via email
+# First, send a code using the send-code endpoint, then use that code here
+# @name verifyCodeProcessUpdate
+POST {{bevalk_base_url}}{{apiVersion}}/step-up/verify-code
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "action": "process.update",
+  "code": "123456"
+}
+
+> {%
+    client.log("Step-up code verified successfully for process.update action");
+    if (response.status === 200) {
+        client.log("You can now perform the process.update action");
+    }
+%}
+
+### Verify Code - Process Delete Action (Success)
+# Replace {code} with the 6-digit code received via email
+# First, send a code using the send-code endpoint, then use that code here
+# @name verifyCodeProcessDelete
+POST {{bevalk_base_url}}{{apiVersion}}/step-up/verify-code
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "action": "process.delete",
+  "code": "123456"
+}
+
+> {%
+    client.log("Step-up code verified successfully for process.delete action");
+    if (response.status === 200) {
+        client.log("You can now perform the process.delete action");
+    }
+%}
+
+### Verify Code - Invalid Code (Wrong Code)
+POST {{bevalk_base_url}}{{apiVersion}}/step-up/verify-code
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "action": "process.update",
+  "code": "999999"
+}
+
+> {%
+    client.log("Invalid code provided - this will increment failed attempts");
+%}
+
+### Verify Code - Expired Code
+# This will fail if the code has expired (default: 5 minutes)
+POST {{bevalk_base_url}}{{apiVersion}}/step-up/verify-code
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "action": "process.update",
+  "code": "123456"
+}
+
+### Verify Code - Missing Code (Validation Error)
+POST {{bevalk_base_url}}{{apiVersion}}/step-up/verify-code
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "action": "process.update"
+}
+
+### Verify Code - Missing Action (Validation Error)
+POST {{bevalk_base_url}}{{apiVersion}}/step-up/verify-code
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "code": "123456"
+}
+
+### Verify Code - Invalid Code Length (Too Short)
+POST {{bevalk_base_url}}{{apiVersion}}/step-up/verify-code
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "action": "process.update",
+  "code": "12345"
+}
+
+### Verify Code - Invalid Code Length (Too Long)
+POST {{bevalk_base_url}}{{apiVersion}}/step-up/verify-code
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "action": "process.update",
+  "code": "1234567"
+}
+
+### Verify Code - Unauthenticated (401)
+POST {{bevalk_base_url}}{{apiVersion}}/step-up/verify-code
+Content-Type: application/json
+Accept: application/json
+
+{
+  "action": "process.update",
+  "code": "123456"
+}
+
+###
+### ============================================
+### TESTING BLOCK SCENARIO
+### ============================================
+### After 3 failed attempts, the user will be blocked for 1 hour
+### To test this, try verifying with wrong codes 3 times in a row
+###
+
+### Test Block - First Failed Attempt
+POST {{bevalk_base_url}}{{apiVersion}}/step-up/verify-code
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "action": "process.update",
+  "code": "000000"
+}
+
+### Test Block - Second Failed Attempt
+POST {{bevalk_base_url}}{{apiVersion}}/step-up/verify-code
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "action": "process.update",
+  "code": "000000"
+}
+
+### Test Block - Third Failed Attempt (Will Block User)
+POST {{bevalk_base_url}}{{apiVersion}}/step-up/verify-code
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "action": "process.update",
+  "code": "000000"
+}
+
+> {%
+    if (response.status === 500 || response.status === 403) {
+        client.log("User has been blocked due to 3 failed attempts");
+        client.log("Session will be logged out and blocked for 1 hour");
+    }
+%}
+

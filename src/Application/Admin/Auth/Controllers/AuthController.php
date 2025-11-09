@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Src\Application\Admin\Auth\Data\LoginData;
 use Src\Application\Admin\Auth\Resources\AuthResource;
+use Src\Application\Admin\StepUp\Services\CheckUserBlockService;
 use Src\Application\Shared\Services\LocationService;
 use Src\Domain\Session\Models\Session;
 use Src\Domain\User\Models\User;
@@ -22,10 +23,19 @@ class AuthController
      *
      * @throws Throwable
      */
-    public function login(LocationService $locationService, LoginData $loginData): Response|JsonResponse
-    {
-        return DB::transaction(function () use ($loginData, $locationService): Response {
+    public function login(
+        LocationService $locationService,
+        CheckUserBlockService $checkUserBlockService,
+        LoginData $loginData
+    ): Response|JsonResponse {
+        return DB::transaction(function () use ($loginData, $locationService, $checkUserBlockService): Response {
             $user = User::query()->where('email', $loginData->email)->first();
+
+            if (! $user) {
+                abort(401, __('auth.failed'));
+            }
+
+            $checkUserBlockService->handle($user);
 
             $token = $user->createToken('auth-token')->plainTextToken;
 
@@ -38,7 +48,6 @@ class AuthController
                 'last_login_at' => now(),
             ]);
 
-            // Register session with location (create a new session record for each login)
             Session::query()->create([
                 'id' => Str::random(40),
                 'user_id' => $user->id,
