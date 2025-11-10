@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Src\Application\Admin\Doctor\Data\StoreDoctorData;
 use Src\Application\Admin\Doctor\Data\UpdateDoctorData;
+use Src\Application\Admin\Doctor\Resources\DoctorIndexResource;
 use Src\Application\Admin\Doctor\Resources\DoctorResource;
 use Src\Application\Admin\Doctor\Services\DoctorCreatorService;
 use Src\Application\Admin\Doctor\Services\DoctorDeleterService;
@@ -24,7 +25,7 @@ class DoctorController
     public function index(DoctorFinderService $doctorFinderService): Collection
     {
         return $doctorFinderService->handle()
-            ->map(fn (Doctor $doctor): array => DoctorResource::fromModel($doctor)->toArray());
+            ->map(fn (Doctor $doctor): array => DoctorIndexResource::fromModel($doctor)->toArray());
     }
 
     /**

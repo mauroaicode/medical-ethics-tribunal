@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use Src\Application\Admin\Process\Data\DeleteProcessData;
 use Src\Application\Admin\Process\Data\StoreProcessData;
 use Src\Application\Admin\Process\Data\UpdateProcessData;
+use Src\Application\Admin\Process\Resources\ProcessIndexResource;
 use Src\Application\Admin\Process\Resources\ProcessResource;
 use Src\Application\Admin\Process\Services\ProcessCreatorService;
 use Src\Application\Admin\Process\Services\ProcessDeleterService;
@@ -25,7 +26,7 @@ class ProcessController
     public function index(ProcessFinderService $processFinderService): Collection
     {
         return $processFinderService->handle()
-            ->map(fn (Process $process): array => ProcessResource::fromModel($process)->toArray());
+            ->map(fn (Process $process): array => ProcessIndexResource::fromModel($process)->toArray());
     }
 
     /**

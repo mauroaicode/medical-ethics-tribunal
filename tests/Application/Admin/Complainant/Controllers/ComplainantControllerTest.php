@@ -54,12 +54,12 @@ describe('index', function (): void {
                 '*' => [
                     'id',
                     'user_id',
-                    'city_id',
-                    'municipality',
-                    'company',
+                    'name',
+                    'last_name',
+                    'email',
+                    'location',
                     'is_anonymous',
-                    'user',
-                    'city',
+                    'created_at',
                 ],
             ]);
 

@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Src\Application\Admin\Magistrate\Data\StoreMagistrateData;
 use Src\Application\Admin\Magistrate\Data\UpdateMagistrateData;
+use Src\Application\Admin\Magistrate\Resources\MagistrateIndexResource;
 use Src\Application\Admin\Magistrate\Resources\MagistrateResource;
 use Src\Application\Admin\Magistrate\Services\MagistrateCreatorService;
 use Src\Application\Admin\Magistrate\Services\MagistrateDeleterService;
@@ -24,7 +25,7 @@ class MagistrateController
     public function index(MagistrateFinderService $magistrateFinderService): Collection
     {
         return $magistrateFinderService->handle()
-            ->map(fn (Magistrate $magistrate): array => MagistrateResource::fromModel($magistrate)->toArray());
+            ->map(fn (Magistrate $magistrate): array => MagistrateIndexResource::fromModel($magistrate)->toArray());
     }
 
     /**

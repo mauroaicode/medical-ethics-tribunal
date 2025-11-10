@@ -66,19 +66,16 @@ describe('index', function (): void {
             ->assertJsonStructure([
                 '*' => [
                     'id',
-                    'complainant_id',
-                    'doctor_id',
-                    'magistrate_instructor_id',
-                    'magistrate_ponente_id',
                     'name',
                     'process_number',
-                    'start_date',
                     'status',
-                    'description',
-                    'complainant',
-                    'doctor',
-                    'magistrate_instructor',
-                    'magistrate_ponente',
+                    'start_date',
+                    'proceedings_count',
+                    'complainant_name',
+                    'complainant_last_name',
+                    'complainant_document_number',
+                    'doctor_name',
+                    'doctor_last_name',
                 ],
             ]);
 

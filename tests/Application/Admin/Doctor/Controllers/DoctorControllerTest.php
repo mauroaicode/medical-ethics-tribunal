@@ -55,13 +55,13 @@ describe('index', function (): void {
                 '*' => [
                     'id',
                     'user_id',
-                    'user',
-                    'specialty_id',
+                    'name',
+                    'last_name',
+                    'email',
                     'specialty',
-                    'faculty',
-                    'medical_registration_number',
-                    'medical_registration_place',
-                    'medical_registration_date',
+                    'phone',
+                    'main_practice_company',
+                    'created_at',
                 ],
             ]);
 
