@@ -1,0 +1,38 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### PROCEEDING ENDPOINTS - LIST PROCEEDINGS BY PROCESS
+### ============================================
+###
+
+### List Proceedings by Process - Success (Super Admin)
+# @name listProceedingsByProcess
+GET {{base_url}}{{apiVersion}}/proceedings/process/1
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### List Proceedings by Process - Success (Admin)
+# @name listProceedingsByProcessAdmin
+GET {{base_url}}{{apiVersion}}/proceedings/process/1
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### List Proceedings by Process - Success (Secretary)
+# @name listProceedingsByProcessSecretary
+GET {{base_url}}{{apiVersion}}/proceedings/process/1
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### List Proceedings by Process - Without Authentication
+# Should return 401 Unauthorized
+GET {{base_url}}{{apiVersion}}/proceedings/process/1
+Accept: application/json
+
+### List Proceedings by Process - Not Found (404)
+# Should return 404 without JSON
+GET {{base_url}}{{apiVersion}}/proceedings/process/99999
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('proceedings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('process_id')->constrained();
+            $table->string('name');
             $table->string('description');
             $table->date('proceeding_date');
             $table->timestamps();

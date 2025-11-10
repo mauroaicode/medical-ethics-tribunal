@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Src\Application\Admin\Process\Resources;
 
 use Spatie\LaravelData\Resource;
+use Src\Application\Admin\Proceeding\Resources\ProceedingResource;
 use Src\Domain\Process\Models\Process;
 
 class ProcessResource extends Resource
@@ -25,6 +26,7 @@ class ProcessResource extends Resource
         public ?array $magistrate_instructor = null,
         public ?array $magistrate_ponente = null,
         public ?array $template_documents = null,
+        public ?array $proceedings = null,
     ) {}
 
     public static function fromModel(Process $process): self
@@ -136,6 +138,7 @@ class ProcessResource extends Resource
                     ] : null,
                 ];
             })->all() : null,
+            proceedings: ($process->relationLoaded('proceedings') && $process->proceedings->isNotEmpty()) ? $process->proceedings->map(fn (\Src\Domain\Proceeding\Models\Proceeding $proceeding): array => ProceedingResource::fromModel($proceeding)->toArray())->all() : null,
         );
     }
 }

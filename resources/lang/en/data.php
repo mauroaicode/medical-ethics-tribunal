@@ -36,4 +36,6 @@ return [
     'process_number' => 'Process number',
     'deleted_reason' => 'Deletion reason',
     'action' => 'Action',
+    'proceeding_date' => 'Proceeding date',
+    'file' => 'File',
 ];

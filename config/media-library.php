@@ -93,6 +93,7 @@ return [
      */
     'custom_path_generators' => [
         \Src\Domain\ProcessTemplateDocument\Models\ProcessTemplateDocument::class => \Src\Application\Shared\PathGenerators\ProcessDocumentPathGenerator::class,
+        \Src\Domain\Proceeding\Models\Proceeding::class => \Src\Application\Shared\PathGenerators\ProceedingDocumentPathGenerator::class,
     ],
 
     /*

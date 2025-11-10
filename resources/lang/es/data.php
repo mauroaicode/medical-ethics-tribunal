@@ -36,4 +36,6 @@ return [
     'process_number' => 'Número de proceso',
     'deleted_reason' => 'Razón de eliminación',
     'action' => 'Acción',
+    'proceeding_date' => 'Fecha de actuación',
+    'file' => 'Archivo',
 ];

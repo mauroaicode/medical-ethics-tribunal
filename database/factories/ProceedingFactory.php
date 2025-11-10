@@ -28,6 +28,7 @@ class ProceedingFactory extends Factory
     {
         return [
             'process_id' => Process::factory(),
+            'name' => fake()->words(3, true),
             'description' => fake()->sentence(),
             'proceeding_date' => fake()->dateTimeBetween('-1 year', 'now'),
         ];
