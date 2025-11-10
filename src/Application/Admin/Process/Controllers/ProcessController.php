@@ -42,6 +42,9 @@ class ProcessController
             'magistratePonente.user',
             'templateDocuments.media',
             'templateDocuments.template',
+            'proceedings' => function ($query): void {
+                $query->latest('proceeding_date')->latest();
+            },
         ]);
 
         return ProcessResource::fromModel($process)->toArray();

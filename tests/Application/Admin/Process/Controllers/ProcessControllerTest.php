@@ -2,15 +2,19 @@
 
 declare(strict_types=1);
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
 use Src\Application\Admin\Process\Controllers\ProcessController;
 use Src\Domain\AuditLog\Models\AuditLog;
 use Src\Domain\Complainant\Models\Complainant;
 use Src\Domain\Doctor\Models\Doctor;
 use Src\Domain\Magistrate\Models\Magistrate;
+use Src\Domain\Proceeding\Models\Proceeding;
 use Src\Domain\Process\Enums\ProcessStatus;
 use Src\Domain\Process\Models\Process;
+use Src\Domain\Shared\Enums\FileType;
 use Src\Domain\User\Enums\UserRole;
 use Src\Domain\User\Models\User;
 
@@ -141,6 +145,7 @@ describe('show', function (): void {
                 'magistrate_instructor',
                 'magistrate_ponente',
                 'template_documents',
+                'proceedings',
             ]);
 
         expect($response->json('id'))->toBe($this->process1->id);
@@ -172,6 +177,7 @@ describe('show', function (): void {
                 'magistrate_instructor',
                 'magistrate_ponente',
                 'template_documents',
+                'proceedings',
             ]);
     });
 
@@ -186,6 +192,48 @@ describe('show', function (): void {
 
         $response->assertStatus(404)
             ->assertContent('');
+    });
+
+    it('includes proceedings when they exist', function (): void {
+        Storage::fake('public');
+
+        // Create proceedings for the process
+        $proceeding1 = Proceeding::factory()->create([
+            'process_id' => $this->process1->id,
+            'proceeding_date' => now()->subDays(5),
+        ]);
+        $proceeding1->addMedia(UploadedFile::fake()->create('test1.pdf', 500, 'application/pdf'))
+            ->toMediaCollection(FileType::PROCEEDING_DOCUMENT->value);
+
+        $proceeding2 = Proceeding::factory()->create([
+            'process_id' => $this->process1->id,
+            'proceeding_date' => now()->subDays(2),
+        ]);
+        $proceeding2->addMedia(UploadedFile::fake()->create('test2.pdf', 600, 'application/pdf'))
+            ->toMediaCollection(FileType::PROCEEDING_DOCUMENT->value);
+
+        $response = actingAs($this->superAdmin)
+            ->get(action([ProcessController::class, 'show'], $this->process1->id))
+            ->assertOk()
+            ->assertJsonStructure([
+                'id',
+                'proceedings' => [
+                    '*' => [
+                        'id',
+                        'process_id',
+                        'name',
+                        'description',
+                        'proceeding_date',
+                        'file',
+                    ],
+                ],
+            ]);
+
+        $proceedings = $response->json('proceedings');
+        expect($proceedings)->toBeArray()
+            ->and(count($proceedings))->toBe(2)
+            ->and($proceedings[0]['id'])->toBe($proceeding2->id) // Most recent first
+            ->and($proceedings[1]['id'])->toBe($proceeding1->id);
     });
 });
 

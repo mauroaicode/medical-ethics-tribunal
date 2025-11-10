@@ -1,0 +1,167 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### PROCEEDING ENDPOINTS - UPDATE PROCEEDING
+### ============================================
+###
+
+### Update Proceeding - Success (Super Admin) - Update Name and Description Only
+# @name updateProceeding
+PUT {{base_url}}{{apiVersion}}/proceedings/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "Actuación Actualizada",
+  "description": "Descripción actualizada de la actuación"
+}
+
+### Update Proceeding - Success (Admin) - Update Date Only
+# @name updateProceedingAdmin
+PUT {{base_url}}{{apiVersion}}/proceedings/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "proceeding_date": "2025-02-01"
+}
+
+### Update Proceeding - Success (Super Admin) - Replace PDF File
+# @name updateProceedingFile
+# Note: Requires multipart/form-data to upload new PDF file
+PUT {{base_url}}{{apiVersion}}/proceedings/1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="actuacion_actualizada.pdf"
+Content-Type: application/pdf
+
+< ./sample_updated.pdf
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Update Proceeding - Success (Admin) - Update All Fields Including File
+# @name updateProceedingAll
+PUT {{base_url}}{{apiVersion}}/proceedings/1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="name"
+
+Actuación Completa Actualizada
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="description"
+
+Nueva descripción completa de la actuación con todos los detalles actualizados.
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="proceeding_date"
+
+2025-02-15
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="nuevo_archivo.pdf"
+Content-Type: application/pdf
+
+< ./sample.pdf
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Update Proceeding - Without Authentication
+# Should return 401 Unauthorized
+PUT {{base_url}}{{apiVersion}}/proceedings/1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Sin Auth"
+}
+
+### Update Proceeding - Unauthorized (Secretary Role)
+# Should return 403 Forbidden
+PUT {{base_url}}{{apiVersion}}/proceedings/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "No Autorizado"
+}
+
+### Update Proceeding - Not Found (404)
+# Should return 404 without JSON
+PUT {{base_url}}{{apiVersion}}/proceedings/99999
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "No Existe"
+}
+
+### Update Proceeding - Validation Error (Invalid File Type - Not PDF)
+# Should return 422 Unprocessable Entity
+PUT {{base_url}}{{apiVersion}}/proceedings/1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="test.txt"
+Content-Type: text/plain
+
+Este no es un PDF
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Update Proceeding - Validation Error (File Too Large)
+# Should return 422 Unprocessable Entity
+# Note: Max file size is 10MB
+PUT {{base_url}}{{apiVersion}}/proceedings/1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="large_file.pdf"
+Content-Type: application/pdf
+
+< ./large_sample.pdf
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Update Proceeding - Validation Error (Invalid Date Format)
+# Should return 422 Unprocessable Entity
+PUT {{base_url}}{{apiVersion}}/proceedings/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "proceeding_date": "invalid-date"
+}
+
+### Update Proceeding - Validation Error (Name Too Short)
+# Should return 422 Unprocessable Entity
+PUT {{base_url}}{{apiVersion}}/proceedings/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "A"
+}
+
+### Update Proceeding - Validation Error (Description Too Short)
+# Should return 422 Unprocessable Entity
+PUT {{base_url}}{{apiVersion}}/proceedings/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "description": "A"
+}
+

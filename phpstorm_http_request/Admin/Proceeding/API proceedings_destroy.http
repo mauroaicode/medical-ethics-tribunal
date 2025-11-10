@@ -1,0 +1,38 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### PROCEEDING ENDPOINTS - DELETE PROCEEDING
+### ============================================
+###
+
+### Delete Proceeding - Success (Super Admin)
+# @name deleteProceeding
+DELETE {{base_url}}{{apiVersion}}/proceedings/1
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Delete Proceeding - Success (Admin)
+# @name deleteProceedingAdmin
+DELETE {{base_url}}{{apiVersion}}/proceedings/2
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Delete Proceeding - Without Authentication
+# Should return 401 Unauthorized
+DELETE {{base_url}}{{apiVersion}}/proceedings/1
+Accept: application/json
+
+### Delete Proceeding - Unauthorized (Secretary Role)
+# Should return 403 Forbidden
+DELETE {{base_url}}{{apiVersion}}/proceedings/1
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Delete Proceeding - Not Found (404)
+# Should return 404 without JSON
+DELETE {{base_url}}{{apiVersion}}/proceedings/99999
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
