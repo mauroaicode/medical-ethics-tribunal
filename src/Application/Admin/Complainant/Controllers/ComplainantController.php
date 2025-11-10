@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Src\Application\Admin\Complainant\Data\StoreComplainantData;
 use Src\Application\Admin\Complainant\Data\UpdateComplainantData;
+use Src\Application\Admin\Complainant\Resources\ComplainantIndexResource;
 use Src\Application\Admin\Complainant\Resources\ComplainantResource;
 use Src\Application\Admin\Complainant\Services\ComplainantCreatorService;
 use Src\Application\Admin\Complainant\Services\ComplainantDeleterService;
@@ -24,7 +25,7 @@ class ComplainantController
     public function index(ComplainantFinderService $complainantFinderService): Collection
     {
         return $complainantFinderService->handle()
-            ->map(fn (Complainant $complainant): array => ComplainantResource::fromModel($complainant)->toArray());
+            ->map(fn (Complainant $complainant): array => ComplainantIndexResource::fromModel($complainant)->toArray());
     }
 
     /**

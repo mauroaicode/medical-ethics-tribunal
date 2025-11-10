@@ -18,6 +18,7 @@ class ProcessFinderService
     {
         return Process::query()
             ->withRelations()
+            ->withCount('proceedings')
             ->withoutTrashed()
             ->orderedByCreatedAt()
             ->get();
