@@ -49,7 +49,7 @@ class ProcessIndexResource extends Resource
             id: $process->id,
             name: $process->name,
             process_number: $process->process_number,
-            status: $process->status->value,
+            status: $process->status->getLabel(),
             start_date: $process->start_date->format('Y-m-d'),
             proceedings_count: $process->proceedings_count ?? ($process->relationLoaded('proceedings') ? $process->proceedings->count() : 0),
             complainant_name: $complainantName,

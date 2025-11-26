@@ -10,6 +10,7 @@ use Src\Application\Admin\Doctor\Data\StoreDoctorData;
 use Src\Application\Admin\Doctor\Data\UpdateDoctorData;
 use Src\Application\Admin\Doctor\Resources\DoctorIndexResource;
 use Src\Application\Admin\Doctor\Resources\DoctorResource;
+use Src\Application\Admin\Doctor\Resources\DoctorSelectResource;
 use Src\Application\Admin\Doctor\Services\DoctorCreatorService;
 use Src\Application\Admin\Doctor\Services\DoctorDeleterService;
 use Src\Application\Admin\Doctor\Services\DoctorFinderService;
@@ -26,6 +27,20 @@ class DoctorController
     {
         return $doctorFinderService->handle()
             ->map(fn (Doctor $doctor): array => DoctorIndexResource::fromModel($doctor)->toArray());
+    }
+
+    /**
+     * Get list of active doctors for select/dropdown filters.
+     */
+    public function active(): Collection
+    {
+        return Doctor::query()
+            ->withUser()
+            ->active()
+            ->withoutTrashed()
+            ->orderedByCreatedAt()
+            ->get()
+            ->map(fn (Doctor $doctor): array => DoctorSelectResource::fromModel($doctor)->toArray());
     }
 
     /**

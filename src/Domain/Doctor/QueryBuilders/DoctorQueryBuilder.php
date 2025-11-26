@@ -6,6 +6,7 @@ namespace Src\Domain\Doctor\QueryBuilders;
 
 use Illuminate\Database\Eloquent\Builder;
 use Src\Domain\Doctor\Models\Doctor;
+use Src\Domain\User\Enums\UserStatus;
 
 /** @extends Builder<Doctor> */
 class DoctorQueryBuilder extends Builder
@@ -48,5 +49,15 @@ class DoctorQueryBuilder extends Builder
     public function orderedByCreatedAt(): self
     {
         return $this->latest();
+    }
+
+    /**
+     * Filter only active doctors (where user status is active)
+     */
+    public function active(): self
+    {
+        return $this->whereHas('user', function (\Illuminate\Contracts\Database\Query\Builder $query): void {
+            $query->where('status', UserStatus::ACTIVE->value);
+        });
     }
 }

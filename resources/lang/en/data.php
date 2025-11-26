@@ -38,4 +38,8 @@ return [
     'action' => 'Action',
     'proceeding_date' => 'Proceeding date',
     'file' => 'File',
+    'complainant_document_number' => 'Complainant document number',
+    'doctor_name' => 'Doctor name',
+    'start_date_from' => 'Start date from',
+    'start_date_to' => 'Start date to',
 ];

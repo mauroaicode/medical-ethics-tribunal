@@ -38,4 +38,8 @@ return [
     'action' => 'Acción',
     'proceeding_date' => 'Fecha de actuación',
     'file' => 'Archivo',
+    'complainant_document_number' => 'Cédula del quejoso',
+    'doctor_name' => 'Nombre del médico',
+    'start_date_from' => 'Fecha de inicio desde',
+    'start_date_to' => 'Fecha de inicio hasta',
 ];

@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
+use Src\Application\Admin\Process\Data\ProcessFilterData;
 use Src\Domain\Complainant\Models\Complainant;
 use Src\Domain\Doctor\Models\Doctor;
 use Src\Domain\Magistrate\Models\Magistrate;
+use Src\Domain\Process\Enums\ProcessStatus;
 use Src\Domain\Process\Models\Process;
 use Src\Domain\User\Models\User;
 
@@ -157,6 +159,26 @@ it('orders processes by created_at correctly', function (): void {
     expect($createdAts)->toBe($sortedCreatedAts);
 });
 
+it('orders processes by start_date correctly (most recent first)', function (): void {
+    $this->process1->update(['start_date' => '2025-01-15']);
+    $this->process2->update(['start_date' => '2025-02-10']);
+
+    $processIds = [$this->process1->id, $this->process2->id];
+
+    $processes = Process::query()
+        ->whereIn('id', $processIds)
+        ->orderedByStartDate()
+        ->get();
+
+    $startDates = $processes->pluck('start_date')->map(fn ($date) => $date->timestamp)->all();
+    $sortedStartDates = $startDates;
+    rsort($sortedStartDates);
+
+    expect($startDates)->toBe($sortedStartDates)
+        ->and($processes->first()->id)->toBe($this->process2->id) // Más reciente primero
+        ->and($processes->last()->id)->toBe($this->process1->id);
+});
+
 it('can be chained with other query methods', function (): void {
     $processIds = [$this->process1->id, $this->process2->id];
 
@@ -169,4 +191,163 @@ it('can be chained with other query methods', function (): void {
 
     expect($processes)->toBeInstanceOf(Illuminate\Database\Eloquent\Collection::class)
         ->and($processes)->toHaveCount(2);
+});
+
+it('filters processes by process_number', function (): void {
+    $filterData = ProcessFilterData::from([
+        'process_number' => $this->process1->process_number,
+    ]);
+
+    $processes = Process::query()
+        ->filters($filterData)
+        ->get();
+
+    expect($processes)->toHaveCount(1)
+        ->and($processes->first()->id)->toBe($this->process1->id);
+});
+
+it('filters processes by complainant_document_number', function (): void {
+    $filterData = ProcessFilterData::from([
+        'complainant_document_number' => $this->user1->document_number,
+    ]);
+
+    $processes = Process::query()
+        ->filters($filterData)
+        ->get();
+
+    expect($processes)->toHaveCount(2)
+        ->and($processes->pluck('id'))->toContain($this->process1->id)
+        ->and($processes->pluck('id'))->toContain($this->process2->id);
+});
+
+it('filters processes by doctor_name', function (): void {
+    $filterData = ProcessFilterData::from([
+        'doctor_name' => $this->user2->name,
+    ]);
+
+    $processes = Process::query()
+        ->filters($filterData)
+        ->get();
+
+    expect($processes)->toHaveCount(2)
+        ->and($processes->pluck('id'))->toContain($this->process1->id)
+        ->and($processes->pluck('id'))->toContain($this->process2->id);
+});
+
+it('filters processes by doctor_name with last_name', function (): void {
+    $filterData = ProcessFilterData::from([
+        'doctor_name' => $this->user2->last_name,
+    ]);
+
+    $processes = Process::query()
+        ->filters($filterData)
+        ->get();
+
+    expect($processes)->toHaveCount(2)
+        ->and($processes->pluck('id'))->toContain($this->process1->id)
+        ->and($processes->pluck('id'))->toContain($this->process2->id);
+});
+
+it('filters processes by start_date', function (): void {
+    $filterData = ProcessFilterData::from([
+        'start_date' => $this->process1->start_date->format('Y-m-d'),
+    ]);
+
+    $processes = Process::query()
+        ->filters($filterData)
+        ->get();
+
+    $processIds = $processes->pluck('id')->all();
+    expect($processIds)->toContain($this->process1->id);
+});
+
+it('filters processes by date range (start_date_from and start_date_to)', function (): void {
+    $this->process1->update(['start_date' => '2025-01-05']);
+    $this->process2->update(['start_date' => '2025-02-10']);
+
+    $filterData = ProcessFilterData::from([
+        'start_date_from' => '2025-01-02',
+        'start_date_to' => '2025-02-12',
+    ]);
+
+    $processes = Process::query()
+        ->filters($filterData)
+        ->get();
+
+    expect($processes->pluck('id'))->toContain($this->process1->id)
+        ->and($processes->pluck('id'))->toContain($this->process2->id);
+});
+
+it('filters processes by date range from (start_date_from only)', function (): void {
+    $this->process1->update(['start_date' => '2025-01-05']);
+    $this->process2->update(['start_date' => '2024-12-20']);
+
+    $filterData = ProcessFilterData::from([
+        'start_date_from' => '2025-01-02',
+    ]);
+
+    $processes = Process::query()
+        ->filters($filterData)
+        ->get();
+
+    expect($processes->pluck('id'))->toContain($this->process1->id)
+        ->and($processes->pluck('id'))->not->toContain($this->process2->id);
+});
+
+it('filters processes by date range to (start_date_to only)', function (): void {
+    $this->process1->update(['start_date' => '2025-01-05']);
+    $this->process2->update(['start_date' => '2025-02-15']);
+
+    $filterData = ProcessFilterData::from([
+        'start_date_to' => '2025-02-12',
+    ]);
+
+    $processes = Process::query()
+        ->filters($filterData)
+        ->get();
+
+    expect($processes->pluck('id'))->toContain($this->process1->id)
+        ->and($processes->pluck('id'))->not->toContain($this->process2->id);
+});
+
+it('filters processes by status', function (): void {
+    $this->process1->update(['status' => ProcessStatus::IN_PROGRESS]);
+    $this->process2->update(['status' => ProcessStatus::DRAFT]);
+
+    $filterData = ProcessFilterData::from([
+        'status' => ProcessStatus::IN_PROGRESS->value,
+    ]);
+
+    $processes = Process::query()
+        ->filters($filterData)
+        ->get();
+
+    expect($processes)->toHaveCount(1)
+        ->and($processes->first()->id)->toBe($this->process1->id)
+        ->and($processes->first()->status)->toBe(ProcessStatus::IN_PROGRESS);
+});
+
+it('applies multiple filters simultaneously', function (): void {
+    $filterData = ProcessFilterData::from([
+        'process_number' => $this->process1->process_number,
+        'start_date' => $this->process1->start_date->format('Y-m-d'),
+    ]);
+
+    $processes = Process::query()
+        ->filters($filterData)
+        ->get();
+
+    expect($processes)->toHaveCount(1)
+        ->and($processes->first()->id)->toBe($this->process1->id);
+});
+
+it('returns all processes when no filters are applied', function (): void {
+    $filterData = ProcessFilterData::from([]);
+
+    $processes = Process::query()
+        ->filters($filterData)
+        ->get();
+
+    expect($processes->pluck('id'))->toContain($this->process1->id)
+        ->and($processes->pluck('id'))->toContain($this->process2->id);
 });

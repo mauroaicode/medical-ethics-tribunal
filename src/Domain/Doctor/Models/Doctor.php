@@ -40,6 +40,7 @@ use Src\Domain\User\Models\User;
  * @method DoctorQueryBuilder withRelations()
  * @method DoctorQueryBuilder withoutTrashed()
  * @method DoctorQueryBuilder orderedByCreatedAt()
+ * @method DoctorQueryBuilder active()
  */
 class Doctor extends Model
 {

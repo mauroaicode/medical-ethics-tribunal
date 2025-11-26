@@ -7,6 +7,7 @@ use Src\Application\Admin\Doctor\Controllers\DoctorController;
 
 Route::middleware(['auth:sanctum'])->prefix('doctors')->group(function (): void {
     Route::get('/', [DoctorController::class, 'index']);
+    Route::get('/active', [DoctorController::class, 'active']);
     Route::get('/{doctor}', [DoctorController::class, 'show']);
 });
 

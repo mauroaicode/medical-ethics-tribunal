@@ -49,66 +49,221 @@ beforeEach(function (): void {
         'doctor_id' => $this->doctor->id,
         'magistrate_instructor_id' => $this->magistrate1->id,
         'magistrate_ponente_id' => $this->magistrate2->id,
+        'start_date' => now()->addDay(), // Fecha reciente para que aparezca primero
     ]);
     $this->process2 = Process::factory()->create([
         'complainant_id' => $this->complainant->id,
         'doctor_id' => $this->doctor->id,
         'magistrate_instructor_id' => $this->magistrate1->id,
         'magistrate_ponente_id' => $this->magistrate2->id,
+        'start_date' => now(), // Fecha reciente
     ]);
 });
 
 describe('index', function (): void {
-    it('returns list of processes when authenticated as super admin', function (): void {
+    it('returns paginated list of processes when authenticated as super admin', function (): void {
         $response = actingAs($this->superAdmin)
             ->get(action([ProcessController::class, 'index']))
             ->assertOk()
             ->assertJsonStructure([
-                '*' => [
-                    'id',
-                    'name',
-                    'process_number',
-                    'status',
-                    'start_date',
-                    'proceedings_count',
-                    'complainant_name',
-                    'complainant_last_name',
-                    'complainant_document_number',
-                    'doctor_name',
-                    'doctor_last_name',
+                'data' => [
+                    '*' => [
+                        'id',
+                        'name',
+                        'process_number',
+                        'status',
+                        'start_date',
+                        'proceedings_count',
+                        'complainant_name',
+                        'complainant_last_name',
+                        'complainant_document_number',
+                        'doctor_name',
+                        'doctor_last_name',
+                    ],
                 ],
+                'current_page',
+                'per_page',
+                'total',
+                'last_page',
             ]);
 
-        $processes = $response->json();
-        $processIds = collect($processes)->pluck('id');
+        $data = $response->json('data');
+        $processIds = collect($data)->pluck('id');
 
         expect($processIds)->toContain($this->process1->id)
             ->and($processIds)->toContain($this->process2->id);
     });
 
-    it('returns list of processes when authenticated as admin', function (): void {
+    it('returns paginated list of processes when authenticated as admin', function (): void {
         $response = actingAs($this->admin)
             ->get(action([ProcessController::class, 'index']));
 
-        $response->assertOk();
+        $response->assertOk()
+            ->assertJsonStructure([
+                'data',
+                'current_page',
+                'per_page',
+                'total',
+            ]);
 
-        $processes = $response->json();
-        $processIds = collect($processes)->pluck('id');
+        $data = $response->json('data');
+        $processIds = collect($data)->pluck('id');
 
         expect($processIds)->toContain($this->process1->id)
             ->and($processIds)->toContain($this->process2->id);
     });
 
-    it('returns list of processes when authenticated as secretary', function (): void {
+    it('returns paginated list of processes when authenticated as secretary', function (): void {
         $response = actingAs($this->secretary)
             ->get(action([ProcessController::class, 'index']))
-            ->assertOk();
+            ->assertOk()
+            ->assertJsonStructure([
+                'data',
+                'current_page',
+                'per_page',
+                'total',
+            ]);
 
-        $processes = $response->json();
-        $processIds = collect($processes)->pluck('id');
+        $data = $response->json('data');
+        $processIds = collect($data)->pluck('id');
 
         expect($processIds)->toContain($this->process1->id)
             ->and($processIds)->toContain($this->process2->id);
+    });
+
+    it('filters processes by process_number', function (): void {
+        $response = actingAs($this->superAdmin)
+            ->get(action([ProcessController::class, 'index'], [
+                'process_number' => $this->process1->process_number,
+            ]))
+            ->assertOk();
+
+        $data = $response->json('data');
+        $processIds = collect($data)->pluck('id');
+
+        expect($processIds)->toContain($this->process1->id)
+            ->and($processIds)->not->toContain($this->process2->id);
+    });
+
+    it('filters processes by complainant_document_number', function (): void {
+        $response = actingAs($this->superAdmin)
+            ->get(action([ProcessController::class, 'index'], [
+                'complainant_document_number' => $this->complainant->user->document_number,
+            ]))
+            ->assertOk();
+
+        $data = $response->json('data');
+        $processIds = collect($data)->pluck('id');
+
+        expect($processIds)->toContain($this->process1->id)
+            ->and($processIds)->toContain($this->process2->id);
+    });
+
+    it('filters processes by doctor_name', function (): void {
+        $response = actingAs($this->superAdmin)
+            ->get(action([ProcessController::class, 'index'], [
+                'doctor_name' => $this->doctor->user->name,
+            ]))
+            ->assertOk();
+
+        $data = $response->json('data');
+        $processIds = collect($data)->pluck('id');
+
+        expect($processIds)->toContain($this->process1->id)
+            ->and($processIds)->toContain($this->process2->id);
+    });
+
+    it('filters processes by start_date', function (): void {
+        $response = actingAs($this->superAdmin)
+            ->get(action([ProcessController::class, 'index'], [
+                'start_date' => $this->process1->start_date->format('Y-m-d'),
+            ]))
+            ->assertOk();
+
+        $data = $response->json('data');
+        $processIds = collect($data)->pluck('id');
+
+        expect($processIds)->toContain($this->process1->id);
+    });
+
+    it('filters processes by date range (start_date_from and start_date_to)', function (): void {
+        $this->process1->update(['start_date' => '2025-01-05']);
+        $this->process2->update(['start_date' => '2025-02-10']);
+
+        $response = actingAs($this->superAdmin)
+            ->get(action([ProcessController::class, 'index'], [
+                'start_date_from' => '2025-01-02',
+                'start_date_to' => '2025-02-12',
+            ]))
+            ->assertOk();
+
+        $data = $response->json('data');
+        $processIds = collect($data)->pluck('id');
+
+        expect($processIds)->toContain($this->process1->id)
+            ->and($processIds)->toContain($this->process2->id);
+    });
+
+    it('filters processes by date range from (start_date_from only)', function (): void {
+        $this->process1->update(['start_date' => '2025-01-05']);
+        $this->process2->update(['start_date' => '2024-12-20']);
+
+        $response = actingAs($this->superAdmin)
+            ->get(action([ProcessController::class, 'index'], [
+                'start_date_from' => '2025-01-02',
+            ]))
+            ->assertOk();
+
+        $data = $response->json('data');
+        $processIds = collect($data)->pluck('id');
+
+        expect($processIds)->toContain($this->process1->id)
+            ->and($processIds)->not->toContain($this->process2->id);
+    });
+
+    it('filters processes by date range to (start_date_to only)', function (): void {
+        $this->process1->update(['start_date' => '2025-01-05']);
+        $this->process2->update(['start_date' => '2025-02-15']);
+
+        $response = actingAs($this->superAdmin)
+            ->get(action([ProcessController::class, 'index'], [
+                'start_date_to' => '2025-02-12',
+            ]))
+            ->assertOk();
+
+        $data = $response->json('data');
+        $processIds = collect($data)->pluck('id');
+
+        expect($processIds)->toContain($this->process1->id)
+            ->and($processIds)->not->toContain($this->process2->id);
+    });
+
+    it('filters processes by status', function (): void {
+        $this->process1->update(['status' => ProcessStatus::IN_PROGRESS]);
+        $this->process2->update(['status' => ProcessStatus::DRAFT]);
+
+        $response = actingAs($this->superAdmin)
+            ->get(action([ProcessController::class, 'index'], [
+                'status' => ProcessStatus::IN_PROGRESS->value,
+            ]))
+            ->assertOk();
+
+        $data = $response->json('data');
+        $processIds = collect($data)->pluck('id');
+
+        expect($processIds)->toContain($this->process1->id)
+            ->and($processIds)->not->toContain($this->process2->id);
+    });
+
+    it('respects per_page parameter', function (): void {
+        $response = actingAs($this->superAdmin)
+            ->get(action([ProcessController::class, 'index'], [
+                'per_page' => 1,
+            ]))
+            ->assertOk();
+
+        expect($response->json('per_page'))->toBe(1)
+            ->and(count($response->json('data')))->toBeLessThanOrEqual(1);
     });
 
     it('requires authentication', function (): void {
@@ -263,7 +418,7 @@ describe('store', function (): void {
             ]);
 
         expect($response->json('name'))->toBe('Nuevo Proceso')
-            ->and($response->json('status'))->toBe(ProcessStatus::DRAFT->value)
+            ->and($response->json('status'))->toBe(ProcessStatus::DRAFT->getLabel())
             ->and($response->json('process_number'))->toMatch('/^PRO-\d{4}$/');
     });
 
@@ -304,7 +459,7 @@ describe('store', function (): void {
 
         $createdProcess = Process::query()->where('name', 'Proceso con Status Predefinido')->first();
 
-        expect($response->json('status'))->toBe(ProcessStatus::DRAFT->value)
+        expect($response->json('status'))->toBe(ProcessStatus::DRAFT->getLabel())
             ->and($createdProcess->status)->toBe(ProcessStatus::DRAFT);
     });
 

@@ -25,3 +25,32 @@ GET {{bevalk_base_url}}{{apiVersion}}/doctors
 Accept: application/json
 Authorization: Bearer {{secretaryToken}}
 
+###
+### ============================================
+### DOCTOR ENDPOINTS - ACTIVE DOCTORS (FOR FILTERS)
+### ============================================
+###
+
+### Get Active Doctors for Filter - Success (Super Admin)
+# @name getActiveDoctors
+GET {{bevalk_base_url}}{{apiVersion}}/doctors/active
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Get Active Doctors for Filter - Success (Admin)
+# @name getActiveDoctorsAdmin
+GET {{bevalk_base_url}}{{apiVersion}}/doctors/active
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Get Active Doctors for Filter - Success (Secretary)
+# @name getActiveDoctorsSecretary
+GET {{bevalk_base_url}}{{apiVersion}}/doctors/active
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Get Active Doctors - Without Authentication
+# Should return 401 Unauthorized
+GET {{bevalk_base_url}}{{apiVersion}}/doctors/active
+Accept: application/json
+

@@ -40,7 +40,7 @@ class ProcessResource extends Resource
             name: $process->name,
             process_number: $process->process_number,
             start_date: $process->start_date->format('Y-m-d'),
-            status: $process->status->value,
+            status: $process->status->getLabel(),
             description: $process->description,
             complainant: $process->relationLoaded('complainant') ? [
                 'id' => $process->complainant->id,

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Src\Application\Admin\Process\Controllers;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Collection;
 use Src\Application\Admin\Process\Data\DeleteProcessData;
+use Src\Application\Admin\Process\Data\ProcessFilterData;
 use Src\Application\Admin\Process\Data\StoreProcessData;
 use Src\Application\Admin\Process\Data\UpdateProcessData;
 use Src\Application\Admin\Process\Resources\ProcessIndexResource;
@@ -23,10 +25,22 @@ class ProcessController
     /**
      * Display a listing of the resource.
      */
-    public function index(ProcessFinderService $processFinderService): Collection
-    {
-        return $processFinderService->handle()
-            ->map(fn (Process $process): array => ProcessIndexResource::fromModel($process)->toArray());
+    public function index(
+        ProcessFinderService $processFinderService,
+        Request $request
+    ): LengthAwarePaginator {
+
+        $filters = ProcessFilterData::from($request->query());
+        $perPage = (int) $request->query('per_page', 20);
+
+        $paginatedProcesses = $processFinderService->handle($filters, $perPage);
+
+        /** @var \Illuminate\Pagination\LengthAwarePaginator $paginatedProcesses */
+        $transformedItems = $paginatedProcesses->getCollection()->map(fn (Process $process): array => ProcessIndexResource::fromModel($process)->toArray());
+
+        $paginatedProcesses->setCollection($transformedItems);
+
+        return $paginatedProcesses;
     }
 
     /**

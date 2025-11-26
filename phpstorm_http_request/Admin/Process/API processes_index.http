@@ -3,7 +3,7 @@
 
 ###
 ### ============================================
-### PROCESS ENDPOINTS - LIST PROCESSES
+### PROCESS ENDPOINTS - LIST PROCESSES (PAGINATED)
 ### ============================================
 ###
 
@@ -29,4 +29,106 @@ Authorization: Bearer {{auth_token}}
 # Should return 401 Unauthorized
 GET {{base_url}}{{apiVersion}}/processes
 Accept: application/json
+
+###
+### ============================================
+### PROCESS FILTERS
+### ============================================
+###
+
+### Filter by Process Number
+# @name filterByProcessNumber
+GET {{base_url}}{{apiVersion}}/processes?process_number=PRO-0001
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Filter by Complainant Document Number
+# @name filterByComplainantDocument
+GET {{base_url}}{{apiVersion}}/processes?complainant_document_number=1234567890
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Filter by Doctor Name
+# @name filterByDoctorName
+GET {{base_url}}{{apiVersion}}/processes?doctor_name=Juan
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Filter by Start Date
+# @name filterByStartDate
+GET {{base_url}}{{apiVersion}}/processes?start_date=2024-01-15
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Filter by Date Range (From and To)
+# @name filterByDateRange
+GET {{base_url}}{{apiVersion}}/processes?start_date_from=2025-01-02&start_date_to=2025-02-12
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Filter by Date Range From (Only)
+# @name filterByDateRangeFrom
+GET {{base_url}}{{apiVersion}}/processes?start_date_from=2025-01-02
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Filter by Date Range To (Only)
+# @name filterByDateRangeTo
+GET {{base_url}}{{apiVersion}}/processes?start_date_to=2025-02-12
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Filter by Status - Draft
+# @name filterByStatusDraft
+GET {{base_url}}{{apiVersion}}/processes?status=borrador
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Filter by Status - In Progress
+# @name filterByStatusInProgress
+GET {{base_url}}{{apiVersion}}/processes?status=in_progress
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Filter by Status - Closed
+# @name filterByStatusClosed
+GET {{base_url}}{{apiVersion}}/processes?status=closed
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Multiple Filters Combined
+# @name filterMultiple
+GET {{base_url}}{{apiVersion}}/processes?process_number=PRO-0001&start_date=2024-01-15&status=in_progress&per_page=10
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Multiple Filters with Date Range
+# @name filterMultipleWithDateRange
+GET {{base_url}}{{apiVersion}}/processes?start_date_from=2025-01-02&start_date_to=2025-02-12&status=in_progress&per_page=10
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+###
+### ============================================
+### PAGINATION
+### ============================================
+###
+
+### Pagination - Custom Per Page
+# @name paginationCustom
+GET {{base_url}}{{apiVersion}}/processes?per_page=25
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Pagination - Page 2
+# @name paginationPage2
+GET {{base_url}}{{apiVersion}}/processes?page=2
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Pagination with Filters
+# @name paginationWithFilters
+GET {{base_url}}{{apiVersion}}/processes?doctor_name=Juan&per_page=10&page=1
+Accept: application/json
+Authorization: Bearer {{auth_token}}
 

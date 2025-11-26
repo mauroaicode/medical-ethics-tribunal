@@ -54,6 +54,8 @@ use Src\Domain\ProcessTemplateDocument\Models\ProcessTemplateDocument;
  * @method ProcessQueryBuilder withRelations()
  * @method ProcessQueryBuilder withoutTrashed()
  * @method ProcessQueryBuilder orderedByCreatedAt()
+ * @method ProcessQueryBuilder orderedByStartDate()
+ * @method ProcessQueryBuilder filters(\Src\Application\Admin\Process\Data\ProcessFilterData $data)
  */
 class Process extends Model
 {
@@ -71,6 +73,10 @@ class Process extends Model
         'status',
         'description',
         'deleted_reason',
+    ];
+
+    protected $casts = [
+        'status' => ProcessStatus::class,
     ];
 
     /**
