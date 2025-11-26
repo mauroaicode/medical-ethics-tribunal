@@ -7,14 +7,44 @@
 ### ============================================
 ###
 
-### List Templates - Success
+### List Templates - Success (Super Admin - includes web_view_link)
 # @name listTemplates
 GET {{bevalk_base_url}}{{apiVersion}}/templates
 Accept: application/json
 Authorization: Bearer {{token}}
 
+### List Templates - Success (Admin - no web_view_link)
+# @name listTemplatesAdmin
+GET {{bevalk_base_url}}{{apiVersion}}/templates
+Accept: application/json
+Authorization: Bearer {{adminToken}}
+
+### List Templates - Success (Secretary - no web_view_link)
+# @name listTemplatesSecretary
+GET {{bevalk_base_url}}{{apiVersion}}/templates
+Accept: application/json
+Authorization: Bearer {{secretaryToken}}
+
 ### List Templates - Without Authentication
 # Should return 401 Unauthorized
 GET {{bevalk_base_url}}{{apiVersion}}/templates
 Accept: application/json
+
+###
+### ============================================
+### TEMPLATE FILTERS
+### ============================================
+###
+
+### Filter Templates by Name
+# @name filterTemplatesByName
+GET {{bevalk_base_url}}{{apiVersion}}/templates?name=Plantilla
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Filter Templates by Name (Partial Match)
+# @name filterTemplatesByNamePartial
+GET {{bevalk_base_url}}{{apiVersion}}/templates?name=Acta
+Accept: application/json
+Authorization: Bearer {{token}}
 

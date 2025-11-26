@@ -43,13 +43,81 @@ beforeEach(function (): void {
 
 describe('index', function (): void {
     it('returns list of templates when authenticated as super admin', function (): void {
+        $this->template1->update(['web_view_link' => 'https://docs.google.com/document/d/test123']);
+        $this->template2->update(['web_view_link' => 'https://docs.google.com/document/d/test456']);
+
         $response = actingAs($this->superAdmin)
             ->getJson('/api/admin/templates');
 
         $response->assertOk()
             ->assertJsonStructure([
-                '*' => ['id', 'name', 'description', 'google_drive_id', 'google_drive_file_id'],
+                '*' => [
+                    'id',
+                    'name',
+                    'description',
+                    'google_drive_id',
+                    'google_drive_file_id',
+                    'created_at',
+                    'web_view_link',
+                ],
             ]);
+
+        $templates = $response->json();
+        expect($templates)->toBeArray()
+            ->and(count($templates))->toBeGreaterThanOrEqual(2)
+            ->and($templates[0])->toHaveKey('web_view_link')
+            ->and($templates[0]['web_view_link'])->not->toBeNull();
+    });
+
+    it('returns list of templates without web_view_link when authenticated as admin', function (): void {
+        $this->template1->update(['web_view_link' => 'https://docs.google.com/document/d/test123']);
+
+        $response = actingAs($this->admin)
+            ->getJson('/api/admin/templates');
+
+        $response->assertOk()
+            ->assertJsonStructure([
+                '*' => [
+                    'id',
+                    'name',
+                    'description',
+                    'google_drive_id',
+                    'google_drive_file_id',
+                    'created_at',
+                ],
+            ]);
+
+        $templates = $response->json();
+        expect($templates)->toBeArray()
+            ->and($templates[0])->not->toHaveKey('web_view_link');
+    });
+
+    it('returns list of templates without web_view_link when authenticated as secretary', function (): void {
+        $this->template1->update(['web_view_link' => 'https://docs.google.com/document/d/test123']);
+
+        $response = actingAs($this->secretary)
+            ->getJson('/api/admin/templates');
+
+        $response->assertOk();
+
+        $templates = $response->json();
+        expect($templates)->toBeArray()
+            ->and($templates[0])->not->toHaveKey('web_view_link');
+    });
+
+    it('filters templates by name', function (): void {
+        $this->template1->update(['name' => 'Plantilla Especial']);
+        $this->template2->update(['name' => 'Otra Plantilla']);
+
+        $response = actingAs($this->superAdmin)
+            ->getJson('/api/admin/templates?name=Especial');
+
+        $response->assertOk();
+
+        $templates = $response->json();
+        expect($templates)->toBeArray()
+            ->and(count($templates))->toBe(1)
+            ->and($templates[0]['name'])->toContain('Especial');
     });
 
     it('returns 401 when not authenticated', function (): void {
@@ -65,6 +133,14 @@ describe('show', function (): void {
             ->getJson("/api/admin/templates/{$this->template1->id}");
 
         $response->assertOk()
+            ->assertJsonStructure([
+                'id',
+                'name',
+                'description',
+                'google_drive_id',
+                'google_drive_file_id',
+                'created_at',
+            ])
             ->assertJson([
                 'id' => $this->template1->id,
                 'name' => $this->template1->name,

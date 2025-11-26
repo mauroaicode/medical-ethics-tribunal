@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Src\Application\Admin\Template\Services;
 
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
@@ -82,7 +83,22 @@ class TemplateSyncService
             Log::channel('google')->warning("No Google Docs files found in folder '{$folderName}' (ID: {$folderId})");
         }
 
-        return $files;
+        // Enrich files with web_view_link from metadata
+        return array_map(function (array $file): array {
+            try {
+                $metadata = $this->googleDriveService->getFileMetadata($file['id']);
+                $file['web_view_link'] = $metadata['web_view_link'] ?? null;
+            } catch (Exception $e) {
+                Log::channel('google')->warning('Could not fetch metadata for file', [
+                    'file_id' => $file['id'],
+                    'file_name' => $file['name'],
+                    'error' => $e->getMessage(),
+                ]);
+                $file['web_view_link'] = null;
+            }
+
+            return $file;
+        }, $files);
     }
 
     /**
@@ -122,6 +138,7 @@ class TemplateSyncService
                 'description' => null,
                 'google_drive_id' => $folderId,
                 'google_drive_file_id' => $file['id'],
+                'web_view_link' => $file['web_view_link'] ?? null,
             ]);
         }
 
@@ -129,14 +146,25 @@ class TemplateSyncService
     }
 
     /**
-     * Update template if name changed
+     * Update template if name or web_view_link changed
      *
      * @param  array<string, mixed>  $file
      */
     private function updateTemplateIfNeeded(Template $template, array $file): Template
     {
+        $updates = [];
+
         if ($template->name !== $file['name']) {
-            $template->update(['name' => $file['name']]);
+            $updates['name'] = $file['name'];
+        }
+
+        $webViewLink = $file['web_view_link'] ?? null;
+        if ($template->web_view_link !== $webViewLink) {
+            $updates['web_view_link'] = $webViewLink;
+        }
+
+        if ($updates !== []) {
+            $template->update($updates);
             $template->refresh();
         }
 

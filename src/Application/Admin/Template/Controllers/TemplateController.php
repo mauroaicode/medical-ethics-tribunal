@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Src\Application\Admin\Template\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Src\Application\Admin\ProcessTemplateDocument\Services\ProcessTemplateDocumentCreatorService;
 use Src\Application\Admin\ProcessTemplateDocument\Services\ProcessTemplateDocumentService;
 use Src\Application\Admin\Template\Data\AssignTemplateToProcessData;
+use Src\Application\Admin\Template\Data\TemplateFilterData;
 use Src\Application\Admin\Template\Resources\AssignTemplateResponseResource;
 use Src\Application\Admin\Template\Resources\SyncTemplatesResponseResource;
 use Src\Application\Admin\Template\Resources\TemplateResource;
@@ -23,9 +25,13 @@ class TemplateController
     /**
      * Display a listing of the resource.
      */
-    public function index(TemplateFinderService $templateFinderService): Collection
-    {
-        return $templateFinderService->handle()
+    public function index(
+        TemplateFinderService $templateFinderService,
+        Request $request
+    ): Collection {
+        $filters = TemplateFilterData::from($request->query());
+
+        return $templateFinderService->handle($filters)
             ->map(fn (Template $template): array => TemplateResource::fromModel($template)->toArray());
     }
 
