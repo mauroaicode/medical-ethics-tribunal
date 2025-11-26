@@ -44,6 +44,18 @@ enum UserRole: string
     }
 
     /**
+     * Get role values that can view template web view links
+     *
+     * @return array<string>
+     */
+    public static function canViewTemplateLinks(): array
+    {
+        return [
+            self::SUPER_ADMIN->value,
+        ];
+    }
+
+    /**
      * Get the label for the role
      *
      * @return non-empty-string

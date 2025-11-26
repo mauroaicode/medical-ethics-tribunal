@@ -8,12 +8,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 use Spatie\MediaLibrary\HasMedia;
 use Src\Domain\Process\Models\Process;
 use Src\Domain\ProcessTemplateDocument\Models\ProcessTemplateDocument;
 use Src\Domain\Shared\Enums\FileType;
 use Src\Domain\Shared\Traits\InteractsWithCustomMedia;
+use Src\Domain\Template\QueryBuilders\TemplateQueryBuilder;
 
 /**
  * @property-read int $id
@@ -21,9 +23,16 @@ use Src\Domain\Shared\Traits\InteractsWithCustomMedia;
  * @property-read string|null $description
  * @property-read string|null $google_drive_id
  * @property-read string|null $google_drive_file_id
+ * @property-read string|null $web_view_link
  * @property-read Carbon|null $created_at
  * @property-read Carbon|null $updated_at
  * @property-read Carbon|null $deleted_at
+ *
+ * @method static TemplateQueryBuilder query()
+ * @method TemplateQueryBuilder withoutTrashed()
+ * @method TemplateQueryBuilder orderedByName()
+ * @method TemplateQueryBuilder orderedByCreatedAt()
+ * @method TemplateQueryBuilder filterByName(?string $name)
  */
 class Template extends Model implements HasMedia
 {
@@ -36,7 +45,16 @@ class Template extends Model implements HasMedia
         'description',
         'google_drive_id',
         'google_drive_file_id',
+        'web_view_link',
     ];
+
+    /**
+     * @param  Builder  $query
+     */
+    public function newEloquentBuilder(mixed $query): TemplateQueryBuilder
+    {
+        return new TemplateQueryBuilder($query);
+    }
 
     public function getMediaCollectionName(): string
     {
