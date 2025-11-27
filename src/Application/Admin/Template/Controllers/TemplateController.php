@@ -7,7 +7,9 @@ namespace Src\Application\Admin\Template\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
+use Src\Application\Admin\ProcessTemplateDocument\Resources\ProcessTemplateDocumentResource;
 use Src\Application\Admin\ProcessTemplateDocument\Services\ProcessTemplateDocumentCreatorService;
+use Src\Application\Admin\ProcessTemplateDocument\Services\ProcessTemplateDocumentFinderService;
 use Src\Application\Admin\ProcessTemplateDocument\Services\ProcessTemplateDocumentService;
 use Src\Application\Admin\Template\Data\AssignTemplateToProcessData;
 use Src\Application\Admin\Template\Data\TemplateFilterData;
@@ -17,6 +19,7 @@ use Src\Application\Admin\Template\Resources\TemplateResource;
 use Src\Application\Admin\Template\Services\TemplateFinderService;
 use Src\Application\Admin\Template\Services\TemplateProcessorService;
 use Src\Application\Admin\Template\Services\TemplateSyncService;
+use Src\Domain\Process\Models\Process;
 use Src\Domain\Template\Models\Template;
 use Throwable;
 
@@ -58,6 +61,18 @@ class TemplateController
         );
 
         return response($resource->toArray(), 200);
+    }
+
+    /**
+     * Get template documents for a process
+     */
+    public function getProcessTemplates(
+        ProcessTemplateDocumentFinderService $processTemplateDocumentFinderService,
+        Process $process
+    ): Collection {
+        $templateDocuments = $processTemplateDocumentFinderService->handle($process);
+
+        return $templateDocuments->map(fn (\Src\Domain\ProcessTemplateDocument\Models\ProcessTemplateDocument $templateDocument): array => ProcessTemplateDocumentResource::fromModel($templateDocument)->toArray());
     }
 
     /**

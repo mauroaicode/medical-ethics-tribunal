@@ -1,0 +1,49 @@
+### Variables
+@apiVersion = /api/admin
+
+###
+### ============================================
+### TEMPLATE ENDPOINTS - GET PROCESS TEMPLATES
+### ============================================
+###
+
+### Get Process Templates - Success (Super Admin)
+# Replace "process-slug-here" with the actual slug of the process
+# @name getProcessTemplates
+GET {{base_url}}{{apiVersion}}/templates/process/process-slug-here
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Get Process Templates - Success (Admin)
+# Replace "process-slug-here" with the actual slug of the process
+# @name getProcessTemplatesAdmin
+GET {{base_url}}{{apiVersion}}/templates/process/process-slug-here
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Get Process Templates - Success (Secretary)
+# Replace "process-slug-here" with the actual slug of the process
+# @name getProcessTemplatesSecretary
+GET {{base_url}}{{apiVersion}}/templates/process/process-slug-here
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Get Process Templates - Without Authentication
+# Should return 401 Unauthorized
+GET {{base_url}}{{apiVersion}}/templates/process/process-slug-here
+Accept: application/json
+
+### Get Process Templates - Not Found (404)
+# Should return 404 without JSON
+GET {{base_url}}{{apiVersion}}/templates/process/non-existent-slug
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Get Process Templates - Empty List
+# Returns empty array when process has no template documents
+# Replace "process-slug-here" with the actual slug of a process without template documents
+# @name getProcessTemplatesEmpty
+GET {{base_url}}{{apiVersion}}/templates/process/process-slug-here
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+

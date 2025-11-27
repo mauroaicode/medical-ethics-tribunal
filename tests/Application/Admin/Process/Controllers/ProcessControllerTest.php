@@ -295,7 +295,6 @@ describe('show', function (): void {
                 'doctor',
                 'magistrate_instructor',
                 'magistrate_ponente',
-                'template_documents',
             ]);
 
         expect($response->json('id'))->toBe($this->process1->id);
@@ -327,7 +326,6 @@ describe('show', function (): void {
                 'doctor',
                 'magistrate_instructor',
                 'magistrate_ponente',
-                'template_documents',
             ]);
     });
 

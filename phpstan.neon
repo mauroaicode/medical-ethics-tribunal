@@ -14,7 +14,12 @@ parameters:
     level: 5
 
     ignoreErrors:
-        []
+        -
+            message: '~Parameter #1 \$query \(Illuminate\\Database\\Eloquent\\Builder\) of method .*::newEloquentBuilder\(\) should be compatible with parameter \$query \(Illuminate\\Database\\Query\\Builder\) of method Illuminate\\Database\\Eloquent\\Model::newEloquentBuilder\(\)~'
+            path: src/Domain
+        -
+            message: '~Parameter #1 \$query of class .*QueryBuilder constructor expects Illuminate\\Database\\Query\\Builder, Illuminate\\Database\\Eloquent\\Builder given\.~'
+            path: src/Domain
 
     excludePaths:
         - ./*/*/FileToIgnore.php

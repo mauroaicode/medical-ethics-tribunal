@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Src\Domain\ProcessTemplateDocument\Models;
 
 use Database\Factories\ProcessTemplateDocumentFactory;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,6 +14,7 @@ use Illuminate\Support\Carbon;
 use Spatie\MediaLibrary\HasMedia;
 use Src\Domain\AuditLog\Models\AuditLog;
 use Src\Domain\Process\Models\Process;
+use Src\Domain\ProcessTemplateDocument\QueryBuilders\ProcessTemplateDocumentQueryBuilder;
 use Src\Domain\Shared\Enums\FileType;
 use Src\Domain\Shared\Traits\InteractsWithCustomMedia;
 use Src\Domain\Template\Models\Template;
@@ -28,7 +29,7 @@ use Src\Domain\Template\Models\Template;
  * @property-read Carbon $created_at
  * @property-read Carbon $updated_at
  * @property-read Process $process
- * @property-read Template $template
+ * @property-read Template|null $template
  */
 class ProcessTemplateDocument extends Model implements HasMedia
 {
@@ -44,6 +45,14 @@ class ProcessTemplateDocument extends Model implements HasMedia
         'file_name',
         'google_docs_name',
     ];
+
+    /**
+     * @param  Builder  $query
+     */
+    public function newEloquentBuilder(mixed $query): ProcessTemplateDocumentQueryBuilder
+    {
+        return new ProcessTemplateDocumentQueryBuilder($query);
+    }
 
     public function getMediaCollectionName(): string
     {
