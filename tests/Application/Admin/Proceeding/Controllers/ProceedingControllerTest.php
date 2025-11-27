@@ -60,7 +60,7 @@ beforeEach(function (): void {
 describe('index', function (): void {
     it('returns list of proceedings for a process when authenticated as super admin', function (): void {
         $response = actingAs($this->superAdmin)
-            ->get(action([ProceedingController::class, 'index'], $this->process->id))
+            ->get(action([ProceedingController::class, 'index'], $this->process->slug))
             ->assertOk()
             ->assertJsonStructure([
                 '*' => [
@@ -83,7 +83,7 @@ describe('index', function (): void {
 
     it('returns list of proceedings when authenticated as admin', function (): void {
         $response = actingAs($this->admin)
-            ->get(action([ProceedingController::class, 'index'], $this->process->id));
+            ->get(action([ProceedingController::class, 'index'], $this->process->slug));
 
         $response->assertOk();
 
@@ -96,7 +96,7 @@ describe('index', function (): void {
 
     it('returns list of proceedings when authenticated as secretary', function (): void {
         $response = actingAs($this->secretary)
-            ->get(action([ProceedingController::class, 'index'], $this->process->id))
+            ->get(action([ProceedingController::class, 'index'], $this->process->slug))
             ->assertOk();
 
         $proceedings = $response->json();
@@ -107,7 +107,7 @@ describe('index', function (): void {
     });
 
     it('requires authentication', function (): void {
-        get(action([ProceedingController::class, 'index'], $this->process->id))
+        get(action([ProceedingController::class, 'index'], $this->process->slug))
             ->assertStatus(401)
             ->assertJson([
                 'messages' => [__('auth.unauthorized')],
@@ -117,7 +117,7 @@ describe('index', function (): void {
 
     it('returns 404 without JSON when process not found', function (): void {
         $response = actingAs($this->superAdmin)
-            ->get(action([ProceedingController::class, 'index'], 99999));
+            ->get(action([ProceedingController::class, 'index'], 'non-existent-slug'));
 
         $response->assertStatus(404)
             ->assertContent('');

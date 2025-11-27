@@ -20,8 +20,9 @@
 
 ### Step 1: Try to Delete Process (Will trigger Step-Up - Code sent automatically)
 # This will return 428 and send code to email
+# Replace "process-slug-here" with the actual slug of the process
 # @name deleteProcessStepUp1
-DELETE {{base_url}}{{apiVersion}}/processes/1
+DELETE {{base_url}}{{apiVersion}}/processes/process-slug-here
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
@@ -60,8 +61,9 @@ Authorization: Bearer {{auth_token}}
 
 ### Step 3: Retry Delete Process (Now it will work)
 # After verifying the code, this request will succeed
+# Replace "process-slug-here" with the actual slug of the process
 # @name deleteProcessAfterVerification
-DELETE {{base_url}}{{apiVersion}}/processes/1
+DELETE {{base_url}}{{apiVersion}}/processes/process-slug-here
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
@@ -77,8 +79,9 @@ Authorization: Bearer {{auth_token}}
 ###
 
 ### Delete Process - Success (Super Admin)
+# Replace "process-slug-here" with the actual slug of the process
 # @name deleteProcess
-DELETE {{base_url}}{{apiVersion}}/processes/1
+DELETE {{base_url}}{{apiVersion}}/processes/process-slug-here
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
@@ -88,8 +91,9 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Delete Process - Success (Admin)
+# Replace "process-slug-here" with the actual slug of the process
 # @name deleteProcessAdmin
-DELETE {{base_url}}{{apiVersion}}/processes/2
+DELETE {{base_url}}{{apiVersion}}/processes/process-slug-here
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
@@ -100,7 +104,7 @@ Authorization: Bearer {{auth_token}}
 
 ### Delete Process - Without Authentication
 # Should return 401 Unauthorized
-DELETE {{base_url}}{{apiVersion}}/processes/1
+DELETE {{base_url}}{{apiVersion}}/processes/process-slug-here
 Accept: application/json
 Content-Type: application/json
 
@@ -110,7 +114,7 @@ Content-Type: application/json
 
 ### Delete Process - Unauthorized (Secretary Role)
 # Should return 403 Forbidden
-DELETE {{base_url}}{{apiVersion}}/processes/1
+DELETE {{base_url}}{{apiVersion}}/processes/process-slug-here
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
@@ -121,7 +125,7 @@ Authorization: Bearer {{auth_token}}
 
 ### Delete Process - Not Found (404)
 # Should return 404 without JSON
-DELETE {{base_url}}{{apiVersion}}/processes/99999
+DELETE {{base_url}}{{apiVersion}}/processes/non-existent-slug
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
@@ -131,15 +135,17 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Delete Process - Validation Error (Missing deleted_reason)
+# Replace "process-slug-here" with the actual slug of the process
 # Should return 422 Unprocessable Entity
-DELETE {{base_url}}{{apiVersion}}/processes/1
+DELETE {{base_url}}{{apiVersion}}/processes/process-slug-here
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 ### Delete Process - Validation Error (deleted_reason too short)
+# Replace "process-slug-here" with the actual slug of the process
 # Should return 422 Unprocessable Entity
-DELETE {{base_url}}{{apiVersion}}/processes/1
+DELETE {{base_url}}{{apiVersion}}/processes/process-slug-here
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
@@ -149,8 +155,9 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Delete Process - Validation Error (deleted_reason too long)
+# Replace "process-slug-here" with the actual slug of the process
 # Should return 422 Unprocessable Entity
-DELETE {{base_url}}{{apiVersion}}/processes/1
+DELETE {{base_url}}{{apiVersion}}/processes/process-slug-here
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}

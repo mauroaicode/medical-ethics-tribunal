@@ -2,19 +2,16 @@
 
 declare(strict_types=1);
 
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 use Src\Application\Admin\Process\Controllers\ProcessController;
 use Src\Domain\AuditLog\Models\AuditLog;
 use Src\Domain\Complainant\Models\Complainant;
 use Src\Domain\Doctor\Models\Doctor;
 use Src\Domain\Magistrate\Models\Magistrate;
-use Src\Domain\Proceeding\Models\Proceeding;
 use Src\Domain\Process\Enums\ProcessStatus;
 use Src\Domain\Process\Models\Process;
-use Src\Domain\Shared\Enums\FileType;
 use Src\Domain\User\Enums\UserRole;
 use Src\Domain\User\Models\User;
 
@@ -70,6 +67,7 @@ describe('index', function (): void {
                     '*' => [
                         'id',
                         'name',
+                        'slug',
                         'process_number',
                         'status',
                         'start_date',
@@ -279,7 +277,7 @@ describe('index', function (): void {
 describe('show', function (): void {
     it('returns process details when authenticated as super admin', function (): void {
         $response = actingAs($this->superAdmin)
-            ->get(action([ProcessController::class, 'show'], $this->process1->id))
+            ->get(action([ProcessController::class, 'show'], $this->process1->slug))
             ->assertOk()
             ->assertJsonStructure([
                 'id',
@@ -288,6 +286,7 @@ describe('show', function (): void {
                 'magistrate_instructor_id',
                 'magistrate_ponente_id',
                 'name',
+                'slug',
                 'process_number',
                 'start_date',
                 'status',
@@ -297,7 +296,6 @@ describe('show', function (): void {
                 'magistrate_instructor',
                 'magistrate_ponente',
                 'template_documents',
-                'proceedings',
             ]);
 
         expect($response->json('id'))->toBe($this->process1->id);
@@ -305,13 +303,13 @@ describe('show', function (): void {
 
     it('returns process details when authenticated as admin', function (): void {
         actingAs($this->admin)
-            ->get(action([ProcessController::class, 'show'], $this->process1->id))
+            ->get(action([ProcessController::class, 'show'], $this->process1->slug))
             ->assertOk();
     });
 
     it('returns process details when authenticated as secretary', function (): void {
         actingAs($this->secretary)
-            ->get(action([ProcessController::class, 'show'], $this->process1->id))
+            ->get(action([ProcessController::class, 'show'], $this->process1->slug))
             ->assertOk()
             ->assertJsonStructure([
                 'id',
@@ -320,6 +318,7 @@ describe('show', function (): void {
                 'magistrate_instructor_id',
                 'magistrate_ponente_id',
                 'name',
+                'slug',
                 'process_number',
                 'start_date',
                 'status',
@@ -329,64 +328,22 @@ describe('show', function (): void {
                 'magistrate_instructor',
                 'magistrate_ponente',
                 'template_documents',
-                'proceedings',
             ]);
     });
 
     it('requires authentication', function (): void {
-        get(action([ProcessController::class, 'show'], $this->process1->id))
+        get(action([ProcessController::class, 'show'], $this->process1->slug))
             ->assertStatus(401);
     });
 
     it('returns 404 without JSON when process not found', function (): void {
         $response = actingAs($this->superAdmin)
-            ->get(action([ProcessController::class, 'show'], 99999));
+            ->get(action([ProcessController::class, 'show'], 'non-existent-slug'));
 
         $response->assertStatus(404)
             ->assertContent('');
     });
 
-    it('includes proceedings when they exist', function (): void {
-        Storage::fake('public');
-
-        // Create proceedings for the process
-        $proceeding1 = Proceeding::factory()->create([
-            'process_id' => $this->process1->id,
-            'proceeding_date' => now()->subDays(5),
-        ]);
-        $proceeding1->addMedia(UploadedFile::fake()->create('test1.pdf', 500, 'application/pdf'))
-            ->toMediaCollection(FileType::PROCEEDING_DOCUMENT->value);
-
-        $proceeding2 = Proceeding::factory()->create([
-            'process_id' => $this->process1->id,
-            'proceeding_date' => now()->subDays(2),
-        ]);
-        $proceeding2->addMedia(UploadedFile::fake()->create('test2.pdf', 600, 'application/pdf'))
-            ->toMediaCollection(FileType::PROCEEDING_DOCUMENT->value);
-
-        $response = actingAs($this->superAdmin)
-            ->get(action([ProcessController::class, 'show'], $this->process1->id))
-            ->assertOk()
-            ->assertJsonStructure([
-                'id',
-                'proceedings' => [
-                    '*' => [
-                        'id',
-                        'process_id',
-                        'name',
-                        'description',
-                        'proceeding_date',
-                        'file',
-                    ],
-                ],
-            ]);
-
-        $proceedings = $response->json('proceedings');
-        expect($proceedings)->toBeArray()
-            ->and(count($proceedings))->toBe(2)
-            ->and($proceedings[0]['id'])->toBe($proceeding2->id) // Most recent first
-            ->and($proceedings[1]['id'])->toBe($proceeding1->id);
-    });
 });
 
 describe('store', function (): void {
@@ -411,6 +368,7 @@ describe('store', function (): void {
                 'magistrate_instructor_id',
                 'magistrate_ponente_id',
                 'name',
+                'slug',
                 'process_number',
                 'start_date',
                 'status',
@@ -419,7 +377,10 @@ describe('store', function (): void {
 
         expect($response->json('name'))->toBe('Nuevo Proceso')
             ->and($response->json('status'))->toBe(ProcessStatus::DRAFT->getLabel())
-            ->and($response->json('process_number'))->toMatch('/^PRO-\d{4}$/');
+            ->and($response->json('process_number'))->toMatch('/^PRO-\d{4}$/')
+            ->and($response->json('slug'))->toBeString()
+            ->and($response->json('slug'))->toContain(Str::slug('Nuevo Proceso'))
+            ->and($response->json('slug'))->toContain(Str::lower($response->json('process_number')));
     });
 
     it('creates process successfully when authenticated as admin', function (): void {
@@ -558,13 +519,15 @@ describe('update', function (): void {
         ];
 
         actingAs($this->superAdmin)
-            ->put(action([ProcessController::class, 'update'], $this->process1->id), $data)
+            ->put(action([ProcessController::class, 'update'], $this->process1->slug), $data)
             ->assertStatus(200);
 
         $this->process1->refresh();
 
         expect($this->process1->name)->toBe('Proceso Actualizado')
-            ->and($this->process1->status)->toBe(ProcessStatus::IN_PROGRESS);
+            ->and($this->process1->status)->toBe(ProcessStatus::IN_PROGRESS)
+            ->and($this->process1->slug)->toContain(Str::slug('Proceso Actualizado'))
+            ->and($this->process1->slug)->toContain(Str::lower($this->process1->process_number));
     });
 
     it('updates process successfully when authenticated as admin', function (): void {
@@ -576,7 +539,7 @@ describe('update', function (): void {
         ];
 
         actingAs($this->admin)
-            ->put(action([ProcessController::class, 'update'], $this->process1->id), $data)
+            ->put(action([ProcessController::class, 'update'], $this->process1->slug), $data)
             ->assertStatus(200);
 
         $this->process1->refresh();
@@ -595,7 +558,7 @@ describe('update', function (): void {
         ];
 
         actingAs($this->superAdmin)
-            ->put(action([ProcessController::class, 'update'], $this->process1->id), $data)
+            ->put(action([ProcessController::class, 'update'], $this->process1->slug), $data)
             ->assertStatus(200);
 
         $auditLog = AuditLog::query()
@@ -617,7 +580,7 @@ describe('update', function (): void {
         ];
 
         actingAs($this->secretary)
-            ->put(action([ProcessController::class, 'update'], $this->process1->id), $data)
+            ->put(action([ProcessController::class, 'update'], $this->process1->slug), $data)
             ->assertStatus(403);
     });
 
@@ -626,7 +589,7 @@ describe('update', function (): void {
             'name' => 'Test',
         ];
 
-        put(action([ProcessController::class, 'update'], $this->process1->id), $data)
+        put(action([ProcessController::class, 'update'], $this->process1->slug), $data)
             ->assertStatus(401);
     });
 
@@ -636,7 +599,7 @@ describe('update', function (): void {
         ];
 
         actingAs($this->superAdmin)
-            ->put(action([ProcessController::class, 'update'], 99999), $data)
+            ->put(action([ProcessController::class, 'update'], 'non-existent-slug'), $data)
             ->assertStatus(404)
             ->assertContent('');
     });
@@ -655,7 +618,7 @@ describe('destroy', function (): void {
         Cache::put($verificationKey, true, now()->addMinutes(10));
 
         actingAs($this->superAdmin)
-            ->delete(action([ProcessController::class, 'destroy'], $processToDelete->id), [
+            ->delete(action([ProcessController::class, 'destroy'], $processToDelete->slug), [
                 'deleted_reason' => 'Proceso duplicado',
             ])
             ->assertStatus(204);
@@ -678,7 +641,7 @@ describe('destroy', function (): void {
         Cache::put($verificationKey, true, now()->addMinutes(10));
 
         actingAs($this->admin)
-            ->delete(action([ProcessController::class, 'destroy'], $processToDelete->id), [
+            ->delete(action([ProcessController::class, 'destroy'], $processToDelete->slug), [
                 'deleted_reason' => 'Error en el proceso',
             ])
             ->assertStatus(204);
@@ -701,7 +664,7 @@ describe('destroy', function (): void {
         Cache::put($verificationKey, true, now()->addMinutes(10));
 
         actingAs($this->superAdmin)
-            ->delete(action([ProcessController::class, 'destroy'], $processToDelete->id), [
+            ->delete(action([ProcessController::class, 'destroy'], $processToDelete->slug), [
                 'deleted_reason' => 'Proceso cerrado por resolución',
             ])
             ->assertStatus(204);
@@ -723,14 +686,14 @@ describe('destroy', function (): void {
 
     it('fails when authenticated as secretary (unauthorized)', function (): void {
         actingAs($this->secretary)
-            ->delete(action([ProcessController::class, 'destroy'], $this->process1->id), [
+            ->delete(action([ProcessController::class, 'destroy'], $this->process1->slug), [
                 'deleted_reason' => 'Test reason',
             ])
             ->assertStatus(403);
     });
 
     it('requires authentication', function (): void {
-        delete(action([ProcessController::class, 'destroy'], $this->process1->id), [
+        delete(action([ProcessController::class, 'destroy'], $this->process1->slug), [
             'deleted_reason' => 'Test reason',
         ])
             ->assertStatus(401);
@@ -738,7 +701,7 @@ describe('destroy', function (): void {
 
     it('returns 404 without JSON when process not found', function (): void {
         actingAs($this->superAdmin)
-            ->delete(action([ProcessController::class, 'destroy'], 99999), [
+            ->delete(action([ProcessController::class, 'destroy'], 'non-existent-slug'), [
                 'deleted_reason' => 'Test reason',
             ])
             ->assertStatus(404)
@@ -758,7 +721,7 @@ describe('destroy', function (): void {
         ]);
 
         $response = actingAs($this->superAdmin)
-            ->delete(action([ProcessController::class, 'destroy'], $processToDelete->id))
+            ->delete(action([ProcessController::class, 'destroy'], $processToDelete->slug))
             ->assertStatus(422)
             ->assertJsonStructure([
                 'messages',
@@ -782,7 +745,7 @@ describe('destroy', function (): void {
         ]);
 
         actingAs($this->superAdmin)
-            ->delete(action([ProcessController::class, 'destroy'], $processToDelete->id), [
+            ->delete(action([ProcessController::class, 'destroy'], $processToDelete->slug), [
                 'deleted_reason' => 'AB',
             ])
             ->assertStatus(422);
@@ -801,7 +764,7 @@ describe('destroy', function (): void {
         ]);
 
         actingAs($this->superAdmin)
-            ->delete(action([ProcessController::class, 'destroy'], $processToDelete->id), [
+            ->delete(action([ProcessController::class, 'destroy'], $processToDelete->slug), [
                 'deleted_reason' => str_repeat('a', 1001),
             ])
             ->assertStatus(422);

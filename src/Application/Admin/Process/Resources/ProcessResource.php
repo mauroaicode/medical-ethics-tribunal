@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Src\Application\Admin\Process\Resources;
 
 use Spatie\LaravelData\Resource;
-use Src\Application\Admin\Proceeding\Resources\ProceedingResource;
 use Src\Domain\Process\Models\Process;
 
 class ProcessResource extends Resource
@@ -17,6 +16,7 @@ class ProcessResource extends Resource
         public int $magistrate_instructor_id,
         public int $magistrate_ponente_id,
         public string $name,
+        public string $slug,
         public string $process_number,
         public string $start_date,
         public string $status,
@@ -26,7 +26,6 @@ class ProcessResource extends Resource
         public ?array $magistrate_instructor = null,
         public ?array $magistrate_ponente = null,
         public ?array $template_documents = null,
-        public ?array $proceedings = null,
     ) {}
 
     public static function fromModel(Process $process): self
@@ -38,6 +37,7 @@ class ProcessResource extends Resource
             magistrate_instructor_id: $process->magistrate_instructor_id,
             magistrate_ponente_id: $process->magistrate_ponente_id,
             name: $process->name,
+            slug: $process->slug,
             process_number: $process->process_number,
             start_date: $process->start_date->format('Y-m-d'),
             status: $process->status->getLabel(),
@@ -138,7 +138,6 @@ class ProcessResource extends Resource
                     ] : null,
                 ];
             })->all() : null,
-            proceedings: ($process->relationLoaded('proceedings') && $process->proceedings->isNotEmpty()) ? $process->proceedings->map(fn (\Src\Domain\Proceeding\Models\Proceeding $proceeding): array => ProceedingResource::fromModel($proceeding)->toArray())->all() : null,
         );
     }
 }

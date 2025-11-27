@@ -20,8 +20,9 @@
 
 ### Step 1: Try to Update Process (Will trigger Step-Up - Code sent automatically)
 # This will return 428 and send code to email
+# Replace "process-slug-here" with the actual slug of the process
 # @name updateProcessStepUp1
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -60,8 +61,9 @@ Authorization: Bearer {{auth_token}}
 
 ### Step 3: Retry Update Process (Now it will work)
 # After verifying the code, this request will succeed
+# Replace "process-slug-here" with the actual slug of the process
 # @name updateProcessAfterVerification
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -78,8 +80,9 @@ Authorization: Bearer {{auth_token}}
 ###
 
 ### Update Process - Success (Super Admin)
+# Replace "process-slug-here" with the actual slug of the process
 # @name updateProcess
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -91,8 +94,9 @@ Authorization: Bearer {{auth_token}}
 
 
 ### Update Process - Success (Admin)
+# Replace "process-slug-here" with the actual slug of the process
 # @name updateProcessAdmin
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -102,8 +106,9 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Update Process - Change Status to Draft
+# Replace "process-slug-here" with the actual slug of the process
 # @name updateProcessStatusDraft
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -113,8 +118,9 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Update Process - Change Status to Closed
+# Replace "process-slug-here" with the actual slug of the process
 # @name updateProcessStatusClosed
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -124,8 +130,9 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Update Process - Change Complainant
+# Replace "process-slug-here" with the actual slug of the process
 # @name updateProcessComplainant
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -135,8 +142,9 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Update Process - Change Doctor
+# Replace "process-slug-here" with the actual slug of the process
 # @name updateProcessDoctor
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -146,8 +154,9 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Update Process - Change Magistrates
+# Replace "process-slug-here" with the actual slug of the process
 # @name updateProcessMagistrates
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -158,8 +167,9 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Update Process - Change Start Date
+# Replace "process-slug-here" with the actual slug of the process
 # @name updateProcessStartDate
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -169,8 +179,9 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Update Process - Multiple Fields
+# Replace "process-slug-here" with the actual slug of the process
 # @name updateProcessMultiple
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -184,7 +195,7 @@ Authorization: Bearer {{auth_token}}
 
 ### Update Process - Without Authentication
 # Should return 401 Unauthorized
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 
@@ -194,7 +205,7 @@ Accept: application/json
 
 ### Update Process - Unauthorized (Secretary Role)
 # Should return 403 Forbidden
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -205,7 +216,7 @@ Authorization: Bearer {{auth_token}}
 
 ### Update Process - Not Found (404)
 # Should return 404 without JSON
-PUT {{base_url}}{{apiVersion}}/processes/99999
+PUT {{base_url}}{{apiVersion}}/processes/non-existent-slug
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -215,8 +226,9 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Update Process - Validation Error (Invalid Complainant ID)
+# Replace "process-slug-here" with the actual slug of the process
 # Should return 422 Unprocessable Entity
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -226,8 +238,9 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Update Process - Validation Error (Invalid Doctor ID)
+# Replace "process-slug-here" with the actual slug of the process
 # Should return 422 Unprocessable Entity
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -237,8 +250,9 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Update Process - Validation Error (Invalid Magistrate Instructor ID)
+# Replace "process-slug-here" with the actual slug of the process
 # Should return 422 Unprocessable Entity
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -248,8 +262,9 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Update Process - Validation Error (Invalid Magistrate Ponente ID)
+# Replace "process-slug-here" with the actual slug of the process
 # Should return 422 Unprocessable Entity
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
@@ -259,8 +274,9 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### Update Process - Validation Error (Invalid Status)
+# Replace "process-slug-here" with the actual slug of the process
 # Should return 422 Unprocessable Entity
-PUT {{base_url}}{{apiVersion}}/processes/1
+PUT {{base_url}}{{apiVersion}}/processes/process-slug-here
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{auth_token}}
