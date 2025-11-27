@@ -29,6 +29,7 @@ use Src\Domain\ProcessTemplateDocument\Models\ProcessTemplateDocument;
  * @property-read int $magistrate_instructor_id
  * @property-read int $magistrate_ponente_id
  * @property-read string $name
+ * @property-read string $slug
  * @property-read string $process_number
  * @property-read Carbon $start_date
  * @property-read ProcessStatus $status
@@ -68,6 +69,7 @@ class Process extends Model
         'magistrate_instructor_id',
         'magistrate_ponente_id',
         'name',
+        'slug',
         'process_number',
         'start_date',
         'status',
@@ -78,6 +80,14 @@ class Process extends Model
     protected $casts = [
         'status' => ProcessStatus::class,
     ];
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 
     /**
      * @return BelongsTo<Complainant, $this>

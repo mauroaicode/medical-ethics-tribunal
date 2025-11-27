@@ -24,13 +24,17 @@ class ProcessCreatorService
     public function handle(StoreProcessData $storeProcessData): Process
     {
         return DB::transaction(function () use ($storeProcessData) {
+            $processNumber = $this->generateProcessNumber();
+            $slug = $this->generateSlug($storeProcessData->name, $processNumber);
+
             $process = Process::query()->create([
                 'complainant_id' => $storeProcessData->complainant_id,
                 'doctor_id' => $storeProcessData->doctor_id,
                 'magistrate_instructor_id' => $storeProcessData->magistrate_instructor_id,
                 'magistrate_ponente_id' => $storeProcessData->magistrate_ponente_id,
                 'name' => $storeProcessData->name,
-                'process_number' => $this->generateProcessNumber(),
+                'slug' => $slug,
+                'process_number' => $processNumber,
                 'start_date' => $storeProcessData->start_date,
                 'status' => ProcessStatus::DRAFT,
                 'description' => $storeProcessData->description,
@@ -66,5 +70,26 @@ class ProcessCreatorService
 
         // Format: PRO-0001, PRO-0002, etc.
         return 'PRO-'.Str::padLeft((string) $nextId, 4, '0');
+    }
+
+    /**
+     * Generate slug from process name and process number
+     */
+    private function generateSlug(string $name, string $processNumber): string
+    {
+        $baseSlug = Str::slug($name);
+        $processNumberSlug = Str::lower($processNumber);
+
+        $slug = $baseSlug.'-'.$processNumberSlug;
+
+        // Ensure uniqueness
+        $originalSlug = $slug;
+        $counter = 1;
+        while (Process::withTrashed()->where('slug', $slug)->exists()) {
+            $slug = $originalSlug.'-'.$counter;
+            $counter++;
+        }
+
+        return $slug;
     }
 }

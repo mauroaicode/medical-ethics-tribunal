@@ -12,6 +12,7 @@ class ProcessIndexResource extends Resource
     public function __construct(
         public int $id,
         public string $name,
+        public string $slug,
         public string $process_number,
         public string $status,
         public string $start_date,
@@ -48,6 +49,7 @@ class ProcessIndexResource extends Resource
         return new self(
             id: $process->id,
             name: $process->name,
+            slug: $process->slug,
             process_number: $process->process_number,
             status: $process->status->getLabel(),
             start_date: $process->start_date->format('Y-m-d'),

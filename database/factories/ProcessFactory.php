@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Src\Domain\Complainant\Models\Complainant;
 use Src\Domain\Doctor\Models\Doctor;
 use Src\Domain\Magistrate\Models\Magistrate;
@@ -33,13 +34,18 @@ class ProcessFactory extends Factory
         $counter++;
         $uniqueId = (int) (microtime(true) * 100000) + $counter;
 
+        $name = fake()->sentence(4);
+        $processNumber = sprintf('PRO-%06d', $uniqueId % 1000000);
+        $slug = Str::slug($name).'-'.Str::lower($processNumber);
+
         return [
             'complainant_id' => Complainant::factory(),
             'doctor_id' => Doctor::factory(),
             'magistrate_instructor_id' => Magistrate::factory(),
             'magistrate_ponente_id' => Magistrate::factory(),
-            'name' => fake()->sentence(4),
-            'process_number' => sprintf('PRO-%06d', $uniqueId % 1000000),
+            'name' => $name,
+            'slug' => $slug,
+            'process_number' => $processNumber,
             'start_date' => fake()->dateTimeBetween('-2 years', 'now'),
             'status' => fake()->randomElement(ProcessStatus::cases())->value,
             'description' => fake()->paragraph(),

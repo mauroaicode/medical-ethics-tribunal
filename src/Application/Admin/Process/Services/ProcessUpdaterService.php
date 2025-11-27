@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Src\Application\Admin\Process\Services;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Src\Application\Admin\Process\Data\UpdateProcessData;
 use Src\Application\Admin\ProcessTemplateDocument\Services\ProcessDocumentRegeneratorService;
 use Src\Application\Shared\Traits\LogsAuditTrait;
@@ -36,6 +37,11 @@ class ProcessUpdaterService
                 'description' => $updateProcessData->description,
             ], fn (mixed $value): bool => ! is_null($value));
 
+            // Update slug if name changed
+            if (isset($updateData['name']) && $updateData['name'] !== $process->name) {
+                $updateData['slug'] = $this->generateSlug($updateData['name'], $process->process_number, $process->id);
+            }
+
             if ($updateData !== []) {
                 $process->update($updateData);
             }
@@ -66,5 +72,26 @@ class ProcessUpdaterService
 
             return $updatedProcess;
         });
+    }
+
+    /**
+     * Generate slug from process name and process number
+     */
+    private function generateSlug(string $name, string $processNumber, int $processId): string
+    {
+        $baseSlug = Str::slug($name);
+        $processNumberSlug = Str::lower($processNumber);
+
+        $slug = $baseSlug.'-'.$processNumberSlug;
+
+        // Ensure uniqueness
+        $originalSlug = $slug;
+        $counter = 1;
+        while (Process::withTrashed()->where('slug', $slug)->where('id', '!=', $processId)->exists()) {
+            $slug = $originalSlug.'-'.$counter;
+            $counter++;
+        }
+
+        return $slug;
     }
 }
