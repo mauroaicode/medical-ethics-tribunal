@@ -25,7 +25,6 @@ class ProcessResource extends Resource
         public ?array $doctor = null,
         public ?array $magistrate_instructor = null,
         public ?array $magistrate_ponente = null,
-        public ?array $template_documents = null,
     ) {}
 
     public static function fromModel(Process $process): self
@@ -117,27 +116,6 @@ class ProcessResource extends Resource
                     'address' => $process->magistratePonente->user->address,
                 ] : null,
             ] : null,
-            template_documents: ($process->relationLoaded('templateDocuments') && $process->templateDocuments->isNotEmpty()) ? $process->templateDocuments->map(function ($templateDocument): array {
-                // Use loaded media if available, otherwise fetch it
-                $media = $templateDocument->relationLoaded('media') && $templateDocument->media->isNotEmpty()
-                    ? $templateDocument->media->first()
-                    : $templateDocument->getFirstMedia($templateDocument->getMediaCollectionName());
-
-                return [
-                    'id' => $templateDocument->id,
-                    'process_id' => $templateDocument->process_id,
-                    'template_id' => $templateDocument->template_id,
-                    'file_name' => $templateDocument->file_name,
-                    'google_drive_file_id' => $templateDocument->google_drive_file_id,
-                    'google_docs_name' => $templateDocument->google_docs_name,
-                    'document_url' => $media?->getUrl(),
-                    'template' => $templateDocument->relationLoaded('template') ? [
-                        'id' => $templateDocument->template->id,
-                        'name' => $templateDocument->template->name,
-                        'description' => $templateDocument->template->description,
-                    ] : null,
-                ];
-            })->all() : null,
         );
     }
 }

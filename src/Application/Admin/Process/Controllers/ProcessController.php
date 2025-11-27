@@ -55,8 +55,6 @@ class ProcessController
             'doctor.specialty',
             'magistrateInstructor.user',
             'magistratePonente.user',
-            'templateDocuments.media',
-            'templateDocuments.template',
         ]);
 
         return ProcessResource::fromModel($process)->toArray();

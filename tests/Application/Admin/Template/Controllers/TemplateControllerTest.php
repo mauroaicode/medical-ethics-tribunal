@@ -2,10 +2,13 @@
 
 declare(strict_types=1);
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
 use Src\Domain\Process\Models\Process;
 use Src\Domain\ProcessTemplateDocument\Models\ProcessTemplateDocument;
+use Src\Domain\Shared\Enums\FileType;
 use Src\Domain\Template\Models\Template;
 use Src\Domain\User\Enums\UserRole;
 use Src\Domain\User\Models\User;
@@ -16,6 +19,7 @@ use function Pest\Laravel\postJson;
 
 beforeEach(function (): void {
     Notification::fake();
+    Storage::fake('public');
 
     // Create roles
     $this->superAdminRole = Role::firstOrCreate(['name' => UserRole::SUPER_ADMIN->value, 'guard_name' => 'web']);
@@ -282,5 +286,136 @@ describe('assignToProcess', function (): void {
         expect($messages)->toBeArray()
             ->and($messages)->not->toBeEmpty()
             ->and(collect($messages)->first(fn ($msg) => str_contains(strtolower($msg), strtolower($fileName))))->not->toBeNull();
+    });
+});
+
+describe('getProcessTemplates', function (): void {
+    it('returns list of template documents for a process when authenticated as super admin', function (): void {
+        // Create template documents for the process
+        $templateDocument1 = ProcessTemplateDocument::factory()->create([
+            'process_id' => $this->process1->id,
+            'template_id' => $this->template1->id,
+        ]);
+        $templateDocument1->addMedia(UploadedFile::fake()->create('test1.pdf', 500, 'application/pdf'))
+            ->toMediaCollection(FileType::PROCESS_DOCUMENT->value);
+
+        $templateDocument2 = ProcessTemplateDocument::factory()->create([
+            'process_id' => $this->process1->id,
+            'template_id' => $this->template2->id,
+        ]);
+        $templateDocument2->addMedia(UploadedFile::fake()->create('test2.pdf', 600, 'application/pdf'))
+            ->toMediaCollection(FileType::PROCESS_DOCUMENT->value);
+
+        $response = actingAs($this->superAdmin)
+            ->getJson("/api/admin/templates/process/{$this->process1->slug}")
+            ->assertOk()
+            ->assertJsonStructure([
+                '*' => [
+                    'id',
+                    'process_id',
+                    'template_id',
+                    'file_name',
+                    'google_drive_file_id',
+                    'google_docs_name',
+                    'document_url',
+                    'template',
+                ],
+            ]);
+
+        $templateDocuments = $response->json();
+        $templateDocumentIds = collect($templateDocuments)->pluck('id');
+
+        expect($templateDocuments)->toBeArray()
+            ->and(count($templateDocuments))->toBe(2)
+            ->and($templateDocumentIds)->toContain($templateDocument1->id)
+            ->and($templateDocumentIds)->toContain($templateDocument2->id);
+    });
+
+    it('returns list of template documents when authenticated as admin', function (): void {
+        $templateDocument = ProcessTemplateDocument::factory()->create([
+            'process_id' => $this->process1->id,
+            'template_id' => $this->template1->id,
+        ]);
+        $templateDocument->addMedia(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'))
+            ->toMediaCollection(FileType::PROCESS_DOCUMENT->value);
+
+        $response = actingAs($this->admin)
+            ->getJson("/api/admin/templates/process/{$this->process1->slug}");
+
+        $response->assertOk();
+
+        $templateDocuments = $response->json();
+        expect($templateDocuments)->toBeArray()
+            ->and(count($templateDocuments))->toBe(1)
+            ->and($templateDocuments[0]['id'])->toBe($templateDocument->id);
+    });
+
+    it('returns list of template documents when authenticated as secretary', function (): void {
+        $templateDocument = ProcessTemplateDocument::factory()->create([
+            'process_id' => $this->process1->id,
+            'template_id' => $this->template1->id,
+        ]);
+        $templateDocument->addMedia(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'))
+            ->toMediaCollection(FileType::PROCESS_DOCUMENT->value);
+
+        $response = actingAs($this->secretary)
+            ->getJson("/api/admin/templates/process/{$this->process1->slug}")
+            ->assertOk();
+
+        $templateDocuments = $response->json();
+        expect($templateDocuments)->toBeArray()
+            ->and(count($templateDocuments))->toBe(1);
+    });
+
+    it('returns empty array when process has no template documents', function (): void {
+        $response = actingAs($this->superAdmin)
+            ->getJson("/api/admin/templates/process/{$this->process1->slug}")
+            ->assertOk();
+
+        $templateDocuments = $response->json();
+        expect($templateDocuments)->toBeArray()
+            ->and(count($templateDocuments))->toBe(0);
+    });
+
+    it('requires authentication', function (): void {
+        getJson("/api/admin/templates/process/{$this->process1->slug}")
+            ->assertStatus(401)
+            ->assertJson([
+                'message' => 'Unauthenticated.',
+            ]);
+    });
+
+    it('returns 404 without JSON when process not found', function (): void {
+        $response = actingAs($this->superAdmin)
+            ->getJson('/api/admin/templates/process/non-existent-slug');
+
+        $response->assertStatus(404)
+            ->assertContent('');
+    });
+
+    it('only returns template documents for the specified process', function (): void {
+        // Create template documents for process1
+        $templateDocument1 = ProcessTemplateDocument::factory()->create([
+            'process_id' => $this->process1->id,
+            'template_id' => $this->template1->id,
+        ]);
+
+        // Create template documents for process2
+        $templateDocument2 = ProcessTemplateDocument::factory()->create([
+            'process_id' => $this->process2->id,
+            'template_id' => $this->template2->id,
+        ]);
+
+        $response = actingAs($this->superAdmin)
+            ->getJson("/api/admin/templates/process/{$this->process1->slug}")
+            ->assertOk();
+
+        $templateDocuments = $response->json();
+        $templateDocumentIds = collect($templateDocuments)->pluck('id');
+
+        expect($templateDocuments)->toBeArray()
+            ->and(count($templateDocuments))->toBe(1)
+            ->and($templateDocumentIds)->toContain($templateDocument1->id)
+            ->and($templateDocumentIds)->not->toContain($templateDocument2->id);
     });
 });

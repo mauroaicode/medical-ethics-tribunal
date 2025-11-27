@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
+use Src\Application\Admin\Process\Data\ProcessFilterData;
 use Src\Domain\AuditLog\Models\AuditLog;
 use Src\Domain\Complainant\Models\Complainant;
 use Src\Domain\Doctor\Models\Doctor;
@@ -56,7 +57,7 @@ use Src\Domain\ProcessTemplateDocument\Models\ProcessTemplateDocument;
  * @method ProcessQueryBuilder withoutTrashed()
  * @method ProcessQueryBuilder orderedByCreatedAt()
  * @method ProcessQueryBuilder orderedByStartDate()
- * @method ProcessQueryBuilder filters(\Src\Application\Admin\Process\Data\ProcessFilterData $data)
+ * @method ProcessQueryBuilder filters(ProcessFilterData $data)
  */
 class Process extends Model
 {
